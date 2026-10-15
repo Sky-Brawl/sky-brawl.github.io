@@ -397,3 +397,8 @@ body *{touch-action:manipulation}
 #mChatBar[hidden]{display:none}
 #mChatBar input{flex:1 1 auto;min-width:0;font:500 16px var(--body);padding:6px 8px;border:2px solid var(--ink);border-radius:8px}
 @media (max-height:520px){ .nico{font-size:16px;-webkit-text-stroke:3px var(--ink)} .nico .nn{font-size:11px} #mChatBar{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 44px)} }
+
+/* Copyright & credits in the menu */
+details.legal p{margin:8px 0 0;font-size:13px;line-height:1.5}
+details.legal a{color:inherit;text-decoration:underline}
+#menu .copy{margin:10px 0 0;font-size:12px;opacity:.7;text-align:center}
