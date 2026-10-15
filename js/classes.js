@@ -153,7 +153,7 @@ const OUTFITS = {
     rainbow.forEach((c, i) => { const phi = .3 + i*.38; const m = OP(SPH(.17), c); m.position.set(0, .64*Math.cos(phi), -.64*Math.sin(phi)); h.add(m); });
     rainbow.forEach((c, i) => { const m = OP(SPH(.15 - i*.012), c); m.position.set(0, -.12 - i*.07, -.42 - i*.12); t.add(m); });
   }},
-  gundam:{name:'กันดั้ม', body:0xf4f4f4, head:true, noHair:true, build(h, t){
+  gundam:{name:'เมคา', body:0xf4f4f4, head:true, noHair:true, build(h, t){
     oDome(h, 0xf4f4f4);
     for (const s of [-1, 1]){
       const fin = OP(new THREE.BoxGeometry(.06, .5, .05), 0xffc23a); fin.position.set(s*.16, .55, .52); fin.rotation.z = -s*.75; h.add(fin);
