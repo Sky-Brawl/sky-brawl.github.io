@@ -402,3 +402,6 @@ body *{touch-action:manipulation}
 details.legal p{margin:8px 0 0;font-size:13px;line-height:1.5}
 details.legal a{color:inherit;text-decoration:underline}
 #menu .copy{margin:10px 0 0;font-size:12px;opacity:.7;text-align:center}
+
+/* Camera turning chips */
+#hudBtns .rot{min-width:38px;font-size:18px;line-height:1;touch-action:none;user-select:none;-webkit-user-select:none}
