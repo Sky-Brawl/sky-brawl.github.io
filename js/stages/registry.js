@@ -80,6 +80,11 @@ const STAGES = {
     light:{sky:0xeaf6ff, ground:0x6f9a5a, hemi:.85, sun:0xfff2d8, sunI:.85},
     sky:['#2f6fd0', '#6fb0f0', '#bfe2fa', '#f4fbff'], build:buildSkyIsland, inside:rectInside(SI_W, SI_D), pushOut:rectPush(SI_W, SI_D),
     fx:fr => { STAGE.group.userData.falls.forEach((f, i) => { f.material.opacity = .55 + Math.sin(fr*.2 + i)*.1; }); }},
+  // lavaFall: falling in burns instead of splashing; the arena shrinks over time (stages/volcano.js, LAVA)
+  volcano:{name:'ภูเขาไฟระเบิด', fallText:'ตกลาวา', water:null, lavaFall:true, fallY:-1.6, wallBottom:-1.4, camX:24, orbit:52,
+    preview:new V(0, 0, 6), spawn:[-13, 13, -13, 13], box:[-22, 22, -22, 22], obstacles:VOL_OBS, fog:0x4a160c, fogNear:55, fogFar:210, shadow:[30, 30], noClouds:true,
+    light:{sky:0xffb48a, ground:0xff5a1f, hemi:.75, sun:0xffc890, sunI:.7},
+    sky:['#160404', '#3d0f08', '#8f2a12', '#ff7a32'], build:buildVolcano, inside:volInside, pushOut:volPush, fx:volcanoTick},
 };
 const STAGE_KEYS = Object.keys(STAGES);
 const MODE_KEYS = ['ffa', 'team', 'boss'];

@@ -73,6 +73,7 @@ const dust = (pos, n = 6) => emit(new V(pos.x, pos.y + .1, pos.z), n, 0xf3ead7, 
 function splash(pos){
   const p = new V(pos.x, SEA_Y + .2, pos.z);
   Sfx.play('splash', p);
+  if (STAGE.lavaFall){ emit(p, 22, 0xff7a2f, 4, 8, 34, 2.2, 10); emit(p, 12, 0xffd23a, 3, 6, 26, 1.6, 8); emit(p, 6, 0x3a2a2a, 1.5, 4, 90, 6, -.5, .55); flash(p, 0xff5a1f, .5, 2.6, 16); Sfx.play('flame', p); return; }
   if (!STAGE.water){ emit(p, 18, 0x9aa3b5, 4, 5, 30, 2, 12); flash(p, 0xffffff, .4, 2, 12); return; }
   emit(p, 20, 0xffffff, 3, 8, 32, 2, 16); flash(p, 0xd8f0ff, .4, 2.2, 16);
 }

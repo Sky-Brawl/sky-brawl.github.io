@@ -6,9 +6,9 @@
 
 *A free browser brawler: 38 classes, up to 128 fighters, online rooms. Plays on phones and PCs.*
 
-### [▶ เล่นเลย: soradadofficial.github.io/sky-brawl](https://soradadofficial.github.io/sky-brawl/)
+### [▶ เล่นเลย: sky-brawl.github.io](https://sky-brawl.github.io/)
 
-[![Sky Brawl](promo/sky-brawl-promo-1-main.jpg)](https://soradadofficial.github.io/sky-brawl/)
+[![Sky Brawl](promo/sky-brawl-promo-1-main.jpg)](https://sky-brawl.github.io/)
 
 </div>
 
@@ -16,9 +16,8 @@
 
 ## 🎬 ตัวอย่างเกม
 
-[![ตัวอย่างเกม Sky Brawl (กดเพื่อดูวิดีโอเต็ม)](promo/trailer-preview.gif)](promo/sky-brawl-trailer-720p.mp4)
+![ตัวอย่างเกม Sky Brawl](promo/trailer-preview.gif)
 
-วิดีโอเต็ม 33 วินาที: [แนวนอน 720p](promo/sky-brawl-trailer-720p.mp4) · [แนวตั้ง 9:16 สำหรับ Reels / TikTok](promo/sky-brawl-trailer-vertical.mp4)
 
 ---
 
@@ -29,7 +28,7 @@
 | 🥊 **ต่อสู้มันส์ เล่นง่าย** | คอมโบ 3 จังหวะ กัน กระโดด หยิบของขว้าง ซัดคู่แข่งจนพลังหมด หรือกระเด็นตกเวที! มีปุ่มวิ่ง และเล็งอัตโนมัติ |
 | 🧙 **38 อาชีพ** | ทุกอาชีพมีชุด อาวุธ คอมโบ และสกิลของตัวเอง ทั้งสายประชิด ยิงไกล เวทย์ ซัพพอร์ต แปลงร่าง และอัญเชิญ |
 | 🏝️ **สูงสุด 128 คน** | ด่านเกาะลอยฟ้าขนาดใหญ่สำหรับสงครามกิล มีเนินสูงให้สายยิงไกล และพุ่มไม้ให้ซุ่มโจมตี |
-| 🗺️ **10 ด่าน** | เรือไททานิก · วัดไทย · สยาม · สนามกิลวอ · ฮัลโลวีน · คริสต์มาส · ทะเลสาบน้ำแข็ง · โรงพยาบาล · เมืองญี่ปุ่นโบราณ · เกาะลอยฟ้า |
+| 🗺️ **11 ด่าน** | เรือไททานิก · วัดไทย · สยาม · สนามกิลวอ · ฮัลโลวีน · คริสต์มาส · ทะเลสาบน้ำแข็ง · โรงพยาบาล · เมืองญี่ปุ่นโบราณ · เกาะลอยฟ้า · 🌋 ภูเขาไฟระเบิด (พื้นถล่มลงลาวาทีละวง!) |
 | 🎮 **3 โหมด** | ตะลุมบอน (ทุกคนคือศัตรู) · ทีมตีหิน (แดงปะทะน้ำเงิน) · ตีบอสยักษ์หิมะ |
 | 🌐 **ออนไลน์กับเพื่อน** | สร้างห้อง ชวนเพื่อนผ่าน LINE / Facebook / X / QR code เลือกทีมได้ มีล็อบบี้และแชต |
 | 🎁 **รางวัลรายวัน** | เข้าเกมทุกวัน รับหมวกพิเศษและฉายาเหนือหัว ครบ 7 วันได้ดาวลอยฟ้า + ฉายา « ตำนาน 7 วัน » |
@@ -122,7 +121,7 @@ python -m http.server 8000
 
 <div align="center">
 
-**ชวนเพื่อนมาตะลุมบอนกัน!** 👉 **[soradadofficial.github.io/sky-brawl](https://soradadofficial.github.io/sky-brawl/)**
+**ชวนเพื่อนมาตะลุมบอนกัน!** 👉 **[sky-brawl.github.io](https://sky-brawl.github.io/)**
 
 `#SkyBrawl` `#เกมออนไลน์` `#เกมฟรี` `#เกมมือถือ`
 

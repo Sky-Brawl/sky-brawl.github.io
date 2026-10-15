@@ -12,8 +12,8 @@
 
 | ลิงก์ / ที่อยู่ | ค่า |
 |---|---|
-| เว็บจริง | https://soradadofficial.github.io/sky-brawl/ |
-| GitHub repo | `soradadofficial/soradadofficial.github.io` · branch **`root`** · โฟลเดอร์ `sky-brawl/` |
+| เว็บจริง | https://sky-brawl.github.io/ (ย้ายมา 2026-10-15 · เว็บเก่า https://soradadofficial.github.io/sky-brawl/) |
+| GitHub repo | `Sky-Brawl/sky-brawl.github.io` · branch **`main`** · ไฟล์อยู่ที่ราก repo (repo เก่า: `soradadofficial/soradadofficial.github.io` โฟลเดอร์ `sky-brawl/`) |
 | ไฟล์บนเครื่อง (เครื่องเดิม) | `agent-trading/sky-brawl/` |
 | Supabase project | `https://dngqblfvgjdoevctsnfy.supabase.co` (Region: Singapore) |
 | Google OAuth | ตั้งไว้ใน Google Cloud แล้ว, Client ID ลงท้าย `…apps.googleusercontent.com` (ไม่ต้องใช้ในโค้ด) |
@@ -106,6 +106,7 @@
 
 - สูตรเลเวล: เลเวล L เริ่มที่ `50 × (L−1)²` XP (Lv2=50, Lv5=800, Lv10=4,050)
 - ตั้งค่าใน Supabase ที่เปิดไว้แล้ว: Anonymous sign-ins ✅, Google provider ✅, Manual linking ✅, Site URL = `https://soradadofficial.github.io/sky-brawl/`, Redirect URLs มี `https://soradadofficial.github.io/sky-brawl/**` และ `http://localhost:8765/**`
+- **ย้ายโดเมน 2026-10-15:** ต้องตั้ง Supabase → Authentication → URL Configuration: Site URL = `https://sky-brawl.github.io/` และเพิ่ม `https://sky-brawl.github.io/**` ใน Redirect URLs ไม่อย่างนั้นปุ่มผูก Google จะเด้งกลับเว็บเก่า
 - **anon key** อยู่ใน `index.html` (`SUPA_KEY`) — ใส่ในหน้าเว็บได้ปลอดภัย; **ห้ามใส่ `service_role` key ในไฟล์หรือส่งให้ใครเด็ดขาด**
 
 ---
@@ -115,7 +116,8 @@
 ### กฎข้อแรก: ดึงไฟล์จาก GitHub มาเทียบก่อนแก้ทุกครั้ง
 เจ้าของเกมแก้ไฟล์บน GitHub เองด้วย (เคยเพิ่มด่าน GvG, ฮาโลวีน, โหมดทีม, อาชีพเพิ่ม ฯลฯ ด้วยตัวเอง)
 ```bash
-curl -sSL -o remote-index.html "https://raw.githubusercontent.com/soradadofficial/soradadofficial.github.io/root/sky-brawl/index.html"
+# ทุกไฟล์ในเว็บ: https://api.github.com/repos/Sky-Brawl/sky-brawl.github.io/git/trees/main?recursive=1
+curl -sSL -o remote-index.html "https://raw.githubusercontent.com/Sky-Brawl/sky-brawl.github.io/main/index.html"
 ```
 แล้ว diff กับไฟล์บนเครื่อง ถ้าต่างกัน ให้ใช้ไฟล์จาก GitHub เป็นตัวตั้ง
 
@@ -331,3 +333,13 @@ python -m http.server 8765 --directory sky-brawl
 - ทุกแท็กมี `?v=1.6.0` กันแคชปนเวอร์ชัน → อัปเดตครั้งต่อไปต้องเปลี่ยนเลขนี้ทุกแท็ก
 - ตรวจแล้ว: ชื่อ global ไม่ชนกับ property ของ window · ผลจำลองบอท 10 ด่าน + ทีม + บอส (Math.random แบบ seed, `G.frame = 0`, 1500 เฟรม) ตรงกับฉบับไฟล์เดียวทุกค่า · ออนไลน์สองแท็บ host/guest เชื่อมตรงได้ เข้าเกม และ guest เห็นเบียวมังกรแปลงร่าง (ออร่า/ขนาด) · สอนเล่น · มือถือแนวตั้งไม่ล้นจอ
 - ทดสอบอัตโนมัติ: ไม่ต้องทำ `_t.html` + `window.__SB` แล้ว เปิดหน้าเกมแล้วเรียก `G`, `tick()`, `startOffline()` จาก console ได้ตรงๆ · ถ้าจะเทียบผลจำลองให้ตั้ง `G.frame = 0` ก่อนทุกแมตช์ (`G.frame` ไม่ reset เอง)
+
+## ด่านภูเขาไฟระเบิด `volcano` (1.7.0 · 2026-10-15)
+- ไฟล์ `js/stages/volcano.js` + รายการใน `stages/registry.js` (ต่อท้ายสุด) + การ์ด/ตัวเลือกห้องใน `index.html` · ลานหินกลมรัศมี 22 กลางทะเลลาวา แบ่ง 5 วง (`VOL_RADII` 22/18/14.5/11/8) แต่ละวงเป็น group ของ tile ที่ merge แยกกัน มี `glow` (RingGeometry) เป็นตัวเตือน
+- กลไก: `LAVA {sunk, t, match}` ทุก `VOL_PHASE` (1500 เฟรม = 25 วิ) วงนอกถล่ม เตือนก่อน `VOL_WARN` (5 วิ: วงเรืองส้ม + banner + ภูเขาไฟพ่น) จมให้เห็น `VOL_SINK` เฟรม · `inside = volInside`: ถามด้วย margin > .6 (บอท/จุดเกิด/เกิดใหม่/แถบเตือนขอบจอ) ระหว่างเตือนจะนับวงที่กำลังจะถล่มเป็นลาวาแล้ว ส่วนฟิสิกส์ (margin ≤ .45) ใช้รัศมีจริง
+- หินภูเขาไฟ: `dropLavaBomb()` ใช้ bomb แบบ meteor (`owner:null`, `LAVA_BOMB`) ตกทุก 40 เฟรมระหว่างเตือน และทุก 150 เฟรมเมื่อเหลือวงสุดท้าย · มีจุดแดงใต้ลูกที่กำลังตก
+- โหมดทีม: พื้นไม่ถล่ม (หินจักรพรรดิอยู่บนวงนอก) มีแค่หินภูเขาไฟทุก 4 วินาที · สอนเล่น: ไม่มีลาวา
+- เสาออบซิเดียน (`VOL_OBS`) อยู่บนวง 1 พอวงจม เอาออกจากรายการชน (array เดียวกับ `FUNNELS`)
+- ออนไลน์: host เป็นเจ้าของ `LAVA` ส่ง `sn.lv = [sunk, t]` ใน snapshot (`relay.js` hostSend/applySnap) guest นับ `t` ต่อเองระหว่าง snapshot · ตกลาวา: `STAGE.lavaFall` → `splash()` ใน `fx.js` เป็นไฟแทนน้ำ
+- ทดสอบแล้ว: บอท 12 ตัว 3 ชีวิตจบใน ~95 วิ (ถล่ม 3 ครั้ง ไม่มี error), ระหว่างเตือนหินตก 6 ลูกระเบิดจริง, เสาหายตามวง, host+guest สองแท็บ guest เห็นวงจมตรงกัน
+- ทุกแท็กใน `index.html` เปลี่ยนเป็น `?v=1.7.0`

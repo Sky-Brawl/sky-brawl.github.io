@@ -6,22 +6,22 @@
 <meta name="theme-color" content="#5a8f3a">
 <meta name="description" content="Sky Brawl เกมต่อสู้ 3 มิติโลกบล็อกบนดาดฟ้าเรือไททานิก ตะลุมบอนกับบอทได้สูงสุด 124 คน หรือชวนเพื่อนเล่นออนไลน์ได้สูงสุด 64 คน">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://soradadofficial.github.io/sky-brawl/">
-<meta property="og:image" content="https://soradadofficial.github.io/sky-brawl/og.png">
+<meta property="og:url" content="https://sky-brawl.github.io/">
+<meta property="og:image" content="https://sky-brawl.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="นักสู้หลายอาชีพตะลุมบอนกันบนดาดฟ้าเรือไททานิก ในโลกบล็อก พร้อมโลโก้ Sky Brawl">
 <meta property="og:title" content="Sky Brawl เกมต่อสู้โลกบล็อก 3D บนเว็บ">
 <meta property="og:description" content="ตะลุมบอนในโลกบล็อก บนเรือไททานิก วัดไทย สยาม และอีกหลายด่าน กว่า 30 อาชีพ เล่นบนมือถือได้ทันที ไม่ต้องติดตั้ง ชวนเพื่อนเล่นออนไลน์ได้">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://soradadofficial.github.io/sky-brawl/og.png">
+<meta name="twitter:image" content="https://sky-brawl.github.io/og.png">
 <meta name="twitter:title" content="Sky Brawl เกมต่อสู้โลกบล็อก 3D บนเว็บ">
 <meta name="twitter:description" content="ตะลุมบอนบนเรือไททานิก วัดไทย และสยาม เล่นบนมือถือได้ทันที ไม่ต้องติดตั้ง">
 <title>Sky Brawl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kanit:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=1.6.0">
+<link rel="stylesheet" href="style.css?v=1.7.0">
 
 </head>
 <body>
@@ -127,6 +127,7 @@
           <input type="radio" name="stage" id="sg-hospital" value="hospital"><label class="pickcard" for="sg-hospital"><span class="nm">โรงพยาบาล</span></label>
           <input type="radio" name="stage" id="sg-japan" value="japan"><label class="pickcard" for="sg-japan"><span class="nm">เมืองญี่ปุ่นโบราณ</span></label>
           <input type="radio" name="stage" id="sg-skyisle" value="skyisle"><label class="pickcard" for="sg-skyisle"><span class="nm">เกาะลอยฟ้า (128 คน)</span></label>
+          <input type="radio" name="stage" id="sg-volcano" value="volcano"><label class="pickcard" for="sg-volcano"><span class="nm">ภูเขาไฟระเบิด</span></label>
         </div>
       </div>
     </div>
@@ -226,7 +227,7 @@
         <div class="seg"><label class="lbl" for="rSt">ชีวิตต่อคน</label><select id="rSt"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
           <label class="lbl" for="rDf" style="margin-left:8px">ระดับบอท</label><select id="rDf"><option value="easy">ง่าย</option><option value="normal" selected>ปกติ</option><option value="hard">ยาก</option></select></div>
         <div class="seg" style="display:none"><label class="lbl" for="rMode">โหมด</label><select id="rMode"><option value="ffa">ตะลุมบอน</option><option value="team">ทีมตีหิน</option><option value="boss">ตีบอส (ด่านคริสต์มาส)</option></select></div>
-        <div class="seg" style="display:none"><label class="lbl" for="rStage">ด่าน</label><select id="rStage"><option value="titanic">เรือไททานิก</option><option value="temple">วัดไทย</option><option value="siam">สยาม</option><option value="gvg">สนามกิลวอ</option><option value="halloween">ฮัลโลวีน</option><option value="christmas">คริสต์มาส (บอส)</option><option value="ice">ทะเลสาบน้ำแข็ง</option><option value="hospital">โรงพยาบาล</option><option value="japan">เมืองญี่ปุ่นโบราณ</option><option value="skyisle">เกาะลอยฟ้า</option></select></div>
+        <div class="seg" style="display:none"><label class="lbl" for="rStage">ด่าน</label><select id="rStage"><option value="titanic">เรือไททานิก</option><option value="temple">วัดไทย</option><option value="siam">สยาม</option><option value="gvg">สนามกิลวอ</option><option value="halloween">ฮัลโลวีน</option><option value="christmas">คริสต์มาส (บอส)</option><option value="ice">ทะเลสาบน้ำแข็ง</option><option value="hospital">โรงพยาบาล</option><option value="japan">เมืองญี่ปุ่นโบราณ</option><option value="skyisle">เกาะลอยฟ้า</option><option value="volcano">ภูเขาไฟระเบิด</option></select></div>
       </div>
       <p id="rCfgText" class="note" hidden></p>
       <div id="rPick" class="settings">
@@ -359,50 +360,51 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <!-- Settings you can tweak without touching this file: skill cooldowns/power, classes on/off -->
-<script src="config.js?v=1.6.0"></script>
+<script src="config.js?v=1.7.0"></script>
 <!-- The game: these files share one scope and must stay in this order (see js/README.md) -->
-<script src="js/voxel.js?v=1.6.0"></script>
-<script src="js/core.js?v=1.6.0"></script>
-<script src="js/moves.js?v=1.6.0"></script>
-<script src="js/world.js?v=1.6.0"></script>
-<script src="js/stages/temple-siam.js?v=1.6.0"></script>
-<script src="js/stages/gvg.js?v=1.6.0"></script>
-<script src="js/stages/halloween.js?v=1.6.0"></script>
-<script src="js/stages/christmas.js?v=1.6.0"></script>
-<script src="js/stages/ice.js?v=1.6.0"></script>
-<script src="js/stages/hospital.js?v=1.6.0"></script>
-<script src="js/stages/japan.js?v=1.6.0"></script>
-<script src="js/stages/skyisle.js?v=1.6.0"></script>
-<script src="js/stages/registry.js?v=1.6.0"></script>
-<script src="js/stages/cards.js?v=1.6.0"></script>
-<script src="js/classes.js?v=1.6.0"></script>
-<script src="js/config-apply.js?v=1.6.0"></script>
-<script src="js/looks.js?v=1.6.0"></script>
-<script src="js/forms.js?v=1.6.0"></script>
-<script src="js/summons.js?v=1.6.0"></script>
-<script src="js/fighter-model.js?v=1.6.0"></script>
-<script src="js/fx.js?v=1.6.0"></script>
-<script src="js/state.js?v=1.6.0"></script>
-<script src="js/input.js?v=1.6.0"></script>
-<script src="js/bots.js?v=1.6.0"></script>
-<script src="js/combat.js?v=1.6.0"></script>
-<script src="js/skills.js?v=1.6.0"></script>
-<script src="js/items.js?v=1.6.0"></script>
-<script src="js/projectiles.js?v=1.6.0"></script>
-<script src="js/weapons.js?v=1.6.0"></script>
-<script src="js/modes.js?v=1.6.0"></script>
-<script src="js/sim.js?v=1.6.0"></script>
-<script src="js/render.js?v=1.6.0"></script>
-<script src="js/hud.js?v=1.6.0"></script>
-<script src="js/flow.js?v=1.6.0"></script>
-<script src="js/online.js?v=1.6.0"></script>
-<script src="js/account.js?v=1.6.0"></script>
-<script src="js/relay.js?v=1.6.0"></script>
-<script src="js/online-ui.js?v=1.6.0"></script>
-<script src="js/customize.js?v=1.6.0"></script>
-<script src="js/tutorial.js?v=1.6.0"></script>
-<script src="js/settings.js?v=1.6.0"></script>
-<script src="js/touch.js?v=1.6.0"></script>
-<script src="js/main.js?v=1.6.0"></script>
+<script src="js/voxel.js?v=1.7.0"></script>
+<script src="js/core.js?v=1.7.0"></script>
+<script src="js/moves.js?v=1.7.0"></script>
+<script src="js/world.js?v=1.7.0"></script>
+<script src="js/stages/temple-siam.js?v=1.7.0"></script>
+<script src="js/stages/gvg.js?v=1.7.0"></script>
+<script src="js/stages/halloween.js?v=1.7.0"></script>
+<script src="js/stages/christmas.js?v=1.7.0"></script>
+<script src="js/stages/ice.js?v=1.7.0"></script>
+<script src="js/stages/hospital.js?v=1.7.0"></script>
+<script src="js/stages/japan.js?v=1.7.0"></script>
+<script src="js/stages/skyisle.js?v=1.7.0"></script>
+<script src="js/stages/volcano.js?v=1.7.0"></script>
+<script src="js/stages/registry.js?v=1.7.0"></script>
+<script src="js/stages/cards.js?v=1.7.0"></script>
+<script src="js/classes.js?v=1.7.0"></script>
+<script src="js/config-apply.js?v=1.7.0"></script>
+<script src="js/looks.js?v=1.7.0"></script>
+<script src="js/forms.js?v=1.7.0"></script>
+<script src="js/summons.js?v=1.7.0"></script>
+<script src="js/fighter-model.js?v=1.7.0"></script>
+<script src="js/fx.js?v=1.7.0"></script>
+<script src="js/state.js?v=1.7.0"></script>
+<script src="js/input.js?v=1.7.0"></script>
+<script src="js/bots.js?v=1.7.0"></script>
+<script src="js/combat.js?v=1.7.0"></script>
+<script src="js/skills.js?v=1.7.0"></script>
+<script src="js/items.js?v=1.7.0"></script>
+<script src="js/projectiles.js?v=1.7.0"></script>
+<script src="js/weapons.js?v=1.7.0"></script>
+<script src="js/modes.js?v=1.7.0"></script>
+<script src="js/sim.js?v=1.7.0"></script>
+<script src="js/render.js?v=1.7.0"></script>
+<script src="js/hud.js?v=1.7.0"></script>
+<script src="js/flow.js?v=1.7.0"></script>
+<script src="js/online.js?v=1.7.0"></script>
+<script src="js/account.js?v=1.7.0"></script>
+<script src="js/relay.js?v=1.7.0"></script>
+<script src="js/online-ui.js?v=1.7.0"></script>
+<script src="js/customize.js?v=1.7.0"></script>
+<script src="js/tutorial.js?v=1.7.0"></script>
+<script src="js/settings.js?v=1.7.0"></script>
+<script src="js/touch.js?v=1.7.0"></script>
+<script src="js/main.js?v=1.7.0"></script>
 </body>
 </html>

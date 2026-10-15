@@ -1,6 +1,6 @@
 # แคปชั่นโปรโมต Sky Brawl
 
-ลิงก์เกม: https://soradadofficial.github.io/sky-brawl/
+ลิงก์เกม: https://sky-brawl.github.io/
 
 ---
 
@@ -18,7 +18,7 @@
 🎁 เข้าเกมทุกวัน รับหมวกพิเศษและฉายาเหนือหัว
 📱 มือถือหรือคอมก็เล่นได้ ไม่ต้องโหลด ไม่ต้องสมัคร
 
-👉 กดเล่นเลย: https://soradadofficial.github.io/sky-brawl/
+👉 กดเล่นเลย: https://sky-brawl.github.io/
 
 #SkyBrawl #เกมออนไลน์ #เกมฟรี #เกมมือถือ #เกมเล่นกับเพื่อน
 
@@ -30,7 +30,7 @@
 37 อาชีพ · สงครามกิล 128 คน · 10 ด่าน
 มือถือ/คอมเล่นได้ ไม่ต้องติดตั้ง 🎮
 
-👉 https://soradadofficial.github.io/sky-brawl/
+👉 https://sky-brawl.github.io/
 #SkyBrawl #เกมฟรี #indiegame
 
 ---
@@ -39,7 +39,7 @@
 
 **`sky-brawl-promo-1-main.jpg` / `sky-brawl-promo-square.jpg`**
 ใครจะเป็นคนสุดท้ายบนเรือไททานิก? 🚢⚔️ ตะลุมบอนออนไลน์ เล่นฟรีบนเว็บ ไม่ต้องโหลด
-👉 https://soradadofficial.github.io/sky-brawl/
+👉 https://sky-brawl.github.io/
 
 **`sky-brawl-promo-2-classes.jpg`**
 เลือกได้ 37 อาชีพ แต่ละอาชีพมีสกิลของตัวเอง 🧙‍♂️🏹🗡️
@@ -69,4 +69,4 @@
 ## 5. ข้อความชวนเพื่อน (ส่งใน LINE / กลุ่มแชต)
 
 มาตีกันใน Sky Brawl! 😆 เกมต่อสู้บนเว็บ กดลิงก์แล้วเล่นได้เลย ไม่ต้องโหลด
-https://soradadofficial.github.io/sky-brawl/
+https://sky-brawl.github.io/
