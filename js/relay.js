@@ -190,7 +190,7 @@ const Net = {
     conn.on('data', msg => {
       if (!msg || msg.t !== 'p' || !msg.d || typeof msg.d !== 'object') return;
       const d = {};
-      for (const k of ['r', 'nm', 'lk', 'in', 'tm']) if (k in msg.d) d[k] = msg.d[k];
+      for (const k of ['r', 'nm', 'lk', 'in', 'tm', 'ch']) if (k in msg.d) d[k] = msg.d[k];
       mergePres(entry.pres, d);
       if (('nm' in d || 'lk' in d || 'r' in d || 'tm' in d) && this.ph === 'wait' && G.mode !== 'play') this.refreshSlots();
     });
@@ -293,7 +293,7 @@ const Net = {
       gh:G.ghosts.slice(0, 16).map(g => [g.id, r(g.pos.x), r(g.pos.z), Math.round(g.rot*100), g.sw]),
       em:G.stones.map(st => Math.ceil(st.hp)),
       bs:G.boss ? [Math.round(G.boss.pos.x*100), Math.round(G.boss.pos.z*100), Math.ceil(G.boss.hp), BOSS_STATES.indexOf(G.boss.state), G.boss.t, Math.round(G.boss.facing*100)] : null,
-      lv:STAGE_KEY === 'volcano' ? [LAVA.sunk, LAVA.t] : null};
+      lv:STAGE_KEY === 'volcano' ? [LAVA.sunk, LAVA.t] : null, ct:chatForSnap()};
     // Snapshots replace each other, so a guest whose channel is backed up just skips this one instead of piling up lag
     const patch = {ph:this.ph, sn};
     mergePres(this.myPres, patch);
@@ -473,6 +473,7 @@ const Net = {
   applySnap(sn){
     if (!sn || !Array.isArray(sn.f)) return;
     if (Number.isFinite(sn.cd)){ G.countdown = sn.cd; cdBanner(sn.cd); }
+    chatFromSnap(sn.ct);
     if (Array.isArray(sn.lv)){ LAVA.sunk = Math.max(0, Math.min(VOL_RADII.length - 1, sn.lv[0] | 0)); LAVA.t = Math.max(0, sn.lv[1] | 0); }
     sn.f.forEach((a, i) => {
       const f = G.fighters[i]; if (!f || !Array.isArray(a)) return;

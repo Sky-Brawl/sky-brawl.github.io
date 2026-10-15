@@ -202,3 +202,10 @@ $('crand').onclick = () => { const r = randomLook(''); delete r.name; setLookVal
   });
   $('emoBtn').onclick = () => { p.hidden = !p.hidden; $('emoBtn').setAttribute('aria-expanded', String(!p.hidden)); };
 }
+
+// In-match chat: the input bar (Enter sends, Esc closes), the 💬 chip, and hiding the flying comments
+$('mChatBar').addEventListener('submit', e => { e.preventDefault(); sendChat($('mChatIn').value); closeChat(); });
+$('mChatIn').addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); closeChat(); } });
+$('chatBtn').onclick = () => ($('mChatBar').hidden ? openChat() : closeChat());
+$('mChatHide').onclick = () => { CHAT.hidden = !CHAT.hidden; try { localStorage.setItem('skybrawl.chatHidden', CHAT.hidden ? '1' : '0'); } catch (e) {} syncChatHide(); };
+syncChatHide();

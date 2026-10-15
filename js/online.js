@@ -47,7 +47,7 @@ const ID_PREFIX = 'skybrawl-v1-';
 const CODE_RE = /^[a-z0-9]{3,8}$/;
 // Signalling hiccups (the phone backgrounded the page for the share sheet or to open LINE) must not end a room
 const SOFT_ERRORS = new Set(['network', 'server-error', 'socket-error', 'socket-closed', 'disconnected', 'webrtc', 'peer-unavailable', 'unavailable-id']);
-const PRES_KEYS = new Set(['r', 'nm', 'lk', 'in', 'tm', 'cfg', 'ph', 'ep', 'slots', 'sd', 'sn', 'res', 'win']);
+const PRES_KEYS = new Set(['r', 'nm', 'lk', 'in', 'tm', 'cfg', 'ph', 'ep', 'slots', 'sd', 'sn', 'res', 'win', 'ch']);
 function mergePres(target, patch){
   if (!patch || typeof patch !== 'object') return;
   for (const k of Object.keys(patch)){

@@ -175,7 +175,7 @@ function loseStock(f, why){
     f.stocks--;
     if (killer && killer !== f) killer.kos++;
     announceLoss(f, why, killer);
-    botEmotes(f, killer);
+    botEmotes(f, killer); botChatKO(f, killer);
   }
   f.weapon = null; f.held = null; f.combo = 0; f.lastHitBy = -1; f.chill = 0; f.shock = 0; f.formT = 0;
   if (f.stocks <= 0){ f.state = 'out'; f.place = aliveCount() + 1; checkEnd(); }
@@ -226,11 +226,13 @@ function tick(){
   if (G.stones.length){ stepStones(); if (G.frame % 6 === 0) syncStoneHud(); }
   if (G.boss){ stepBoss(); if (G.frame % 6 === 0) syncBossHud(); }
   if (G.mode === 'custom'){ for (const f of G.fighters) if (f.squash > 0) f.squash--; return; }
+  if (G.mode !== 'play') chatTick();
   if (G.net === 'guest' && G.mode === 'play'){ guestTick(); return; }
   if (G.slow > 0) G.slow--;
   if (G.countdown > 0){ G.countdown--; cdBanner(G.countdown); }
   if (G.net === 'host') Net.readInputs();
   if (G.endT > 0) stepVictory(); else botEmoteTick();
+  chatTick();
   for (const f of G.fighters){
     if (G.endT > 0){ const i = f.input; i.x = i.z = 0; i.atk = i.jump = i.grab = i.guard = i.skill = i.lock = i.sprint = false; continue; }
     if (f.ctrl === 'bot' || isAuto(f)) think(f);

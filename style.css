@@ -387,3 +387,13 @@ body *{touch-action:manipulation}
   #hudBtns .chipbtn{font-size:12px;padding:5px 10px}
   #emoPanel{top:auto;bottom:calc(100% + 10px)}
 }
+
+/* In-match chat: comments fly across the upper half (Niconico style) */
+#nico{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:3}
+.nico{position:absolute;left:0;white-space:nowrap;font-family:var(--body);font-weight:700;font-size:22px;line-height:1.1;color:#fff;-webkit-text-stroke:4px var(--ink);paint-order:stroke fill;will-change:transform}
+.nico .nn{font-size:13px;margin-right:6px;-webkit-text-stroke:3px var(--ink);opacity:.95}
+.nico.mine{color:var(--gold)}
+#mChatBar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 64px);z-index:7;display:flex;gap:6px;align-items:center;width:min(520px,calc(100vw - 24px));padding:6px;background:var(--paper);border:3px solid var(--ink);border-radius:12px;box-shadow:4px 4px 0 var(--ink);box-sizing:border-box}
+#mChatBar[hidden]{display:none}
+#mChatBar input{flex:1 1 auto;min-width:0;font:500 16px var(--body);padding:6px 8px;border:2px solid var(--ink);border-radius:8px}
+@media (max-height:520px){ .nico{font-size:16px;-webkit-text-stroke:3px var(--ink)} .nico .nn{font-size:11px} #mChatBar{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 44px)} }

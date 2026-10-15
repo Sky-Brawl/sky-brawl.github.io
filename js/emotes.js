@@ -96,7 +96,7 @@ function stepVictory(){
     if (f.state === 'win'){ f.stateT++; continue; }
     if (!f.onGround || f.state === 'out' || f.state === 'wait' || f.state === 'respawn') continue;
     f.state = 'win'; f.stateT = 0; f.move = null; f.moveKey = ''; f.vel.set(0, f.vel.y, 0); f.facing = 0; f.formT = Math.min(f.formT, 1);
-    doEmote(f, EMOTE_TROPHY, true);
+    doEmote(f, EMOTE_TROPHY, true); chatOnWin(f);
   }
 }
 const WIN_CONFETTI = [0xffd23a, 0xff5d4a, 0x2f8cff, 0x3fbf5a, 0xff7fb5, 0xffffff];
