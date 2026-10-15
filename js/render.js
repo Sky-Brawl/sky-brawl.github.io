@@ -50,6 +50,9 @@ function animAttack(f, v, t){
     }
   }
 }
+// Which face a fighter makes: hurt while reeling from a hit, X eyes when knocked out
+const faceMood = f => f.state === 'win' ? 'joy' : f.state === 'ko' || f.state === 'out' || f.stocks <= 0 ? 'ko'
+  : f.state === 'hitstun' || f.state === 'tumble' || (f.state === 'down' && f.stateT < 40) ? 'ouch' : 'normal';
 function pose(f){
   const v = f.vis, T = G.frame, s = f.state, t = f.stateT;
   const shown = alive(f);
@@ -86,6 +89,7 @@ function pose(f){
     else { tilt.rotation.x = -t*(s === 'ko' ? .45 : .3); tilt.rotation.z = Math.sin(t*.2)*.3; tilt.position.y = .6; armL.rotation.set(0,0,2); armR.rotation.set(0,0,-2); legL.rotation.x = .6; legR.rotation.x = -.6; }
   }
   else if (s === 'down'){ tilt.rotation.x = -1.5; tilt.position.y = .5; armL.rotation.set(0,0,1.4); armR.rotation.set(0,0,-1.4); }
+  else if (s === 'win') animWin(f, v, t);
   else if (s === 'getup'){ const k = Math.min(1, t/16); tilt.rotation.x = -1.5*(1 - k); tilt.position.y = L(.5, .75, k); }
   if (f.held === 'bomb' && ['idle','run','air'].includes(s)){ armL.rotation.set(-3, 0, .35); armR.rotation.set(-3, 0, -.35); }
   else if ((f.weapon || v.cw) && ['idle','run','air','respawn'].includes(s)) armR.rotation.set(f.weapon && f.weapon !== 'hammer' ? -.7 : -.95, 0, -.2);
@@ -93,6 +97,7 @@ function pose(f){
   if (v.cw) v.cw.visible = !f.weapon;
   if (v.oh) v.oh.visible = !f.weapon;
   if (v.form) poseForm(f, v, T, s);
+  if (v.face){ const m = faceMood(f); v.face.eyes.visible = m === 'normal'; v.face.ouch.visible = m === 'ouch'; v.face.ko.visible = m === 'ko'; v.face.joy.visible = m === 'joy'; }
   if (v.rageFx){
     const on = f.rage > 0, R = v.rageFx;
     R.eyes.visible = R.aura.visible = R.ring.visible = on;
@@ -116,6 +121,8 @@ function pose(f){
   }
 }
 function camTargets(){
+  const won = G.fighters.filter(f => f.state === 'win' && alive(f));
+  if (won.length) return won;
   const locals = G.fighters.filter(f => f.isLocal && alive(f) && f.pos.y > -3);
   if (locals.length) return locals;
   let s = G.fighters[G.spec];
@@ -162,11 +169,11 @@ function render(){
       if (ts.length === 2) spread = ts[0].pos.distanceTo(ts[1].pos);
     }
     mid.x = Math.max(-STAGE.camX, Math.min(STAGE.camX, mid.x)); mid.y = Math.max(0, mid.y)*.5;
-    const cz = CAM_LEVELS[G.camZoom] || CAM_LEVELS[1];
-    if (cz.all){ const d = (STAGE.camX + 6)/(Math.tan(camera.fov*PI/360)*camera.aspect)*.74; camPos.lerp(tmpV.set(0, d, d), .07); camLook.lerp(new V(0, 0, 0), .09); }
+    const cz = CAM_LEVELS[G.camZoom] || CAM_LEVELS[1], won = ts.length && ts[0].state === 'win', ck = won ? .5 : cz.k, mz = won ? 1 : .6;
+    if (cz.all && !won){ const d = (STAGE.camX + 6)/(Math.tan(camera.fov*PI/360)*camera.aspect)*.74; camPos.lerp(tmpV.set(0, d, d), .07); camLook.lerp(new V(0, 0, 0), .09); }
     else {
-      camPos.lerp(tmpV.set(mid.x*.9, (7.5 + spread*.35)*cz.k + mid.y, mid.z*.6 + (11.5 + spread*.55)*cz.k), .07);
-      camLook.lerp(new V(mid.x, mid.y + 1, mid.z*.8), .09);
+      camPos.lerp(tmpV.set(mid.x*.9, (7.5 + spread*.35)*ck + mid.y, mid.z*mz + (11.5 + spread*.55)*ck), won ? .05 : .07);
+      camLook.lerp(new V(mid.x, mid.y + (won ? 1.9 : 1), mid.z*(won ? 1 : .8)), .09);
     }
   }
   camera.position.copy(camPos);

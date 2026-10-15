@@ -191,3 +191,14 @@ $('cname').addEventListener('input', e => {
   saveLooks();
 });
 $('crand').onclick = () => { const r = randomLook(''); delete r.name; setLookVals(r); };
+
+// Emote panel: the 😀 chip opens a grid of the eight emotes
+{
+  const p = $('emoPanel');
+  EMOTES.slice(0, EMOTE_PICK).forEach(([e, label], i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'emo';
+    b.innerHTML = '<b></b><small></small>'; b.querySelector('b').textContent = e; b.querySelector('small').textContent = (IS_TOUCH ? '' : (i + 1) + ' ') + label;
+    b.setAttribute('aria-label', label); b.onclick = () => emoteLocal(i); p.appendChild(b);
+  });
+  $('emoBtn').onclick = () => { p.hidden = !p.hidden; $('emoBtn').setAttribute('aria-expanded', String(!p.hidden)); };
+}

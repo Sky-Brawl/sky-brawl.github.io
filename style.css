@@ -16,6 +16,13 @@ button,select,input{font-family:inherit;color:inherit}
 #cards{display:grid;gap:8px;min-width:0}
 .pcard{background:var(--paper);border:3px solid var(--ink);border-radius:14px;padding:8px 12px 7px;width:min(300px,42vw);min-width:0;box-shadow:4px 4px 0 var(--ink);display:grid;gap:5px;box-sizing:border-box}
 .pcard .row{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0}
+.pcard{grid-template-columns:auto minmax(0,1fr);column-gap:10px;width:min(370px,48vw)}
+.pcard>:not(.pface){grid-column:2}
+.pcard .pface{grid-column:1;grid-row:1/span 5;align-self:center;width:clamp(38px,5.2vw,68px);aspect-ratio:1;border:3px solid var(--ink);border-radius:12px;background:var(--c);box-shadow:2px 2px 0 var(--ink);box-sizing:border-box;object-fit:cover}
+.pcard.ouch .pface{background:#ff5d4a;animation:faceShake .22s linear infinite}
+.pcard.ko .pface{filter:grayscale(.9) brightness(.9)}
+@keyframes faceShake{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-5deg)}50%{transform:translate(2px,-1px) rotate(4deg)}75%{transform:translate(-1px,-1px) rotate(-2deg)}}
+@media (prefers-reduced-motion:reduce){.pcard.ouch .pface{animation:none}}
 .pname{font-family:var(--display);font-size:17px;line-height:1.1;color:var(--c);-webkit-text-stroke:.6px var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pitem{font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
 .hp{position:relative;height:14px;background:var(--track);border:2px solid var(--ink);border-radius:8px;overflow:hidden}
@@ -268,7 +275,7 @@ body *{touch-action:manipulation}
 @media (max-height:520px){
   #hud{padding:calc(env(safe-area-inset-top,0px) + 6px) calc(env(safe-area-inset-right,0px) + 8px) 0 calc(env(safe-area-inset-left,0px) + 8px);gap:8px}
   #cards{gap:4px}
-  .pcard{width:min(190px,27vw);padding:4px 8px;border-width:2px;border-radius:10px;box-shadow:2px 2px 0 var(--ink);gap:3px}
+  .pcard{width:min(228px,31vw);padding:4px 8px;border-width:2px;border-radius:10px;box-shadow:2px 2px 0 var(--ink);gap:3px}
   .pname{font-size:13px} .pitem{font-size:10px} .hp{height:9px;border-width:1.5px} .pip{width:9px;height:9px;border-width:1.5px} .hpnum{font-size:11px}
   .skrow{font-size:10px;gap:5px} .skbar{height:6px;border-width:1.5px;min-width:24px}
   #hudMid{gap:4px}
@@ -286,7 +293,7 @@ body *{touch-action:manipulation}
   .tag .tn{font-size:10px;-webkit-text-stroke:2.5px var(--ink)} .tag.me .tn{font-size:11px} .tag .tb{width:34px;height:4px}
   #tbtns{transform:scale(.8);transform-origin:right bottom} #joy{transform:scale(.8)}
 }
-@media (max-height:380px){ #tbtns{transform:scale(.7)} #joy{transform:scale(.7)} .pcard{width:min(170px,25vw)} }
+@media (max-height:380px){ #tbtns{transform:scale(.7)} #joy{transform:scale(.7)} .pcard{width:min(210px,29vw)} }
 
 #custom{position:fixed;inset:0;display:flex;justify-content:flex-end;align-items:stretch;padding:16px;pointer-events:none;box-sizing:border-box}
 .cpanel{pointer-events:auto;width:min(380px,100%);max-height:100%;overflow-y:auto;background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:6px 6px 0 var(--ink);padding:16px;display:grid;gap:14px;align-content:start;box-sizing:border-box}
@@ -358,3 +365,25 @@ body *{touch-action:manipulation}
   text-shadow:0 3px 0 #8a8a8a,0 6px 0 #5f5f5f,3px 9px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),2px 2px 0 var(--ink);display:flex;flex-wrap:wrap;gap:0 .32em}
 .logo.blox span{color:#7ccf3f;text-shadow:0 3px 0 #4f8f26,0 6px 0 #33641a,3px 9px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink),2px 2px 0 var(--ink)}
 .card{background-image:linear-gradient(rgba(20,33,58,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(20,33,58,.035) 1px,transparent 1px);background-size:8px 8px}
+
+/* Emotes */
+#hudBtns{position:relative}
+#emoPanel{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:5;display:grid;grid-template-columns:repeat(4,auto);gap:6px;padding:8px;background:var(--paper);border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink)}
+#emoPanel[hidden]{display:none}
+#emoPanel .emo{display:grid;justify-items:center;gap:2px;min-width:58px;padding:6px 4px;border:2px solid var(--ink);border-radius:10px;background:#fff;cursor:pointer;font-family:var(--body)}
+#emoPanel .emo b{font-size:26px;line-height:1;font-family:var(--display)}
+#emoPanel .emo small{font-size:11px;font-weight:700;color:var(--muted)}
+#emoPanel .emo:active{transform:translateY(2px)}
+.tag .temo{display:none;position:relative;margin-bottom:6px;padding:3px 7px;font-size:30px;line-height:1.05;font-family:var(--display);color:var(--ink);background:#fff;border:2.5px solid var(--ink);border-radius:12px;box-shadow:2px 2px 0 var(--ink)}
+.tag .temo::after{content:'';position:absolute;left:50%;bottom:-11px;margin-left:-6px;border:6px solid transparent;border-top-color:var(--ink)}
+.tag .temo.word{font-size:19px;padding:6px 9px}
+.tag .temo.on{display:block;animation:emoPop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes emoPop{from{transform:scale(.2) translateY(12px);opacity:0}to{transform:none;opacity:1}}
+.pcard.joy .pface{background:var(--gold)}
+@media (prefers-reduced-motion:reduce){.tag .temo.on{animation:none}}
+/* Computer (mouse) screens: the HUD chips sit in one row along the bottom instead of a column in the middle of the top */
+@media (pointer:fine) and (min-width:601px) and (min-height:521px){
+  #hudBtns{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);transform:translateX(-50%);display:flex;flex-wrap:nowrap;gap:8px;pointer-events:auto}
+  #hudBtns .chipbtn{font-size:12px;padding:5px 10px}
+  #emoPanel{top:auto;bottom:calc(100% + 10px)}
+}

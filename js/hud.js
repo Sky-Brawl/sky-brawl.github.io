@@ -22,6 +22,7 @@ function updateTags(w, h){
     if (tmpV.z > 1 || Math.abs(tmpV.x) > 1.1 || Math.abs(tmpV.y) > 1.1){ el.style.opacity = 0; continue; }
     el.style.opacity = 1;
     el.style.transform = `translate(${(tmpV.x*.5 + .5)*w}px,${(-tmpV.y*.5 + .5)*h}px) translate(-50%,-100%)`;
+    syncEmoteTag(f);
     const hp = Math.ceil(f.hp);
     if (hp !== f.tag.hp){ f.tag.hp = hp; f.tag.bar.style.width = Math.min(100, hp/MAX_HP*100) + '%'; }
   }
@@ -67,14 +68,15 @@ function buildHud(){
   const cards = $('cards'); cards.textContent = '';
   for (const f of G.fighters.filter(f => f.isLocal)){
     const c = document.createElement('div'); c.className = 'pcard'; c.style.setProperty('--c', hex(f.team));
-    c.innerHTML = `<div class="row"><span class="pname"></span><span class="pitem">มือเปล่า</span></div>
+    c.innerHTML = `<img class="pface" alt=""><div class="row"><span class="pname"></span><span class="pitem">มือเปล่า</span></div>
       <div class="hp"><div class="lag"></div><div class="fill"></div></div>
       <div class="row"><span class="stocks"></span><span class="hpnum">${MAX_HP}</span></div>
       <div class="skrow"><span class="skn"></span><div class="skbar"><i></i></div></div>
       <div class="stam"><i></i></div>`;
     c.querySelector('.pname').textContent = ((f.ctrl === 'p1' || (G.net === 'guest' && f.isLocal)) && Progress.level ? 'Lv.' + Progress.level + ' ' : '') + f.name;
     cards.appendChild(c);
-    f.card = {fill:c.querySelector('.fill'), lag:c.querySelector('.lag'), item:c.querySelector('.pitem'), stocks:c.querySelector('.stocks'), hpn:c.querySelector('.hpnum'), sk:c.querySelector('.skn'), skb:c.querySelector('.skbar i'), stam:c.querySelector('.stam i'), k:{}};
+    try { c.querySelector('.pface').src = facePortrait(f.look, 'normal'); } catch (e) { console.warn('[face]', e); }
+    f.card = {el:c, face:c.querySelector('.pface'), fill:c.querySelector('.fill'), lag:c.querySelector('.lag'), item:c.querySelector('.pitem'), stocks:c.querySelector('.stocks'), hpn:c.querySelector('.hpnum'), sk:c.querySelector('.skn'), skb:c.querySelector('.skbar i'), stam:c.querySelector('.stam i'), k:{}};
   }
   const rows = $('brows'); rows.textContent = '';
   for (const f of G.fighters){
@@ -100,6 +102,12 @@ function updateHud(){
       const skt = MOVES[skillKey(f.cls)].name + (f.formT > 0 ? ' · กำลังแปลงร่าง' : ready ? ' · พร้อม' : ' · ' + Math.ceil(f.skillCd/60) + ' วิ');
       if (c.k.sk !== skt){ c.k.sk = skt; c.sk.textContent = skt; c.skb.parentNode.classList.toggle('ready', ready); }
       c.skb.style.width = (ready ? 100 : Math.max(0, 100 - f.skillCd/si.cd*100)) + '%';
+      const mood = faceMood(f);
+      if (c.k.mood !== mood){
+        c.k.mood = mood;
+        try { c.face.src = facePortrait(f.look, mood); } catch (e) {}
+        c.el.classList.toggle('ouch', mood === 'ouch'); c.el.classList.toggle('ko', mood === 'ko'); c.el.classList.toggle('joy', mood === 'joy');
+      }
       c.stam.style.width = Math.max(0, f.stam) + '%'; c.stam.parentNode.classList.toggle('low', !!f.exh || f.stam < 25);
     }
   }

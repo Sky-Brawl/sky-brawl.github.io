@@ -60,7 +60,7 @@ function endTeamMatch(win){
   if (G.winTeam !== null || G.endT) return;
   G.winTeam = win;
   for (const f of G.fighters) f.place = win === null ? 1 : f.side === win ? 1 : 2;
-  G.winner = null; G.endT = 140;
+  G.winner = null; G.endT = 200;
 }
 function stepStones(){
   for (const st of G.stones){
@@ -184,7 +184,7 @@ function endRaid(win){
   // Raid ranking: whoever dealt the most damage to the boss comes first
   [...G.fighters].sort((a, b) => b.dmgDealt - a.dmgDealt).forEach((f, i) => { f.place = i + 1; });
   if (!win) banner('ยักษ์หิมะชนะ…', 'red');
-  G.winner = null; G.endT = 170;
+  G.winner = null; G.endT = 200;
 }
 function pushFromBoss(f){
   const B = G.boss; if (!B || B.hp <= 0 || !alive(f) || f.pos.y > 7) return;

@@ -1,0 +1,139 @@
+# GitHub Issue Form: "เสนออาชีพใหม่" for Sky Brawl.
+# To enable it, put this file at the ROOT of the repository as:
+#   .github/ISSUE_TEMPLATE/new-class.yml
+# (GitHub only reads issue forms from the root .github folder, not from sky-brawl/.)
+name: "⚔️ เสนออาชีพใหม่ (Sky Brawl)"
+description: เสนอไอเดียอาชีพ/ตัวละครใหม่ให้เกม Sky Brawl ช่องไหนไม่แน่ใจเว้นว่างได้
+title: "[อาชีพใหม่] "
+labels: ["sky-brawl", "new-class"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ขอบคุณที่ช่วยออกแบบอาชีพใหม่! 🙏 กรอกเท่าที่นึกออก ทีมพัฒนาจะปรับสมดุลตัวเลขให้เอง
+        ดูตัวอย่างที่กรอกครบได้ที่ `sky-brawl/templates/EXAMPLE_REAPER.md`
+
+  - type: input
+    id: name_th
+    attributes:
+      label: ชื่ออาชีพ (ไทย)
+      description: ไม่เกิน 12 ตัวอักษร
+      placeholder: ยมทูต
+    validations:
+      required: true
+  - type: input
+    id: name_id
+    attributes:
+      label: ชื่อรหัส (อังกฤษ ตัวพิมพ์เล็ก)
+      description: ห้ามซ้ำอาชีพเดิม เช่น reaper, lancer
+      placeholder: reaper
+  - type: dropdown
+    id: role
+    attributes:
+      label: แนวการเล่น
+      options:
+        - ระยะใกล้
+        - ระยะไกล
+        - เวทย์วงกว้าง
+        - ซัพพอร์ต/ฮีล
+        - แปลงร่าง/อัญเชิญ
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: ความยาก
+      options:
+        - "⭐ ง่าย (ขึ้นในแท็บแนะนำมือใหม่)"
+        - "⭐⭐ ปานกลาง"
+        - "⭐⭐⭐ ยาก"
+  - type: input
+    id: tagline
+    attributes:
+      label: คำโปรยสั้นๆ
+      placeholder: เรียกโครงกระดูกยักษ์ทุบพื้นให้ศัตรูมึน
+
+  - type: textarea
+    id: look
+    attributes:
+      label: หน้าตา
+      description: ตัวละครเป็นบล็อกจิบิ (หัวโต ตัวเป็นกล่อง) บรรยายสีชุด ของบนหัว อาวุธ ของประดับ แนบรูปอ้างอิงได้
+      placeholder: |
+        สีชุด: ดำอมม่วง
+        ของบนหัว: ฮู้ด + หน้ากากกะโหลก (ซ่อนผม)
+        อาวุธ: เคียวด้ามยาว
+        อื่นๆ: ผ้าคลุมยาว ตาเรืองแสงม่วง
+    validations:
+      required: true
+
+  - type: textarea
+    id: combo
+    attributes:
+      label: คอมโบปกติ (ปุ่มต่อย 3 จังหวะ)
+      description: ท่าแต่ละจังหวะ + ระยะตีโดยประมาณ (หมัด ≈ 1.5 ช่อง · ดาบ ≈ 2.2 · หอก ≈ 2.6 · ธนู ≈ 8–9)
+      placeholder: |
+        1) ฟันเคียว
+        2) เคียวหมุนรอบตัว
+        3) เคียวเกี่ยววิญญาณ ทุบลง คนโดนลอย
+        ระยะ: 2.4 ช่อง
+
+  - type: input
+    id: skill_name
+    attributes:
+      label: ชื่อสกิล (ปุ่ม E)
+      placeholder: อัญเชิญโครงกระดูกยักษ์
+    validations:
+      required: true
+  - type: dropdown
+    id: skill_type
+    attributes:
+      label: รูปแบบสกิล
+      multiple: true
+      options:
+        - พุ่งชน
+        - ยิงกระสุน
+        - ระเบิดวงรอบตัว
+        - วงที่พื้นตรงศัตรู
+        - อัญเชิญตัวช่วย
+        - แปลงร่าง
+        - ฮีล/บัพ
+        - วาร์ป
+        - อื่นๆ (อธิบายด้านล่าง)
+  - type: textarea
+    id: skill_desc
+    attributes:
+      label: อธิบายสกิลแบบเต็ม
+      description: เกิดอะไรขึ้นตั้งแต่กดจนจบ เล็งยังไง ใครโดน โดนแล้วเป็นอะไร
+    validations:
+      required: true
+  - type: textarea
+    id: numbers
+    attributes:
+      label: ตัวเลขสกิล (ไม่แน่ใจเว้นว่างได้)
+      description: |
+        คูลดาวน์ 5–16 วินาที (ขั้นต่ำ 5) · ดาเมจ 8–30 (เลือดเต็ม 100) · แรงกระเด็น 2–13 · รัศมีวง 3–4 ช่อง
+        สถานะ: มึน / แช่แข็ง / ช็อต / ไฟไหม้ 1–3 วินาที · อัญเชิญ/แปลงร่าง อยู่ 6–20 วินาที
+      placeholder: |
+        คูลดาวน์: 14
+        ดาเมจ: 12
+        รัศมี: 3.5
+        สถานะ: มึน 1.7 วินาที
+        อยู่นาน: 10 วินาที
+        ทะลุการกัน: ไม่
+
+  - type: textarea
+    id: bot
+    attributes:
+      label: บอทควรเล่นอาชีพนี้ยังไง
+      placeholder: ใช้สกิลเมื่อศัตรูอยู่ในระยะ 9 ช่อง · ชอบเข้าประชิด
+  - type: textarea
+    id: fx
+    attributes:
+      label: เสียงและเอฟเฟกต์
+      description: "เสียงที่มี: swing (ฟัน) · boom (ระเบิด) · zap (สายฟ้า) · freeze (น้ำแข็ง) · flame (ไฟ) · heal (ฮีล) · stomp (ทุบพื้น) · skull (วิญญาณ)"
+      placeholder: สีม่วง + ขาวกระดูก · เสียง skull
+  - type: textarea
+    id: ref
+    attributes:
+      label: รูปอ้างอิง / แรงบันดาลใจ (ไม่บังคับ)
+      description: ลากรูปมาวางได้เลย

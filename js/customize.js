@@ -97,6 +97,40 @@ function classThumb(k){
   sm.getContext('2d').drawImage(big, 0, 0, W/2, W/2);
   return sm.toDataURL('image/jpeg', .82);
 }
+// The fighter's face for the HUD card, rendered once per look and mood (normal / ouch / ko) on a transparent background
+const FACE_CACHE = new Map();
+let faceScene = null, faceCam = null, faceRT = null;
+function facePortrait(look, mood = 'normal'){
+  const key = JSON.stringify(encLook(look)) + mood;
+  if (FACE_CACHE.has(key)) return FACE_CACHE.get(key);
+  const W = 160;
+  if (!faceScene){
+    faceScene = new THREE.Scene();
+    faceScene.add(new THREE.HemisphereLight(0xffffff, 0x9a8a70, .95));
+    const d = new THREE.DirectionalLight(0xffffff, .55); d.position.set(2, 4, 3); faceScene.add(d);
+    faceCam = new THREE.PerspectiveCamera(34, 1, .1, 50); faceRT = new THREE.WebGLRenderTarget(W, W);
+  }
+  const v = buildChibi(look, 0xffffff);
+  scene.remove(v.root, v.hurt, v.hit);
+  for (const o of [v.bubble, v.bomb, v.hammer, v.gun, v.shotgun, v.cw, v.oh]) if (o) o.visible = false;
+  v.face.eyes.visible = mood === 'normal'; v.face.ouch.visible = mood === 'ouch'; v.face.ko.visible = mood === 'ko'; v.face.joy.visible = mood === 'joy';
+  if (mood === 'ouch') v.head.rotation.set(-.15, 0, .12);
+  v.armR.rotation.set(-.5, 0, -.25); v.armL.rotation.set(-.5, 0, .25);
+  v.root.rotation.y = .35; faceScene.add(v.root);
+  faceCam.position.set(.4, 1.85, 2.9); faceCam.lookAt(0, 1.78, 0);
+  const cc = renderer.getClearColor(new THREE.Color()), ca = renderer.getClearAlpha();
+  renderer.setClearColor(0x000000, 0); renderer.setRenderTarget(faceRT); renderer.clear(); renderer.render(faceScene, faceCam);
+  const px = new Uint8Array(W*W*4); renderer.readRenderTargetPixels(faceRT, 0, 0, W, W, px);
+  renderer.setRenderTarget(null); renderer.setClearColor(cc, ca);
+  faceScene.remove(v.root); v.root.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+  const c = document.createElement('canvas'); c.width = c.height = W;
+  const t = c.getContext('2d'), img = t.createImageData(W, W);
+  for (let y = 0; y < W; y++) img.data.set(px.subarray((W - 1 - y)*W*4, (W - y)*W*4), y*W*4);
+  t.putImageData(img, 0, 0);
+  const url = c.toDataURL('image/png');
+  FACE_CACHE.set(key, url);
+  return url;
+}
 function paintClassCard(k){
   const c = document.querySelector('.ccard[data-val="' + k + '"] .cimg'); if (!c) return;
   if (CLASS_THUMBS[k]) c.style.backgroundImage = 'url(' + CLASS_THUMBS[k] + ')';

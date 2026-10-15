@@ -269,12 +269,13 @@ const Net = {
     if (!f.nc) f.nc = {a:num(3), j:num(4), g:num(5), s:num(6), l:num(7)};
     inp.atk = num(3) !== f.nc.a; inp.jump = num(4) !== f.nc.j; inp.grab = num(5) !== f.nc.g; inp.skill = num(6) !== f.nc.s; inp.lock = num(7) !== f.nc.l;
     f.nc = {a:num(3), j:num(4), g:num(5), s:num(6), l:num(7)};
+    if (f.ne === undefined) f.ne = num(10); else if (num(10) !== f.ne){ f.ne = num(10); doEmote(f, Math.min(EMOTE_PICK - 1, Math.max(0, num(11)))); }
   },
   encF(f){
     const r = v => Math.round(v);
     const flags = (f.weapon ? 1 : 0) | (f.held ? 2 : 0) | (f.invuln > 0 ? 4 : 0) | (f.onGround ? 8 : 0) | (f.rage > 0 ? 16 : 0) | (f.chill > 0 ? 32 : 0) | (f.shock > 0 ? 64 : 0) | (f.formT > 0 ? 128 : 0);
     return [r(f.pos.x*100), r(f.pos.y*100), r(f.pos.z*100), r(f.vel.x*10), r(f.vel.y*10), r(f.vel.z*10), r(f.facing*100),
-      STATES.indexOf(f.state), Math.min(f.stateT, 999), Math.ceil(Math.max(0, f.hp)), f.stocks, flags, f.move ? MOVE_KEYS.indexOf(f.moveKey) : -1, f.weaponUses, f.lr, WEAPONS.indexOf(f.weapon), Math.ceil(f.skillCd/6), f.lock ? f.lock.idx : -1, Math.round(f.stam)];
+      STATES.indexOf(f.state), Math.min(f.stateT, 999), Math.ceil(Math.max(0, f.hp)), f.stocks, flags, f.move ? MOVE_KEYS.indexOf(f.moveKey) : -1, f.weaponUses, f.lr, WEAPONS.indexOf(f.weapon), Math.ceil(f.skillCd/6), f.lock ? f.lock.idx : -1, Math.round(f.stam), f.emo && f.emo.until > G.frame ? f.emoSeq*16 + f.emo.id : 0];
   },
   // 30 / 20 / 15 / 10 / 7.5 snapshots a second for up to 8 / 16 / 32 / 63 / 123 guests
   sendEvery(){ const g = this.conns.size; return g <= 8 ? 2 : g <= 16 ? 3 : g <= 32 ? 4 : g <= 63 ? 6 : 8; },
@@ -500,6 +501,7 @@ const Net = {
       f.hp = hp; f.stocks = stk; f.stun = 18;
       f.weapon = a.length > 15 ? (WEAPONS[n(15)] || null) : (fl & 1 ? 'hammer' : null); f.held = fl & 2 ? 'bomb' : null; f.invuln = fl & 4 ? 10 : 0; f.onGround = !!(fl & 8);
       f.weaponUses = n(13); f.skillCd = n(16)*6; f.rage = fl & 16 ? 30 : 0; f.chill = fl & 32 ? 30 : 0; f.shock = fl & 64 ? 30 : 0; { const was = f.formT > 0; f.formT = fl & 128 ? 30 : 0; if ((f.formT > 0) !== was) f.formT > 0 ? formFx(f) : endForm(f); } f.lockIdx = a.length > 17 ? n(17) : -1; f.stam = a.length > 18 ? n(18) : 100;
+      if (a.length > 19){ const ec = n(19); if (ec && ec !== f.emoCode){ f.emoCode = ec; if (!(f.emo && f.emo.id === ec % 16 && f.emo.until > G.frame)) f.emo = {id:ec % 16, until:G.frame + EMOTE_T}; } }
     });
     if (Array.isArray(sn.it)){
       const seen = new Set();
@@ -595,7 +597,7 @@ const Net = {
     const raw = readRaw([MAP1, MAPALT], true), c = this.counts;
     if (raw.atk && !c.pa) c.a++; if (raw.jump && !c.pj) c.j++; if (raw.grab && !c.pg) c.g++; if (raw.skill && !c.ps) c.s++; if (raw.lock && !c.pl) c.l++;
     c.pa = raw.atk; c.pj = raw.jump; c.pg = raw.grab; c.ps = raw.skill; c.pl = raw.lock;
-    const arr = [Math.round(raw.x*100), Math.round(raw.z*100), raw.guard ? 1 : 0, c.a, c.j, c.g, c.s, c.l, G.autoLock ? 1 : 0, raw.sprint ? 1 : 0];
+    const arr = [Math.round(raw.x*100), Math.round(raw.z*100), raw.guard ? 1 : 0, c.a, c.j, c.g, c.s, c.l, G.autoLock ? 1 : 0, raw.sprint ? 1 : 0, c.e || 0, c.eid || 0];
     const key = arr.join(',');
     if (key === this.lastIn) return;
     if (this.hostConn && this.hostConn.relay){ const t = performance.now(); if (t - (this.inT || 0) < RELAY_IN_MS) return; this.inT = t; }

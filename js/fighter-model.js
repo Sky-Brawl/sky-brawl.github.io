@@ -10,7 +10,8 @@ function buildChibi(look, team){
   head.add(part(SPH(.56), toon(skin), 1.05));
   if (!o.noHair) buildHair(head, look);
   if (!o.head || FLOAT_HATS.has(look.hat)) buildHat(head, look, !!o.head);
-  buildEyes(head, look);
+  const eyesG = new THREE.Group(); head.add(eyesG); buildEyes(eyesG, look);
+  const ouchF = buildOuchFace(), koF = buildKoFace(), joyF = buildJoyFace(); ouchF.visible = koF.visible = joyF.visible = false; head.add(ouchF, koF, joyF);
   if (o.build){
     const before = new Set([...head.children, ...tilt.children]);
     o.build(head, tilt);
@@ -42,7 +43,7 @@ function buildChibi(look, team){
   const hurt = wire(0x3fbf5a); hurt.scale.setScalar(.55); const hit = wire(0xff2a2a);
   // Bake each rigid piece: about 58 draw calls per fighter become about 16
   mergeMeshes(tilt, new Set([head, armL, armR, legL, legR, bomb, bubble]));
-  mergeMeshes(head);
+  mergeMeshes(head, new Set([eyesG, ouchF, koF, joyF])); mergeMeshes(eyesG); mergeMeshes(ouchF); mergeMeshes(koF); mergeMeshes(joyF);
   mergeMeshes(armL, new Set([oh].filter(Boolean)));
   mergeMeshes(armR, new Set([hammer, gun, shotgun, cw].filter(Boolean)));
   mergeMeshes(legL); mergeMeshes(legR);
@@ -64,5 +65,5 @@ function buildChibi(look, team){
   const outlines = [];
   root.traverse(m => { if (m.isMesh){ m.castShadow = false; if (m.material === OUT) outlines.push(m); } });
   scene.add(root, hurt, hit);
-  return {root, tilt, head, armL, armR, legL, legR, hammer, gun, shotgun, cw, oh, bomb, bubble, hurt, hit, outlines, form, rageFx, far:false};
+  return {root, tilt, head, armL, armR, legL, legR, hammer, gun, shotgun, cw, oh, bomb, bubble, hurt, hit, outlines, form, rageFx, face:{eyes:eyesG, ouch:ouchF, ko:koF, joy:joyF}, far:false};
 }

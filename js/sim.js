@@ -7,7 +7,7 @@ function stepFighter(f){
   prev.atk = inp.atk; prev.jump = inp.jump; prev.grab = inp.grab; prev.skill = inp.skill;
   const lockP = inp.lock && !prev.lock; prev.lock = inp.lock;
   if (f.lock && !lockable(f, f.lock, 26)) f.lock = null;
-  if (f.state === 'out') return;
+  if (f.state === 'out' || f.state === 'win') return;
   if (lockP){ cycleLock(f); f.lockManual = G.frame; f.autoPicked = false; }
   if ((f.ctrl === 'p1' || f.ctrl === 'p2') ? G.autoLock && !isAuto(f) : f.ctrl === 'net' && f.netAuto) autoLockStep(f);
   if (f.state === 'wait'){ if (--f.waitT <= 0) respawn(f); return; }
@@ -175,6 +175,7 @@ function loseStock(f, why){
     f.stocks--;
     if (killer && killer !== f) killer.kos++;
     announceLoss(f, why, killer);
+    botEmotes(f, killer);
   }
   f.weapon = null; f.held = null; f.combo = 0; f.lastHitBy = -1; f.chill = 0; f.shock = 0; f.formT = 0;
   if (f.stocks <= 0){ f.state = 'out'; f.place = aliveCount() + 1; checkEnd(); }
@@ -203,7 +204,7 @@ function checkEnd(){
   const left = G.fighters.filter(f => f.stocks > 0);
   if (left.length <= 1 && !G.endT){
     G.winner = left[0] || null; if (G.winner) G.winner.place = 1;
-    G.endT = 100;
+    G.endT = 180;
   }
 }
 const CD_MARKS = [[209, '3'], [149, '2'], [89, '1'], [30, 'FIGHT!']];
@@ -229,7 +230,9 @@ function tick(){
   if (G.slow > 0) G.slow--;
   if (G.countdown > 0){ G.countdown--; cdBanner(G.countdown); }
   if (G.net === 'host') Net.readInputs();
+  if (G.endT > 0) stepVictory(); else botEmoteTick();
   for (const f of G.fighters){
+    if (G.endT > 0){ const i = f.input; i.x = i.z = 0; i.atk = i.jump = i.grab = i.guard = i.skill = i.lock = i.sprint = false; continue; }
     if (f.ctrl === 'bot' || isAuto(f)) think(f);
     else if (f.ctrl === 'net') Net.applyInput(f);
     else readHuman(f);

@@ -100,6 +100,38 @@ function buildEyes(head, look){
     if (look.eyes === 'angry'){ const b = new THREE.Mesh(new THREE.BoxGeometry(.17, .035, .04), toon(INK)); b.position.set(x, .17, .5); b.rotation.z = s*.4; head.add(b); }
   }
 }
+// Hit face: bulging eyes with tiny pupils, a wide-open mouth with teeth and tongue, a sweat drop
+function buildOuchFace(){
+  const g = new THREE.Group(), B = c => new THREE.MeshBasicMaterial({color:c});
+  for (const s of [-1, 1]){
+    const w = new THREE.Mesh(SPH(.13), B(0xffffff)); w.scale.set(1, 1.15, .45); w.position.set(s*.21, .06, .5); g.add(w);
+    const rim = new THREE.Mesh(SPH(.145), toon(INK)); rim.scale.set(1, 1.15, .4); rim.position.set(s*.21, .06, .485); g.add(rim);
+    const p = new THREE.Mesh(SPH(.035), B(INK)); p.position.set(s*.21, .05, .565); g.add(p);
+    const brow = new THREE.Mesh(new THREE.BoxGeometry(.17, .04, .04), toon(INK)); brow.position.set(s*.21, .27, .5); brow.rotation.z = -s*.35; g.add(brow);
+  }
+  const mouth = new THREE.Mesh(SPH(.12), B(0x5a1420)); mouth.scale.set(1, .9, .35); mouth.position.set(0, -.22, .49); g.add(mouth);
+  const teeth = new THREE.Mesh(new THREE.BoxGeometry(.15, .035, .03), B(0xffffff)); teeth.position.set(0, -.13, .53); g.add(teeth);
+  const tongue = new THREE.Mesh(SPH(.055), B(0xff6b81)); tongue.scale.set(1.2, .6, .5); tongue.position.set(0, -.28, .52); g.add(tongue);
+  const drop = new THREE.Mesh(new THREE.ConeGeometry(.06, .16, 6), B(0x7fd0ff)); drop.position.set(.46, .32, .3); g.add(drop);
+  return g;
+}
+// Knocked-out face: X eyes and the tongue out
+function buildKoFace(){
+  const g = new THREE.Group(), ink = toon(INK);
+  for (const s of [-1, 1]) for (const r of [-.78, .78]){ const b = new THREE.Mesh(new THREE.BoxGeometry(.2, .045, .04), ink); b.position.set(s*.21, .04, .53); b.rotation.z = r; g.add(b); }
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(.18, .05, .04), ink); mouth.position.set(0, -.18, .51); g.add(mouth);
+  const tongue = new THREE.Mesh(SPH(.06), new THREE.MeshBasicMaterial({color:0xff6b81})); tongue.scale.set(1, 1.3, .5); tongue.position.set(.05, -.25, .52); g.add(tongue);
+  return g;
+}
+// Winner's face: ^ ^ eyes and a big open smile
+function buildJoyFace(){
+  const g = new THREE.Group(), ink = toon(INK);
+  for (const s of [-1, 1]) for (const d of [-1, 1]){ const b = new THREE.Mesh(new THREE.BoxGeometry(.13, .045, .04), ink); b.position.set(s*.21 + d*.045, .07, .53); b.rotation.z = -d*.6; g.add(b); }
+  const mouth = new THREE.Mesh(SPH(.13), new THREE.MeshBasicMaterial({color:0x5a1420})); mouth.scale.set(1.1, .7, .35); mouth.position.set(0, -.2, .49); g.add(mouth);
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(.27, .05, .03), new THREE.MeshBasicMaterial({color:0xffffff})); lip.position.set(0, -.12, .53); g.add(lip);
+  const tongue = new THREE.Mesh(SPH(.06), new THREE.MeshBasicMaterial({color:0xff6b81})); tongue.scale.set(1.3, .6, .5); tongue.position.set(0, -.25, .52); g.add(tongue);
+  return g;
+}
 function buildHammer(){
   const g = new THREE.Group();
   const h = part(new THREE.CylinderGeometry(.05,.05,1,8), toon(0x8a5a2b)); h.position.y = -.45; g.add(h);

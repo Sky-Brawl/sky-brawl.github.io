@@ -291,7 +291,7 @@ const DIFF = {
   hard:  {react:6,  guard:.6,  aggr:.85, combo:.95, edge:1},
 };
 const DIFF_KEYS = ['easy','normal','hard'];
-const STATES = ['idle','run','air','attack','guard','guardstun','hitstun','tumble','down','getup','ko','respawn','wait','out'];
+const STATES = ['idle','run','air','attack','guard','guardstun','hitstun','tumble','down','getup','ko','respawn','wait','out','win'];
 const RAILED = new Set(['idle','run','air','attack','guard','guardstun','hitstun','down','getup']);
 const TEAM = Array.from({length:128}, (_, i) => new THREE.Color().setHSL((i*.618034 + .02) % 1, .78, .55).getHex());
 TEAM[0] = 0xff5d4a; TEAM[1] = 0x2f8cff;
