@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#5a8f3a">
+<meta name="description" content="Sky Brawl เกมต่อสู้ 3 มิติโลกบล็อกบนดาดฟ้าเรือไททานิก ตะลุมบอนกับบอทได้สูงสุด 124 คน หรือชวนเพื่อนเล่นออนไลน์ได้สูงสุด 64 คน">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://soradadofficial.github.io/sky-brawl/">
+<meta property="og:image" content="https://soradadofficial.github.io/sky-brawl/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="นักสู้หลายอาชีพตะลุมบอนกันบนดาดฟ้าเรือไททานิก ในโลกบล็อก พร้อมโลโก้ Sky Brawl">
+<meta property="og:title" content="Sky Brawl เกมต่อสู้โลกบล็อก 3D บนเว็บ">
+<meta property="og:description" content="ตะลุมบอนในโลกบล็อก บนเรือไททานิก วัดไทย สยาม และอีกหลายด่าน กว่า 30 อาชีพ เล่นบนมือถือได้ทันที ไม่ต้องติดตั้ง ชวนเพื่อนเล่นออนไลน์ได้">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://soradadofficial.github.io/sky-brawl/og.png">
+<meta name="twitter:title" content="Sky Brawl เกมต่อสู้โลกบล็อก 3D บนเว็บ">
+<meta name="twitter:description" content="ตะลุมบอนบนเรือไททานิก วัดไทย และสยาม เล่นบนมือถือได้ทันที ไม่ต้องติดตั้ง">
+<title>Sky Brawl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kanit:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1.6.0">
+
+</head>
+<body>
+<canvas id="c" aria-label="สนามต่อสู้บนดาดฟ้าเรือไททานิก"></canvas>
+<div id="tags"></div>
+<div id="offs"></div>
+<div id="edgeWarn"><b>ระวังตก!</b></div>
+<div id="tutBox" hidden role="status" aria-live="polite"></div>
+<div id="fx"></div>
+<div id="feed" aria-live="polite"></div>
+<div id="banner"></div>
+
+<div id="hud" hidden>
+  <div id="cards"></div>
+  <div id="hudMid">
+    <div id="bossBar" hidden><span id="bossName">ยักษ์หิมะ</span><div class="bhp"><i id="bossHp"></i></div><span id="bossNum"></span></div>
+    <div id="stoneBar" hidden>
+      <div class="sb"><span id="shn0">หินแดง</span><div class="shp"><i id="shp0" style="background:#ff5d4a"></i></div></div>
+      <div class="sb"><span id="shn1">หินน้ำเงิน</span><div class="shp"><i id="shp1" style="background:#2f8cff"></i></div></div>
+    </div>
+    <div id="hudBtns">
+      <button id="pauseBtn" class="chipbtn" type="button">II เมนู</button>
+      <button id="camBtn" class="chipbtn" type="button" title="ปรับมุมกล้อง (ปุ่ม - และ = หรือล้อเมาส์)">กล้อง: ปกติ</button>
+      <button id="touchBtn" class="chipbtn" type="button">ปุ่มจอ: ปิด</button>
+      <button id="aimBtn" class="chipbtn" type="button" title="ล็อกเป้าศัตรูที่ใกล้ที่สุดให้เอง">เล็ง: ออโต้</button>
+      <button id="autoBtn" class="chipbtn" type="button" title="ให้บอทเล่นแทน (ปุ่ม T)">ออโต้: ปิด</button>
+      <button id="spec" class="chipbtn" type="button" hidden>ดูคนถัดไป</button>
+    </div>
+  </div>
+  <div id="board"><div id="boardHead"><span>นักสู้</span><span id="aliveCount"></span></div><div id="brows"></div></div>
+</div>
+
+<div id="dbg" hidden></div>
+
+<div id="touch" hidden>
+  <div id="joyZone" aria-label="จอยเดิน แตะตรงไหนก็ได้ทางครึ่งซ้ายของจอแล้วลาก"><div id="joy"><div id="knob"></div></div></div>
+  <div id="tbtns">
+    <button type="button" data-k="guard" aria-label="กดค้างเพื่อกัน">กัน</button>
+    <button type="button" data-k="jump">กระโดด</button>
+    <button type="button" data-k="grab" id="grabBtn">หยิบ</button>
+    <button type="button" data-k="sprint" id="sprintBtn">วิ่ง</button>
+    <button type="button" data-k="skill" id="skillBtn">สกิล</button>
+    <button type="button" data-k="lock" id="lockBtn" aria-label="ล็อกเป้า กดซ้ำเพื่อสลับเป้า">ล็อก</button>
+    <button type="button" data-k="atk">ต่อย</button>
+  </div>
+  <div id="rotHint">หมุนจอแนวนอนจะเห็นสนามกว้างกว่า</div>
+</div>
+
+<div id="menu" class="overlay">
+  <div class="card">
+    <div>
+      <h1 class="logo blox" aria-label="Sky Brawl">SKY<span>BRAWL</span></h1>
+      <p class="sub">ศึกตะลุมบอนบนดาดฟ้าเรือไททานิก ต่อยคู่แข่งจนพลังหมด หรือซัดให้ลอยข้ามราวลงทะเล ลงได้สูงสุด 128 คน ทั้งคนจริงและบอท คนสุดท้ายที่เหลืออยู่ชนะ</p>
+      <div id="lvChip" class="lvchip" hidden><span class="lv"></span><span class="lt"></span><span class="xpbar"><i></i></span></div>
+      <div id="acctBox" class="acct" hidden>
+        <span id="acctText" class="note"></span>
+        <button class="btn google" id="acctGoogle" type="button">ผูกบัญชี Google</button>
+        <button class="btn google" id="acctExisting" type="button" hidden>เข้าบัญชี Google ที่มีอยู่</button>
+        <button class="btn plain" id="acctOut" type="button" hidden>ออกจากระบบ</button>
+      </div>
+      <p class="note" id="touchNote" hidden style="margin-top:8px">เล่นบนมือถือ: แตะครึ่งซ้ายของจอแล้วลากเพื่อเดิน ใช้ปุ่มด้านขวาเพื่อต่อย กระโดด กัน และหยิบของ หมุนจอแนวนอนจะเล่นง่ายขึ้น</p>
+    </div>
+    <button class="btn quick" id="quickPlay" type="button">▶ เล่นเลย<small>นักสู้ 8 ตัว บอทง่าย · ด่านสุ่ม · ใช้อาชีพของคุณ</small></button>
+    <button class="btn plain tutb" id="tutBtn" type="button">📘 สอนเล่น 1 นาที</button>
+    <details class="setd" id="setD"><summary>ตั้งค่าเกม <small id="setSum"></small></summary>
+    <div class="settings">
+      <div class="seg"><label class="lbl" for="nf">จำนวนนักสู้</label><input type="range" id="nf" min="2" max="128" value="8"><output id="nfOut" for="nf">8</output></div>
+      <div class="seg" role="radiogroup" aria-label="จำนวนชีวิต">
+        <span class="lbl">ชีวิตต่อคน</span>
+        <input type="radio" name="st" id="st1" value="1"><label for="st1">1</label>
+        <input type="radio" name="st" id="st2" value="2" checked><label for="st2">2</label>
+        <input type="radio" name="st" id="st3" value="3"><label for="st3">3</label>
+      </div>
+      <div class="seg" role="radiogroup" aria-label="ระดับบอท">
+        <span class="lbl">ระดับบอท</span>
+        <input type="radio" name="diff" id="d-easy" value="easy"><label for="d-easy">ง่าย</label>
+        <input type="radio" name="diff" id="d-normal" value="normal" checked><label for="d-normal">ปกติ</label>
+        <input type="radio" name="diff" id="d-hard" value="hard"><label for="d-hard">ยาก</label>
+      </div>
+      <div class="seg" role="radiogroup" aria-label="เล็งอัตโนมัติ">
+        <span class="lbl">เล็งอัตโนมัติ</span>
+        <input type="radio" name="al" id="al-on" value="1" checked><label for="al-on">เปิด</label>
+        <input type="radio" name="al" id="al-off" value="0"><label for="al-off">ปิด (กดล็อกเอง)</label>
+      </div>
+      <div class="pick" role="radiogroup" aria-label="โหมด">
+        <span class="lbl">โหมด</span>
+        <div class="pickgrid modes">
+          <input type="radio" name="mode" id="md-ffa" value="ffa" checked><label class="pickcard" for="md-ffa"><svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="120" fill="#ffd25e"/><path d="M80 44 0 0h44zM80 44 116 0h44v26zM80 44l80 34v42h-30zM80 44 54 120H18zM80 44 0 86V48z" fill="#ffb02e"/><polygon points="80,18 88,33 105,29 94,43 106,56 89,54 80,70 71,54 54,56 66,43 55,29 72,33" fill="#fff" stroke="#1b2333" stroke-width="3" stroke-linejoin="round"/><g stroke="#1b2333" stroke-width="3"><circle cx="32" cy="50" r="18" fill="#ff5d4a"/><circle cx="128" cy="50" r="18" fill="#2f8cff"/><circle cx="80" cy="84" r="14" fill="#3fbf5a"/></g><g fill="#1b2333"><rect x="36" y="44" width="4" height="8" rx="2"/><rect x="44" y="44" width="4" height="8" rx="2"/><rect x="112" y="44" width="4" height="8" rx="2"/><rect x="120" y="44" width="4" height="8" rx="2"/></g><path d="M34 40l10 4M126 40l-10 4" stroke="#1b2333" stroke-width="3" stroke-linecap="round"/></svg><span class="nm">ตะลุมบอน<small>ทุกคนคือศัตรู</small></span></label>
+          <input type="radio" name="mode" id="md-team" value="team"><label class="pickcard" for="md-team"><svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="120" fill="#2f8cff"/><polygon points="0,0 98,0 62,120 0,120" fill="#ff5d4a"/><polygon points="62,120 98,0 104,0 68,120" fill="#fff" opacity=".85"/><g stroke="#1b2333" stroke-width="3" stroke-linejoin="round"><rect x="20" y="62" width="30" height="10" rx="3" fill="#9aa3b5"/><polygon points="35,14 50,38 35,62 20,38" fill="#ffb3a8"/><rect x="110" y="62" width="30" height="10" rx="3" fill="#9aa3b5"/><polygon points="125,14 140,38 125,62 110,38" fill="#a8d4ff"/></g><path d="M31 26l-4 10M121 26l-4 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/><text x="80" y="54" text-anchor="middle" font-size="26" font-weight="900" font-family="Arial Black,Arial,sans-serif" fill="#ffd25e" stroke="#1b2333" stroke-width="5" paint-order="stroke">VS</text></svg><span class="nm">ทีมตีหิน<small>แดงปะทะน้ำเงิน</small></span></label>
+          <input type="radio" name="mode" id="md-boss" value="boss"><label class="pickcard" for="md-boss"><svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="120" fill="#1f2d55"/><g fill="#fff" opacity=".8"><circle cx="14" cy="18" r="2"/><circle cx="40" cy="8" r="1.5"/><circle cx="150" cy="22" r="2"/><circle cx="132" cy="6" r="1.5"/><circle cx="20" cy="50" r="1.5"/><circle cx="146" cy="56" r="1.5"/></g><rect y="92" width="160" height="28" fill="#dfe9f7"/><g stroke="#1b2333" stroke-width="3"><circle cx="80" cy="76" r="30" fill="#f4f8ff"/><circle cx="80" cy="36" r="20" fill="#f4f8ff"/><polygon points="64,20 68,6 74,14 80,4 86,14 92,6 96,20" fill="#ffd23a" stroke-linejoin="round"/><circle cx="24" cy="94" r="10" fill="#ff5d4a"/><circle cx="138" cy="94" r="10" fill="#2f8cff"/></g><g fill="#1b2333"><circle cx="72" cy="35" r="3.5"/><circle cx="88" cy="35" r="3.5"/><circle cx="80" cy="66" r="3"/><circle cx="80" cy="78" r="3"/></g><path d="M66 27l10 4M94 27l-10 4" stroke="#1b2333" stroke-width="3" stroke-linecap="round"/><polygon points="80,40 92,44 80,46" fill="#ff8a2a" stroke="#1b2333" stroke-width="1.5"/><path d="M73 50q7 -5 14 0" fill="none" stroke="#1b2333" stroke-width="2.5" stroke-linecap="round"/></svg><span class="nm">ตีบอส<small>รุมยักษ์หิมะ</small></span></label>
+        </div>
+      </div>
+      <div class="pick" role="radiogroup" aria-label="ด่าน">
+        <span class="lbl">ด่าน <small id="stageNote"></small></span>
+        <div class="pickgrid" id="stageGrid">
+          <input type="radio" name="stage" id="sg-titanic" value="titanic" checked><label class="pickcard" for="sg-titanic"><span class="nm">เรือไททานิก</span></label>
+          <input type="radio" name="stage" id="sg-temple" value="temple"><label class="pickcard" for="sg-temple"><span class="nm">วัดไทย</span></label>
+          <input type="radio" name="stage" id="sg-siam" value="siam"><label class="pickcard" for="sg-siam"><span class="nm">สยาม</span></label>
+          <input type="radio" name="stage" id="sg-gvg" value="gvg"><label class="pickcard" for="sg-gvg"><span class="nm">สนามกิลวอ</span></label>
+          <input type="radio" name="stage" id="sg-halloween" value="halloween"><label class="pickcard" for="sg-halloween"><span class="nm">ฮัลโลวีน</span></label>
+          <input type="radio" name="stage" id="sg-christmas" value="christmas"><label class="pickcard" for="sg-christmas"><span class="nm">คริสต์มาส</span></label>
+          <input type="radio" name="stage" id="sg-ice" value="ice"><label class="pickcard" for="sg-ice"><span class="nm">ทะเลสาบน้ำแข็ง</span></label>
+          <input type="radio" name="stage" id="sg-hospital" value="hospital"><label class="pickcard" for="sg-hospital"><span class="nm">โรงพยาบาล</span></label>
+          <input type="radio" name="stage" id="sg-japan" value="japan"><label class="pickcard" for="sg-japan"><span class="nm">เมืองญี่ปุ่นโบราณ</span></label>
+          <input type="radio" name="stage" id="sg-skyisle" value="skyisle"><label class="pickcard" for="sg-skyisle"><span class="nm">เกาะลอยฟ้า (128 คน)</span></label>
+        </div>
+      </div>
+    </div>
+    </details>
+    <div class="btns">
+      <button class="btn red" id="playSolo" type="button">เล่นกับบอท</button>
+      <button class="btn blue" id="play2p" type="button">2 คนเครื่องเดียว</button>
+      <button class="btn wide" id="playOnline" type="button">เล่นออนไลน์ (สร้าง/เข้าห้อง)</button>
+      <button class="btn wide" id="dailyBtn" type="button" hidden>🎁 รางวัลล็อกอินรายวัน<i class="rdot" hidden></i></button>
+      <button class="btn plain wide" id="custBtn" type="button">แต่งตัวละคร</button>
+      <button class="btn plain wide" id="soundBtnMenu" type="button">เสียง: เปิด</button>
+      <button class="btn line wide" id="inviteBtn" type="button">ชวนเพื่อนมาเล่น (LINE / Facebook / X / QR)</button>
+      <button class="btn plain wide" id="boardBtn" type="button">ตารางอันดับ</button>
+    </div>
+    <details class="keys-d">
+      <summary>ปุ่มควบคุม</summary>
+      <div class="keys">
+        <div class="k1"><h3>ผู้เล่น 1</h3>
+          <dl>
+            <dt><kbd>W A S D</kbd></dt><dd>เดิน</dd>
+            <dt><kbd>F</kbd></dt><dd>ต่อย (กดรัว = คอมโบ 3 จังหวะ)</dd>
+            <dt><kbd>G</kbd> <kbd>Space</kbd></dt><dd>กระโดด</dd>
+            <dt><kbd>H</kbd></dt><dd>กดค้างเพื่อกัน</dd>
+            <dt><kbd>Shift</kbd></dt><dd>กดค้างเพื่อวิ่งเร็ว (มีแถบแรง สีฟ้าใต้แถบสกิล)</dd>
+            <dt><kbd>R</kbd></dt><dd>หยิบของ / ขว้างระเบิด</dd>
+            <dt><kbd>E</kbd></dt><dd>สกิลอาชีพ</dd>
+            <dt><kbd>Q</kbd></dt><dd>ล็อกเป้า (กดซ้ำ = สลับเป้า)</dd>
+          </dl>
+        </div>
+        <div class="k2"><h3>ผู้เล่น 2</h3>
+          <dl>
+            <dt><kbd>← ↑ → ↓</kbd></dt><dd>เดิน</dd>
+            <dt><kbd>,</kbd> หรือ <kbd>Num1</kbd></dt><dd>ต่อย</dd>
+            <dt><kbd>.</kbd> หรือ <kbd>Num2</kbd></dt><dd>กระโดด</dd>
+            <dt><kbd>/</kbd> หรือ <kbd>Num3</kbd></dt><dd>กัน</dd>
+            <dt><kbd>M</kbd> หรือ <kbd>Num0</kbd></dt><dd>หยิบ / ขว้าง</dd>
+            <dt><kbd>;</kbd> หรือ <kbd>Num4</kbd></dt><dd>สกิลอาชีพ</dd>
+            <dt><kbd>'</kbd> หรือ <kbd>Num6</kbd></dt><dd>ล็อกเป้า</dd>
+            <dt><kbd>N</kbd> หรือ <kbd>Num7</kbd></dt><dd>กดค้างเพื่อวิ่งเร็ว</dd>
+          </dl>
+        </div>
+      </div>
+      <p class="note" style="margin-top:10px">ปรับมุมกล้องด้วย <kbd>-</kbd> <kbd>=</kbd> ล้อเมาส์ หรือปุ่ม "กล้อง" ระหว่างเล่น · ถ้าเล่นคนเดียวหรือออนไลน์ ใช้ลูกศรกับ <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> <kbd>U</kbd> <kbd>I</kbd> <kbd>O</kbd> แทนได้ · <kbd>X</kbd> ดู hitbox · <kbd>T</kbd> ให้บอทเล่นแทนผู้เล่น 1 (ผู้เล่น 2 ใช้ <kbd>P</kbd> หรือ <kbd>Num5</kbd>) · <kbd>Esc</kbd> เมนู · มือถือใช้จอยกับปุ่มบนจอ</p>
+    </details>
+  </div>
+</div>
+
+<div id="nameGate" class="overlay" hidden>
+  <form class="card" id="nameForm" style="max-width:440px" novalidate>
+    <h2 class="logo sm">ตั้งชื่อนักสู้</h2>
+    <p class="sub">ชื่อนี้จะขึ้นเหนือหัวตัวละครและในห้องออนไลน์ ต้องตั้งก่อนเริ่มเล่น เปลี่ยนทีหลังได้ที่หน้าแต่งตัวละคร</p>
+    <input id="gateName" class="tin" maxlength="12" autocomplete="off" placeholder="ชื่อของคุณ (1–12 ตัว)" aria-label="ชื่อนักสู้">
+    <p id="gateErr" class="note" hidden style="color:var(--p1)">ใส่ชื่ออย่างน้อย 1 ตัวอักษร</p>
+    <div class="btns"><button class="btn red" type="submit">เริ่มเลย</button></div>
+  </form>
+</div>
+
+<div id="online" class="overlay" hidden>
+  <div class="card">
+    <div class="rhead"><h2 class="logo sm">ออนไลน์</h2><span id="onStatus" class="status">กำลังเชื่อมต่อ…</span></div>
+    <div id="lobbyView" class="settings">
+      <div class="joinrow"><label for="myName">ชื่อของคุณ</label><input id="myName" class="tin" maxlength="12" autocomplete="off"><button class="btn plain" id="lobbyCust" type="button" style="flex:0 0 auto">แต่งตัวละคร</button></div>
+      <p class="note" id="myClass"></p>
+      <div class="opt"><h4>ห้องที่เปิดอยู่ · <span id="lobbyInfo" style="font-weight:500"></span></h4><div id="roomList" class="rlist"></div></div>
+      <div class="opt" id="chatBox" hidden>
+        <h4>แชตล็อบบี้</h4>
+        <div id="chatLog" class="chatlog" aria-live="polite"></div>
+        <form id="chatForm" class="joinrow" style="margin-top:6px">
+          <input id="chatIn" class="tin" maxlength="120" autocomplete="off" placeholder="พิมพ์ข้อความ…" aria-label="ข้อความแชต">
+          <button class="btn plain" type="submit" style="flex:0 0 auto">ส่ง</button>
+        </form>
+        <p id="chatNote" class="note" hidden></p>
+      </div>
+      <div class="btns"><button class="btn red" id="mkRoom" type="button">สร้างห้องใหม่</button></div>
+      <div class="joinrow"><label for="codeIn">หรือใส่รหัสห้อง</label><input id="codeIn" class="tin" maxlength="8" autocomplete="off" placeholder="เช่น k7mpx"><button class="btn plain" id="codeGo" type="button" style="flex:0 0 auto">เข้าห้อง</button></div>
+    </div>
+    <div id="roomView" class="settings" hidden>
+      <div class="rhead"><span>รหัสห้อง <b id="rCode"></b></span><span id="rRole" class="note"></span></div>
+      <div class="joinrow">
+        <input id="inviteLink" class="tin" readonly aria-label="ลิงก์เชิญเข้าห้อง">
+        <button class="btn" id="copyLink" type="button" style="flex:0 0 auto">คัดลอกลิงก์เชิญ</button>
+        <button class="btn plain" id="shareLink" type="button" style="flex:0 0 auto" hidden>แชร์</button>
+      </div>
+      <div class="sharebox">
+        <div id="roomQr" class="qr" role="img" aria-label="QR code สำหรับเข้าห้องนี้"></div>
+        <div class="sharecol">
+          <p class="note">ให้เพื่อนสแกน QR ด้วยกล้องมือถือ หรือแชร์ลิงก์ห้อง กดแล้วเข้าห้องนี้ได้ทันที</p>
+          <div class="shares">
+            <a class="btn line" id="roomLine" target="_blank" rel="noopener">LINE</a>
+            <a class="btn fb" id="roomFb" target="_blank" rel="noopener">Facebook</a>
+            <a class="btn x" id="roomX" target="_blank" rel="noopener">X</a>
+          </div>
+        </div>
+      </div>
+      <div id="rCfg" class="settings">
+        <div class="seg"><label class="lbl" for="rN">จำนวนนักสู้</label><input type="range" id="rN" min="2" max="64" value="2"><output id="rNOut" for="rN">2</output></div>
+        <div class="seg"><label class="lbl" for="rSt">ชีวิตต่อคน</label><select id="rSt"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
+          <label class="lbl" for="rDf" style="margin-left:8px">ระดับบอท</label><select id="rDf"><option value="easy">ง่าย</option><option value="normal" selected>ปกติ</option><option value="hard">ยาก</option></select></div>
+        <div class="seg" style="display:none"><label class="lbl" for="rMode">โหมด</label><select id="rMode"><option value="ffa">ตะลุมบอน</option><option value="team">ทีมตีหิน</option><option value="boss">ตีบอส (ด่านคริสต์มาส)</option></select></div>
+        <div class="seg" style="display:none"><label class="lbl" for="rStage">ด่าน</label><select id="rStage"><option value="titanic">เรือไททานิก</option><option value="temple">วัดไทย</option><option value="siam">สยาม</option><option value="gvg">สนามกิลวอ</option><option value="halloween">ฮัลโลวีน</option><option value="christmas">คริสต์มาส (บอส)</option><option value="ice">ทะเลสาบน้ำแข็ง</option><option value="hospital">โรงพยาบาล</option><option value="japan">เมืองญี่ปุ่นโบราณ</option><option value="skyisle">เกาะลอยฟ้า</option></select></div>
+      </div>
+      <p id="rCfgText" class="note" hidden></p>
+      <div id="rPick" class="settings">
+        <div class="pick" role="radiogroup" aria-label="โหมดของห้อง"><span class="lbl">โหมด <small id="rPickWho"></small></span><div class="pickgrid modes" id="rModeGrid"></div></div>
+        <div class="pick" role="radiogroup" aria-label="ด่านของห้อง"><span class="lbl">ด่าน <small id="rStageNote"></small></span><div class="pickgrid" id="rStageGrid"></div></div>
+      </div>
+      <div class="opt"><h4 id="slotHead">นักสู้ในห้อง</h4>
+        <div id="teamRow" class="teamrow chips" hidden><span class="lbl">ทีมของคุณ</span><button type="button" data-tm="-1">อัตโนมัติ</button><button type="button" class="red" data-tm="0">ทีมแดง</button><button type="button" class="blue" data-tm="1">ทีมน้ำเงิน</button></div>
+        <div id="slotList" class="slots"></div></div>
+      <p id="netWarn" class="note" hidden style="color:var(--p1)"></p>
+      <div class="btns">
+        <button class="btn red" id="rStart" type="button">เริ่มแข่ง</button>
+        <button class="btn plain" id="roomCust" type="button">แต่งตัวละคร</button>
+        <button class="btn plain" id="rLeave" type="button">ออกจากห้อง</button>
+      </div>
+    </div>
+    <p id="onMsg" class="note" hidden></p>
+    <p class="note">ตั้งจำนวนนักสู้เป็น 2 = ดวล 1v1 ถ้าคนไม่ครบ บอทจะลงแทน · ส่งลิงก์เชิญให้เพื่อน กดแล้วเข้าห้องได้ทันที ไม่ต้องสมัครอะไร · คนสร้างห้องเป็นคนคุมเกม ต้องเปิดหน้านี้ค้างไว้ตลอดการแข่ง ห้ามสลับแอปหรือปิดจอ</p>
+    <div class="btns"><button class="btn plain" id="onBack" type="button">กลับเมนู</button></div>
+  </div>
+</div>
+
+<div id="ranks" class="overlay" hidden>
+  <div class="card">
+    <h2 class="logo sm">ตารางอันดับ</h2>
+    <div class="ctabs" id="rankTabs" role="group" aria-label="เรียงตาม">
+      <button type="button" class="tab" data-k="xp">เลเวล</button>
+      <button type="button" class="tab" data-k="wins">ชนะ</button>
+      <button type="button" class="tab" data-k="kos">KO</button>
+    </div>
+    <div class="rtable"><table><thead><tr><th>อันดับ</th><th>ชื่อ</th><th class="n">เลเวล</th><th class="n" id="rankCol">XP</th></tr></thead><tbody id="rankBody"></tbody></table></div>
+    <p id="rankMe" class="note"></p>
+    <p class="note">XP: เล่นจบ 20 · KO ละ 5 · ชนะ +40 · ติด 3 อันดับแรก +20 · ยิ่งคู่แข่งเยอะยิ่งได้มาก · เล่นออนไลน์ได้ ×1.5</p>
+    <div class="btns"><button class="btn" id="ranksClose" type="button">ปิด</button></div>
+  </div>
+</div>
+
+<div id="daily" class="overlay" hidden>
+  <div class="card" style="max-width:600px">
+    <h2 class="logo sm">รางวัลรายวัน</h2>
+    <p class="note" id="dailyStreak"></p>
+    <div class="dgrid" id="dailyGrid"></div>
+    <p id="dailyGot" aria-live="polite"></p>
+    <p class="note">เข้าเกมทุกวันเพื่อรับของต่อเนื่อง ขาดวันเมื่อไรจะกลับไปเริ่มวันที่ 1 (ของที่ได้แล้วไม่หาย) · ล็อกอินรวมครบ 14 และ 30 วันได้ฉายาพิเศษ · ผูกบัญชี Google ไว้ ของจะตามไปทุกเครื่อง</p>
+    <div class="btns">
+      <button class="btn" id="dailyClaim" type="button">รับรางวัลวันนี้</button>
+      <button class="btn plain" id="dailyWear" type="button" hidden>ไปแต่งตัว</button>
+      <button class="btn plain" id="dailyClose" type="button">ปิด</button>
+    </div>
+  </div>
+</div>
+<div id="toast" role="status" hidden></div>
+
+<div id="invite" class="overlay" hidden>
+  <div class="card" style="max-width:460px">
+    <h2 class="logo sm">ชวนเพื่อน</h2>
+    <div class="sharebox">
+      <div id="gameQr" class="qr" role="img" aria-label="QR code สำหรับเปิดเกม"></div>
+      <div class="sharecol">
+        <p class="note">สแกนแล้วเล่นบนมือถือได้ทันที ไม่ต้องติดตั้ง ไม่ต้องสมัคร</p>
+        <div class="shares">
+          <a class="btn line" id="gameLine" target="_blank" rel="noopener">LINE</a>
+          <a class="btn fb" id="gameFb" target="_blank" rel="noopener">Facebook</a>
+          <a class="btn x" id="gameX" target="_blank" rel="noopener">X</a>
+        </div>
+      </div>
+    </div>
+    <div class="joinrow"><input id="gameLink" class="tin" readonly aria-label="ลิงก์เกม"><button class="btn plain" id="gameCopy" type="button" style="flex:0 0 auto">คัดลอก</button></div>
+    <div class="btns">
+      <button class="btn plain" id="gameShare" type="button" hidden>แชร์ทางอื่น</button>
+      <button class="btn" id="inviteClose" type="button">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<div id="pause" class="overlay" hidden>
+  <div class="card">
+    <h2 class="logo sm" id="pauseTitle">พักเกม</h2>
+    <p class="note" id="pauseNote" hidden>เกมออนไลน์ไม่หยุดเดินระหว่างเปิดเมนูนี้</p>
+    <div class="btns">
+      <button class="btn" id="resume" type="button">เล่นต่อ</button>
+      <button class="btn plain" id="restart" type="button">เริ่มใหม่</button>
+      <button class="btn plain" id="toMenu" type="button">กลับเมนู</button>
+      <button class="btn plain" id="soundBtn" type="button">เสียง: เปิด</button>
+      <button class="btn plain" id="dbgBtn" type="button">แสดง hitbox: ปิด</button>
+    </div>
+  </div>
+</div>
+
+<div id="result" class="overlay" hidden>
+  <div class="card">
+    <h2 class="result" id="resTitle">P1 ชนะ!</h2>
+    <div id="resXp" class="resxp" hidden>
+      <div class="row"><span id="resLv"></span><span id="resGain"></span></div>
+      <span class="xpbar"><i id="resBar"></i></span>
+    </div>
+    <div class="rtable"><table><thead><tr><th>อันดับ</th><th>ชื่อ</th><th class="n">KO</th><th class="n">ดาเมจ</th></tr></thead><tbody id="resBody"></tbody></table></div>
+    <div class="btns">
+      <button class="btn" id="rematch" type="button">แข่งอีกรอบ</button>
+      <button class="btn plain" id="resMenu" type="button">กลับเมนู</button>
+      <div class="shares wide">
+        <a class="btn line" id="resLine" target="_blank" rel="noopener">แชร์ผลไป LINE</a>
+        <a class="btn fb" id="resFb" target="_blank" rel="noopener">Facebook</a>
+        <a class="btn x" id="resX" target="_blank" rel="noopener">X</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="custom" hidden>
+  <div class="cpanel" role="dialog" aria-label="แต่งตัวละคร">
+    <div class="ctabs">
+      <button type="button" class="tab" data-slot="0">ผู้เล่น 1 / ออนไลน์</button>
+      <button type="button" class="tab" data-slot="1">ผู้เล่น 2</button>
+    </div>
+    <div class="opt"><h4><label for="cname">ชื่อ (ไม่เกิน 12 ตัว)</label></h4><input id="cname" class="tin" style="width:100%" type="text" maxlength="12" autocomplete="off"></div>
+    <div class="opt"><h4>สกิลอาชีพ</h4><div id="skillInfo" class="skillinfo"></div></div>
+    <div id="copts"></div>
+    <p class="note">ของที่มี 🔒 ปลดล็อกจากรางวัลล็อกอินรายวัน (วงแหวนนางฟ้าและดาวลอยฟ้าใส่คู่กับชุดอาชีพได้) · ชุดอาชีพมีหมวกหรือหมวกเกราะของตัวเอง จะใช้แทนของบนหัวและสีชุด ของแต่งเปลี่ยนแค่หน้าตา ไม่มีผลกับพลัง ชุดของผู้เล่น 1 ใช้ตอนเล่นออนไลน์ด้วย และจำไว้ในเบราว์เซอร์นี้</p>
+    <div class="btns">
+      <button class="btn plain" id="cback" type="button" hidden>ย้อนกลับ</button>
+      <button class="btn plain" id="crand" type="button">สุ่มชุด</button>
+      <button class="btn" id="cdone" type="button">เสร็จ</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<!-- Settings you can tweak without touching this file: skill cooldowns/power, classes on/off -->
+<script src="config.js?v=1.6.0"></script>
+<!-- The game: these files share one scope and must stay in this order (see js/README.md) -->
+<script src="js/voxel.js?v=1.6.0"></script>
+<script src="js/core.js?v=1.6.0"></script>
+<script src="js/moves.js?v=1.6.0"></script>
+<script src="js/world.js?v=1.6.0"></script>
+<script src="js/stages/temple-siam.js?v=1.6.0"></script>
+<script src="js/stages/gvg.js?v=1.6.0"></script>
+<script src="js/stages/halloween.js?v=1.6.0"></script>
+<script src="js/stages/christmas.js?v=1.6.0"></script>
+<script src="js/stages/ice.js?v=1.6.0"></script>
+<script src="js/stages/hospital.js?v=1.6.0"></script>
+<script src="js/stages/japan.js?v=1.6.0"></script>
+<script src="js/stages/skyisle.js?v=1.6.0"></script>
+<script src="js/stages/registry.js?v=1.6.0"></script>
+<script src="js/stages/cards.js?v=1.6.0"></script>
+<script src="js/classes.js?v=1.6.0"></script>
+<script src="js/config-apply.js?v=1.6.0"></script>
+<script src="js/looks.js?v=1.6.0"></script>
+<script src="js/forms.js?v=1.6.0"></script>
+<script src="js/summons.js?v=1.6.0"></script>
+<script src="js/fighter-model.js?v=1.6.0"></script>
+<script src="js/fx.js?v=1.6.0"></script>
+<script src="js/state.js?v=1.6.0"></script>
+<script src="js/input.js?v=1.6.0"></script>
+<script src="js/bots.js?v=1.6.0"></script>
+<script src="js/combat.js?v=1.6.0"></script>
+<script src="js/skills.js?v=1.6.0"></script>
+<script src="js/items.js?v=1.6.0"></script>
+<script src="js/projectiles.js?v=1.6.0"></script>
+<script src="js/weapons.js?v=1.6.0"></script>
+<script src="js/modes.js?v=1.6.0"></script>
+<script src="js/sim.js?v=1.6.0"></script>
+<script src="js/render.js?v=1.6.0"></script>
+<script src="js/hud.js?v=1.6.0"></script>
+<script src="js/flow.js?v=1.6.0"></script>
+<script src="js/online.js?v=1.6.0"></script>
+<script src="js/account.js?v=1.6.0"></script>
+<script src="js/relay.js?v=1.6.0"></script>
+<script src="js/online-ui.js?v=1.6.0"></script>
+<script src="js/customize.js?v=1.6.0"></script>
+<script src="js/tutorial.js?v=1.6.0"></script>
+<script src="js/settings.js?v=1.6.0"></script>
+<script src="js/touch.js?v=1.6.0"></script>
+<script src="js/main.js?v=1.6.0"></script>
+</body>
+</html>
