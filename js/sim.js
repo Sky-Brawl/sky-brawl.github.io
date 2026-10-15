@@ -37,6 +37,7 @@ function stepFighter(f){
   // Stamina refills after a short pause in sprinting (a little slower while attacking or guarding)
   if (f.stamT > 0) f.stamT--; else if (f.stam < 100){ f.stam = Math.min(100, f.stam + (f.state === 'idle' ? .55 : f.state === 'run' ? .33 : .2)); if (f.exh && f.stam >= 25) f.exh = false; }
   if (f.formT > 0){ f.formT--; if (f.formT === 0) endForm(f); }
+  powerTick(f);
   if (f.rage > 0){ f.rage--; if (G.frame % 6 === 0) emit(new V(f.pos.x, f.pos.y + .9, f.pos.z), 1, 0xff4a3a, 1.5, 2, 18, 1.2, -1); }
   if (!atkP && f.buffer > 0) f.buffer--;
   f.stateT++;
@@ -49,17 +50,18 @@ function stepFighter(f){
       // Sprint: needs a direction, solid ground and some stamina; once it runs dry you must recover a quarter before the next sprint
       const sprint = !!inp.sprint && mag > .2 && f.onGround && !f.exh && f.stam > 0 && !(f.shock > 0);
       if (sprint){ f.stam -= 100/(SPRINT_SECS*60); f.stamT = 40; if (f.stam <= 0){ f.stam = 0; f.exh = true; } }
-      const sp = WALK*(sprint ? SPRINT : 1)*(f.onGround && !f.weapon ? 1 : .875)*(f.rage > 0 ? 1.4 : 1)*(f.shock > 0 ? .55 : 1)*(f.formT > 0 ? FORM_INFO[f.cls].speed : 1), k = f.onGround ? (STAGE.slip ? .09 : .35) : .12;
+      const sp = WALK*(sprint ? SPRINT : 1)*(f.onGround && !f.weapon ? 1 : .875)*(f.rage > 0 ? 1.4 : 1)*(f.shock > 0 ? .55 : 1)*(f.formT > 0 ? FORM_INFO[f.cls].speed : 1)*powerSpeed(f), k = f.onGround ? (STAGE.slip ? .09 : .35) : .12;
       f.vel.x += (inp.x*sp - f.vel.x)*k; f.vel.z += (inp.z*sp - f.vel.z)*k;
       if (mag > .2) f.facing = Math.atan2(inp.x, inp.z);
       f.state = f.onGround ? (mag > .2 ? 'run' : 'idle') : 'air';
       if (jumpP && f.onGround && !(f.shock > 0)){ f.vel.y = JUMP; f.onGround = false; f.state = 'air'; dust(f.pos); Sfx.play('jump', f.pos); }
+      else if (skillP && G.countdown <= 30 && powerOn(f)) powerSkill(f);
       else if (skillP && f.skillCd <= 0 && G.countdown <= 30) useSkill(f);
       else if (grabP) doGrab(f);
       else if (f.buffer > 0){
         if (f.held === 'bomb'){ throwBomb(f); f.buffer = 0; }
         // Standing next to an item: the attack button picks it up (the grab button still works too)
-        else if (doGrab(f)) f.buffer = 0;
+        else if (doGrab(f, true)) f.buffer = 0;
         else startMove(f, attackKey(f));
       }
       else if (inp.guard && f.onGround) setState(f, 'guard');
@@ -261,6 +263,10 @@ function tick(){
       if (it.pos.y < SEA_Y){ splash(it.pos); removeItem(it); continue; }
     }
     if (it.t > 60*20){ removeItem(it); continue; }
+    if (it.landed && it.type === 'potion'){
+      const f = fs.find(f => alive(f) && f.state !== 'ko' && !powerOn(f) && f.pos.y < 1 && Math.hypot(it.pos.x - f.pos.x, it.pos.z - f.pos.z) < 1.1);
+      if (f){ drinkPotion(f, it); continue; }
+    }
     if (it.landed && it.type === 'heal'){
       for (const f of fs) if (alive(f) && f.state !== 'ko' && f.pos.y < 1 && Math.hypot(it.pos.x - f.pos.x, it.pos.z - f.pos.z) < 1.1){
         f.hp = Math.min(MAX_HP, f.hp + RICE_HEAL); popup(new V(f.pos.x, 2.4, f.pos.z), '+' + RICE_HEAL, 'heal');
@@ -284,6 +290,7 @@ function tick(){
   }
   stepTurrets();
   stepGhosts();
+  stepMechs();
   stepZones();
   stepBullets();
   if (G.mode === 'menu'){ for (const f of fs) if (f.stocks < 99) f.stocks = 99; }

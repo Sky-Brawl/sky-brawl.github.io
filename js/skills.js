@@ -238,6 +238,7 @@ function rageSteal(credit, tgt, amount){
 function applyHit(att, tgt, m, dir, credit){
   if (ally(credit, tgt)) return;
   if (credit && credit !== tgt && credit.rage > 0) m = {...m, dmg:Math.round(m.dmg*1.5)};
+  if (powerOn(tgt) && powerAbsorb(att, tgt, m, dir, credit)) return;
   const local = (att && att.isLocal) || tgt.isLocal || G.fighters.length <= 2;
   const front = -(Math.sin(tgt.facing)*dir.x + Math.cos(tgt.facing)*dir.z);
   const guarding = (tgt.state === 'guard' || tgt.state === 'guardstun') && front > .2;

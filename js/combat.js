@@ -2,6 +2,7 @@
 // Part of the game split into files: all js/ files share one global scope and must load in the order listed in index.html.
 /* ---------- Combat ---------- */
 function attackKey(f){
+  const pk = powerAttackKey(f); if (pk) return pk;
   if (f.weapon === 'gun') return 'shoot';
   if (f.weapon === 'shotgun') return 'blast';
   if (f.formT > 0 && FORM_INFO[f.cls]) return FORM_INFO[f.cls].atk;
@@ -32,7 +33,7 @@ function checkHits(f){
   const hc = hitCenter(f), m = f.move, sweep = !!m.sweep;
   for (const o of G.fighters){
     if (o === f || ally(f, o) || !hittable(o) || (sweep && f.hitSet.has(o))) continue;
-    if (hc.distanceTo(new V(o.pos.x, o.pos.y + .8, o.pos.z)) < m.rad + .55){
+    if (hc.distanceTo(new V(o.pos.x, o.pos.y + .8, o.pos.z)) < m.rad + .55 + bodyR(o)){
       let dx = o.pos.x - f.pos.x, dz = o.pos.z - f.pos.z, d = Math.hypot(dx, dz);
       if (d < .01){ dx = Math.sin(f.facing); dz = Math.cos(f.facing); d = 1; }
       applyHit(f, o, m, new V(dx/d, 0, dz/d), f);

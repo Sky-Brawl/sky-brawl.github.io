@@ -273,7 +273,7 @@ const Net = {
   },
   encF(f){
     const r = v => Math.round(v);
-    const flags = (f.weapon ? 1 : 0) | (f.held ? 2 : 0) | (f.invuln > 0 ? 4 : 0) | (f.onGround ? 8 : 0) | (f.rage > 0 ? 16 : 0) | (f.chill > 0 ? 32 : 0) | (f.shock > 0 ? 64 : 0) | (f.formT > 0 ? 128 : 0);
+    const flags = (f.weapon ? 1 : 0) | (f.held ? 2 : 0) | (f.invuln > 0 ? 4 : 0) | (f.onGround ? 8 : 0) | (f.rage > 0 ? 16 : 0) | (f.chill > 0 ? 32 : 0) | (f.shock > 0 ? 64 : 0) | (f.formT > 0 ? 128 : 0) | (f.apeT > 0 ? 256 : 0);
     return [r(f.pos.x*100), r(f.pos.y*100), r(f.pos.z*100), r(f.vel.x*10), r(f.vel.y*10), r(f.vel.z*10), r(f.facing*100),
       STATES.indexOf(f.state), Math.min(f.stateT, 999), Math.ceil(Math.max(0, f.hp)), f.stocks, flags, f.move ? MOVE_KEYS.indexOf(f.moveKey) : -1, f.weaponUses, f.lr, WEAPONS.indexOf(f.weapon), Math.ceil(f.skillCd/6), f.lock ? f.lock.idx : -1, Math.round(f.stam), f.emo && f.emo.until > G.frame ? f.emoSeq*16 + f.emo.id : 0];
   },
@@ -293,7 +293,7 @@ const Net = {
       gh:G.ghosts.slice(0, 16).map(g => [g.id, r(g.pos.x), r(g.pos.z), Math.round(g.rot*100), g.sw]),
       em:G.stones.map(st => Math.ceil(st.hp)),
       bs:G.boss ? [Math.round(G.boss.pos.x*100), Math.round(G.boss.pos.z*100), Math.ceil(G.boss.hp), BOSS_STATES.indexOf(G.boss.state), G.boss.t, Math.round(G.boss.facing*100)] : null,
-      lv:STAGE_KEY === 'volcano' ? [LAVA.sunk, LAVA.t] : null, ct:chatForSnap()};
+      lv:STAGE_KEY === 'volcano' ? [LAVA.sunk, LAVA.t] : null, ct:chatForSnap(), mc:mechsForSnap()};
     // Snapshots replace each other, so a guest whose channel is backed up just skips this one instead of piling up lag
     const patch = {ph:this.ph, sn};
     mergePres(this.myPres, patch);
@@ -474,6 +474,7 @@ const Net = {
     if (!sn || !Array.isArray(sn.f)) return;
     if (Number.isFinite(sn.cd)){ G.countdown = sn.cd; cdBanner(sn.cd); }
     chatFromSnap(sn.ct);
+    mechsFromSnap(sn.mc);
     if (Array.isArray(sn.lv)){ LAVA.sunk = Math.max(0, Math.min(VOL_RADII.length - 1, sn.lv[0] | 0)); LAVA.t = Math.max(0, sn.lv[1] | 0); }
     sn.f.forEach((a, i) => {
       const f = G.fighters[i]; if (!f || !Array.isArray(a)) return;
@@ -501,7 +502,7 @@ const Net = {
       else if (Math.abs(f.stateT - n(8)) > 6) f.stateT = n(8);
       f.hp = hp; f.stocks = stk; f.stun = 18;
       f.weapon = a.length > 15 ? (WEAPONS[n(15)] || null) : (fl & 1 ? 'hammer' : null); f.held = fl & 2 ? 'bomb' : null; f.invuln = fl & 4 ? 10 : 0; f.onGround = !!(fl & 8);
-      f.weaponUses = n(13); f.skillCd = n(16)*6; f.rage = fl & 16 ? 30 : 0; f.chill = fl & 32 ? 30 : 0; f.shock = fl & 64 ? 30 : 0; { const was = f.formT > 0; f.formT = fl & 128 ? 30 : 0; if ((f.formT > 0) !== was) f.formT > 0 ? formFx(f) : endForm(f); } f.lockIdx = a.length > 17 ? n(17) : -1; f.stam = a.length > 18 ? n(18) : 100;
+      f.weaponUses = n(13); f.skillCd = n(16)*6; f.rage = fl & 16 ? 30 : 0; f.chill = fl & 32 ? 30 : 0; f.shock = fl & 64 ? 30 : 0; { const was = f.formT > 0; f.formT = fl & 128 ? 30 : 0; if ((f.formT > 0) !== was) f.formT > 0 ? formFx(f) : endForm(f); } { const was = f.apeT > 0; f.apeT = fl & 256 ? 30 : 0; if ((f.apeT > 0) !== was){ if (f.apeT > 0){ apeFx(f); f.apeIntro = 50; } else endApe(f); } } f.lockIdx = a.length > 17 ? n(17) : -1; f.stam = a.length > 18 ? n(18) : 100;
       if (a.length > 19){ const ec = n(19); if (ec && ec !== f.emoCode){ f.emoCode = ec; if (!(f.emo && f.emo.id === ec % 16 && f.emo.until > G.frame)) f.emo = {id:ec % 16, until:G.frame + EMOTE_T}; } }
     });
     if (Array.isArray(sn.it)){
@@ -618,7 +619,7 @@ function guestTick(){
       f.pos.lerp(f.netPos, .4);
       if (!f.splashed && f.pos.y < SEA_Y){ f.splashed = true; splash(f.pos); }
     }
-    f.stateT++; if (f.squash > 0) f.squash--;
+    f.stateT++; if (f.squash > 0) f.squash--; if (f.apeIntro > 0) f.apeIntro--;
     if (f.rage > 0 && alive(f) && G.frame % 6 === 0) emit(new V(f.pos.x, f.pos.y + .9, f.pos.z), 1, 0xff4a3a, 1.5, 2, 18, 1.2, -1);
   }
   for (const it of G.items) if (it.netPos) it.pos.lerp(it.netPos, .4);

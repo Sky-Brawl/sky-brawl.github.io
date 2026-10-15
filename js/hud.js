@@ -98,10 +98,10 @@ function updateHud(){
       if (c.k.st !== f.stocks){ c.k.st = f.stocks; c.stocks.innerHTML = Array.from({length:G.stocks}, (_, n) => `<span class="pip${n < f.stocks ? '' : ' off'}"></span>`).join(''); }
       const item = f.held === 'bomb' ? 'ถือระเบิด' : f.weapon ? WEAPON_INFO[f.weapon].name + ' ×' + f.weaponUses : 'มือเปล่า';
       if (c.k.item !== item){ c.k.item = item; c.item.textContent = item; }
-      const si = SKILL_INFO[f.cls] || SKILL_INFO.none, ready = f.skillCd <= 0;
-      const skt = MOVES[skillKey(f.cls)].name + (f.formT > 0 ? ' · กำลังแปลงร่าง' : ready ? ' · พร้อม' : ' · ' + Math.ceil(f.skillCd/60) + ' วิ');
+      const si = SKILL_INFO[f.cls] || SKILL_INFO.none, ph = powerHud(f), ready = ph ? ph.ready : f.skillCd <= 0;
+      const skt = ph ? ph.text : MOVES[skillKey(f.cls)].name + (f.formT > 0 ? ' · กำลังแปลงร่าง' : ready ? ' · พร้อม' : ' · ' + Math.ceil(f.skillCd/60) + ' วิ');
       if (c.k.sk !== skt){ c.k.sk = skt; c.sk.textContent = skt; c.skb.parentNode.classList.toggle('ready', ready); }
-      c.skb.style.width = (ready ? 100 : Math.max(0, 100 - f.skillCd/si.cd*100)) + '%';
+      c.skb.style.width = (ph ? Math.max(0, ph.pct) : ready ? 100 : Math.max(0, 100 - f.skillCd/si.cd*100)) + '%';
       const mood = faceMood(f);
       if (c.k.mood !== mood){
         c.k.mood = mood;

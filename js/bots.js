@@ -107,13 +107,15 @@ function think(b){
   const dx = tOk ? t.pos.x - b.pos.x : 0, dz = tOk ? t.pos.z - b.pos.z : 0, dist = Math.hypot(dx, dz) || .001;
   const edge = !onDeck(b.pos.x, b.pos.z, 1.3);
   let goal = null, stop = 0;
+  if (G.frame % 30 === b.idx % 30) ai.mechGo = !powerOn(b) && !b.held ? G.mechs.find(m => m.landed && !m.rider && Math.hypot(m.pos.x - b.pos.x, m.pos.z - b.pos.z) < 12) || null : null;
   const item = nearestItem(b, 7);
   if (ai.retreat > 0){ ai.retreat--; goal = {x:b.pos.x*.8, z:b.pos.z*.4}; }
   else if (edge && Math.random() < D.edge*.08){ ai.retreat = 20; goal = {x:b.pos.x*.8, z:b.pos.z*.4}; }
   else if (!tOk){ goal = item ? item.it.pos : {x:0, z:0}; stop = item ? 0 : 2; }
   else if (b.held === 'bomb'){ if (dist < 4) goal = {x:b.pos.x - dx, z:b.pos.z - dz}; }
+  else if (ai.mechGo && !b.mech && ai.mechGo.landed && !ai.mechGo.rider && G.mechs.includes(ai.mechGo)){ goal = ai.mechGo.pos; stop = 0; }
   else if (item && item.d < dist*.8){ goal = item.it.pos; }
-  else { goal = t.pos; stop = b.weapon === 'gun' ? 6 : b.weapon === 'shotgun' ? 3 : b.weapon ? 1.1 : b.formT > 0 ? FORM_INFO[b.cls].stop : (CLASS_STOP[b.cls] || 1.1); }
+  else { goal = t.pos; stop = b.weapon === 'gun' ? 6 : b.weapon === 'shotgun' ? 3 : b.weapon ? 1.1 : powerOn(b) ? 1.8 : b.formT > 0 ? FORM_INFO[b.cls].stop : (CLASS_STOP[b.cls] || 1.1); }
   inp.x = inp.z = 0; inp.sprint = tOk && dist > 8 && b.stam > 35 && b.ctrl === 'bot';
   if (goal){
     const mx = goal.x - b.pos.x, mz = goal.z - b.pos.z, md = Math.hypot(mx, mz);
@@ -125,15 +127,18 @@ function think(b){
     ai.guardT = 12 + t.move.startup; inp.guard = true; inp.x = inp.z = 0; ai.cd = D.react; return;
   }
   const si = SKILL_INFO[b.cls] || SKILL_INFO.none;
-  if (b.skillCd <= 0 && Math.random() < .35*D.aggr && (si.range < 0 ? wantsHeal(b) : tOk && dist < si.range)){
+  if (ai.mechGo && !b.mech && Math.hypot(ai.mechGo.pos.x - b.pos.x, ai.mechGo.pos.z - b.pos.z) < 2){ press('grab'); ai.cd = 4; return; }
+  if (powerOn(b)){
+    if (tOk && dist < 9 && !(b.apeT > 0 ? b.apeSk > 0 : b.mechSk > 0) && Math.random() < .3*D.aggr){ inp.x = dx/dist*.3; inp.z = dz/dist*.3; press('skill'); ai.cd = D.react; return; }
+  } else if (b.skillCd <= 0 && Math.random() < .35*D.aggr && (si.range < 0 ? wantsHeal(b) : tOk && dist < si.range)){
     if (tOk){ inp.x = dx/dist*.3; inp.z = dz/dist*.3; }
     press('skill'); ai.cd = D.react; return;
   }
   if (b.held === 'bomb' && tOk && dist >= 3.5 && dist < 10){ inp.x = dx/dist*.3; inp.z = dz/dist*.3; press('grab'); ai.cd = D.react; return; }
   const near = nearestItem(b, 1.3);
-  if (near && near.it.type !== 'heal'){ press('grab'); ai.cd = 4; return; }
+  if (near && near.it.type !== 'heal' && near.it.type !== 'potion' && !powerOn(b)){ press('grab'); ai.cd = 4; return; }
   const isGun = b.weapon === 'gun' || b.weapon === 'shotgun';
-  if (tOk && dist < (isGun ? (b.weapon === 'gun' ? 11 : 5.5) : b.weapon ? 2.3 : b.formT > 0 ? FORM_INFO[b.cls].reach : (CLASS_REACH[b.cls] || 1.9)) && Math.random() < D.aggr*(isGun ? .5 : 1)){
+  if (tOk && dist < (isGun ? (b.weapon === 'gun' ? 11 : 5.5) : b.weapon ? 2.3 : powerOn(b) ? 3.2 : b.formT > 0 ? FORM_INFO[b.cls].reach : (CLASS_REACH[b.cls] || 1.9)) && Math.random() < D.aggr*(isGun ? .5 : 1)){
     inp.x = dx/dist*.3; inp.z = dz/dist*.3; press('atk'); ai.wantCombo = Math.random() < D.combo; ai.cd = 4; return;
   }
   if (tOk && t.pos.y > 1 && dist < 2.5 && Math.random() < .3) press('jump');

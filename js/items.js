@@ -2,7 +2,7 @@
 // Part of the game split into files: all js/ files share one global scope and must load in the order listed in index.html.
 /* ---------- Items & bombs ---------- */
 function makeItemMesh(type){
-  const inner = type === 'hammer' ? buildHammer() : type === 'bomb' ? buildBomb() : type === 'heal' ? buildRice() : buildGun(type);
+  const inner = type === 'hammer' ? buildHammer() : type === 'bomb' ? buildBomb() : type === 'heal' ? buildRice() : type === 'potion' ? buildPotion() : buildGun(type);
   if (type === 'gun' || type === 'shotgun'){ inner.rotation.z = PI/2; inner.position.set(-.3, .1, 0); }
   if (type === 'hammer'){ inner.rotation.z = .9; inner.position.set(-.35, .45, 0); }
   const g = new THREE.Group(); g.add(inner);
@@ -11,7 +11,7 @@ function makeItemMesh(type){
   scene.add(g, ring);
   return g;
 }
-const ITEM_TYPES = ['hammer', 'bomb', 'heal', 'gun', 'shotgun'];
+const ITEM_TYPES = ['hammer', 'bomb', 'heal', 'gun', 'shotgun', 'potion'];
 const WEAPONS = [null, 'hammer', 'gun', 'shotgun'];
 const WEAPON_INFO = {hammer:{uses:7, name:'ค้อน', got:'ได้ค้อน!'}, gun:{uses:10, name:'ปืนพก', got:'ได้ปืนพก!'}, shotgun:{uses:5, name:'ลูกซอง', got:'ได้ลูกซอง!'}};
 function addItem(type, pos, vy, id){
@@ -19,17 +19,19 @@ function addItem(type, pos, vy, id){
   G.items.push(it); return it;
 }
 function spawnItem(){
-  const r = Math.random(), type = r < .22 ? 'hammer' : r < .44 ? 'gun' : r < .58 ? 'shotgun' : r < .84 ? 'bomb' : 'heal';
+  const r = Math.random(), type = Math.random() < PU.potion ? 'potion' : r < .22 ? 'hammer' : r < .44 ? 'gun' : r < .58 ? 'shotgun' : r < .84 ? 'bomb' : 'heal';
   const p = randomDeckPoint(1.5); p.y = 7;
   addItem(type, p, 0);
 }
 const dropItem = (type, pos) => addItem(type, {x:pos.x, y:pos.y + 1.5, z:pos.z}, 4);
 function removeItem(it){ scene.remove(it.mesh, it.mesh.userData.ring); G.items.splice(G.items.indexOf(it), 1); }
-function doGrab(f){
+function doGrab(f, viaAtk){
   if (f.held === 'bomb'){ throwBomb(f); return true; }
+  if (mechGrab(f, viaAtk)) return true;     // get in / out of a mech (powerups.js)
+  if (powerOn(f)) return false;
   let best = null, bd = 1.5;
   for (const it of G.items){
-    if (!it.landed || it.type === 'heal') continue;
+    if (!it.landed || it.type === 'heal' || it.type === 'potion') continue;
     if (WEAPON_INFO[it.type] && f.weapon) continue;
     const d = Math.hypot(it.pos.x - f.pos.x, it.pos.z - f.pos.z);
     if (d < bd){ bd = d; best = it; }

@@ -2,7 +2,7 @@
 // Part of the game split into files: all js/ files share one global scope and must load in the order listed in index.html.
 /* ---------- Flow ---------- */
 function clearArena(){
-  clearStones(); clearBoss();
+  clearStones(); clearBoss(); clearPowers();
   for (const it of [...G.items]) removeItem(it);
   for (const b of G.bombs) scene.remove(b.mesh); G.bombs.length = 0;
   for (const b of G.bullets) scene.remove(b.mesh); G.bullets.length = 0;
