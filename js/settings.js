@@ -160,6 +160,28 @@ setAutoLock(G.autoLock);
 $('aimBtn').onclick = e => { setAutoLock(!G.autoLock); e.currentTarget.blur(); };
 for (const r of document.querySelectorAll('input[name=al]')) r.addEventListener('change', () => setAutoLock(r.value === '1'));
 $('camBtn').onclick = () => camStep(G.camZoom === CAM_LEVELS.length - 1 ? -G.camZoom : 1);
+// Turning the camera: hold Z / C (or the ⟲ ⟳ chips), drag with the right mouse button, V turns it back to the front
+G.camYaw = 0; G.camYawT = 0;
+const camTurn = {l:false, r:false, drag:null};
+function camYawStep(){
+  if (G.mode !== 'play') return;
+  const d = (camTurn.l || keys.has('KeyZ') ? 1 : 0) - (camTurn.r || keys.has('KeyC') ? 1 : 0);
+  if (d && !G.paused) G.camYawT += d*.04;
+  G.camYaw += (G.camYawT - G.camYaw)*.2;
+  if (Math.abs(G.camYawT - G.camYaw) < .0005) G.camYaw = G.camYawT;
+}
+function camYawReset(){ G.camYawT = G.camYaw - Math.atan2(Math.sin(G.camYaw), Math.cos(G.camYaw)); }
+for (const [id, side] of [['rotL', 'l'], ['rotR', 'r']]){
+  const b = $(id);
+  b.addEventListener('pointerdown', e => { e.preventDefault(); camTurn[side] = true; b.setPointerCapture(e.pointerId); });
+  for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, () => { camTurn[side] = false; });
+  b.addEventListener('contextmenu', e => e.preventDefault());
+}
+$('rotL').addEventListener('dblclick', camYawReset); $('rotR').addEventListener('dblclick', camYawReset);
+canvas.addEventListener('contextmenu', e => { if (G.mode === 'play') e.preventDefault(); });
+canvas.addEventListener('pointerdown', e => { if (G.mode === 'play' && e.button === 2){ camTurn.drag = e.clientX; canvas.setPointerCapture(e.pointerId); } });
+canvas.addEventListener('pointermove', e => { if (camTurn.drag === null) return; G.camYawT -= (e.clientX - camTurn.drag)*.008; camTurn.drag = e.clientX; });
+for (const ev of ['pointerup', 'pointercancel']) canvas.addEventListener(ev, () => { camTurn.drag = null; });
 {
   let acc = 0;
   canvas.addEventListener('wheel', e => {

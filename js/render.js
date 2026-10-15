@@ -172,11 +172,19 @@ function render(){
     }
     mid.x = Math.max(-STAGE.camX, Math.min(STAGE.camX, mid.x)); mid.y = Math.max(0, mid.y)*.5;
     const cz = CAM_LEVELS[G.camZoom] || CAM_LEVELS[1], won = ts.length && ts[0].state === 'win', ck = won ? .5 : cz.k, mz = won ? 1 : .6;
-    if (cz.all && !won){ const d = (STAGE.camX + 6)/(Math.tan(camera.fov*PI/360)*camera.aspect)*.74; camPos.lerp(tmpV.set(0, d, d), .07); camLook.lerp(new V(0, 0, 0), .09); }
-    else {
-      camPos.lerp(tmpV.set(mid.x*.9, (7.5 + spread*.35)*ck + mid.y, mid.z*mz + (11.5 + spread*.55)*ck), won ? .05 : .07);
-      camLook.lerp(new V(mid.x, mid.y + (won ? 1.9 : 1), mid.z*(won ? 1 : .8)), .09);
+    camYawStep();
+    // where the camera wants to be with no turning, then turned by G.camYaw around the point it looks at
+    let L, P, k;
+    if (cz.all && !won){ const d = (STAGE.camX + 6)/(Math.tan(camera.fov*PI/360)*camera.aspect)*.74; L = new V(0, 0, 0); P = tmpV.set(0, d, d); k = .07; }
+    else { L = new V(mid.x, mid.y + (won ? 1.9 : 1), mid.z*(won ? 1 : .8)); P = tmpV.set(mid.x*.9, (7.5 + spread*.35)*ck + mid.y, mid.z*mz + (11.5 + spread*.55)*ck); k = won ? .05 : .07; }
+    if (G.camYaw){
+      const c = Math.cos(G.camYaw), s = Math.sin(G.camYaw), dx = P.x - L.x, dz = P.z - L.z;
+      P.x = L.x + dx*c + dz*s; P.z = L.z - dx*s + dz*c;
+      // the stages are built to be seen from the front: from the sides and back the camera rises and looks down more, over the walls
+      const back = (1 - c)/2, hz = 1 - .35*back;
+      P.x = L.x + (P.x - L.x)*hz; P.z = L.z + (P.z - L.z)*hz; P.y = L.y + (P.y - L.y)*(1 + .75*back);
     }
+    camPos.lerp(P, k); camLook.lerp(L, .09);
   }
   camera.position.copy(camPos);
   if (G.shake > .005 && !REDUCE && !G.paused){

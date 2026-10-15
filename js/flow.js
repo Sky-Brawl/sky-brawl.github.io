@@ -73,6 +73,7 @@ function beginMatch(specs, stocks){
   G.mode = 'play'; G.paused = false; G.endT = 0; G.winner = null; G.slow = 0; G.stocks = stocks;
   G.countdown = 210; G.cdShown = new Set(); G.itemTimer = 240; G.spec = 0; G.dbgHtml = null;
   G.matchId = (G.matchId || 0) + 1; $('resXp').hidden = true;
+  G.camYaw = G.camYawT = 0; camStep(2 - G.camZoom);   // start wide every time (the tutorial picks its own)
   createFighters(specs, stocks, true);
   renderer.setPixelRatio(Math.min(devicePixelRatio, IS_TOUCH ? (specs.length > 24 ? 1 : 1.5) : (specs.length > 64 ? 1.5 : 2))); resize();
   buildHud();
