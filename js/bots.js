@@ -8,7 +8,7 @@ function toggleAuto(ctrl){
   if (!canAuto()) return;
   const f = G.fighters.find(o => o.ctrl === ctrl); if (!f) return;
   G.auto[ctrl] = !G.auto[ctrl];
-  Object.assign(f.ai, {cd:0, guardT:0, retreat:0, wantCombo:false, tgt:null, tgtT:0});
+  Object.assign(f.ai, {cd:0, guardT:0, retreat:0, wantCombo:false, tgt:null, tgtT:0, duel:null, duelT:0});
   Object.assign(f.input, {x:0, z:0, atk:false, jump:false, guard:false, grab:false, skill:false});
   touch.atkL = touch.jumpL = touch.grabL = touch.skillL = false;
   feed(G.auto[ctrl] ? `${f.name}: บอทเล่นแทน` : `${f.name}: กลับมาบังคับเอง`);
@@ -87,7 +87,11 @@ function think(b){
   if (!['idle','run','air','guard'].includes(b.state)){ inp.guard = false; inp.x = inp.z = 0; return; }
   if (ai.guardT > 0){ ai.guardT--; inp.guard = ai.guardT > 0; inp.x = inp.z = 0; return; }
   inp.guard = false;
-  if (!ai.tgt || !alive(ai.tgt) || ai.tgt.state === 'ko' || --ai.tgtT <= 0){ ai.tgt = nearestFoe(b); ai.tgtT = 90 + Math.random()*120 | 0; }
+  if (!ai.tgt || !alive(ai.tgt) || ai.tgt.state === 'ko' || --ai.tgtT <= 0){
+    // a player who challenged this bot in chat stays its target until the duel time runs out (chatbot.js)
+    const d = ai.duelT > G.frame && ai.duel && alive(ai.duel) && ai.duel.stocks > 0 ? ai.duel : null;
+    ai.tgt = d || nearestFoe(b); ai.tgtT = d ? 30 : 90 + Math.random()*120 | 0;
+  }
   if (G.raid && G.boss && G.boss.hp > 0 && ai.retreat <= 0) return thinkBoss(b, D);
   if (G.teamMode && b.side >= 0){
     // Defenders peel onto anyone threatening their own stone; raiders head for the enemy stone

@@ -155,7 +155,7 @@ function botsAnswer(from, text){
     if (!fromBot && !line.includes('@') && Math.random() < .45) line = '@' + from.name + ' ' + line;
     queueBotLine(b, humanize(line), 40 + i*70 + Math.random()*90);
     b.chatT = G.frame + 300;
-    if (act === 'duel' && b.ai && alive(from)){ b.ai.tgt = from; b.ai.tgtT = 900; }   // the bot really comes for you
+    if (act === 'duel' && b.ai && alive(from)){ b.ai.tgt = b.ai.duel = from; b.ai.tgtT = 30; b.ai.duelT = G.frame + 900; }   // the bot really comes for you
     if (!fromBot && (i === 0 || !many)) CHAT.threads.set(from.idx, {bot:b, until:G.frame + 660, topic:null});
   });
 }
