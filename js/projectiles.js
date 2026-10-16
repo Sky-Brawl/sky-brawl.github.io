@@ -17,6 +17,7 @@ function burst(b){
   flash(b.pos, c, .4, r*1.3, 16); emit(b.pos, 20, c, 6, 4, 26, 1.6, 6);
   if (b.kind === 'fireball') explodeFx(b.pos);
   aoe(b.owner, b.pos, r, b.m);
+  if (b.kind === 'acid') acidPool(b.owner, b.pos, r*.85);
   return true;
 }
 PROJ_LOOK.skyslash = [0xdff4ff, .3, 1]; TRAIL.skyslash = 0xbfe9ff; PROJ_SND.skyslash = 'skyslash';

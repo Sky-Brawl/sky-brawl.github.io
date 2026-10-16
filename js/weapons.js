@@ -67,7 +67,7 @@ function buildClassWeapon(cls){
     }
     case 'wizard': add(new THREE.CylinderGeometry(.04, .04, 1.4, 8), 0x3a2a1a, 0, -.45, 0); glow(new THREE.OctahedronGeometry(.15), 0xff5d4a, -1.2); break;
     case 'crusader': add(new THREE.CylinderGeometry(.035, .035, 1.6, 8), wood, 0, -.5, 0); add(new THREE.ConeGeometry(.08, .3, 8), silver, 0, -1.42, 0, 1.08).rotation.x = PI; break;
-    case 'alchemist': add(new THREE.CylinderGeometry(.03, .03, .2, 8), 0xf4f1ea, 0, -.12, 0); glow(SPH(.14), 0x6fe08a, -.32); break;
+    case 'alchemist': add(new THREE.CylinderGeometry(.04, .035, .06, 8), 0x8a5a2b, 0, -.02, 0); add(new THREE.CylinderGeometry(.035, .035, .16, 8), 0xe8f4ff, 0, -.12, 0); glow(SPH(.15), 0xd8342c, -.32); break;
     case 'gunner': { const p = buildGun('gun'); p.scale.setScalar(.85); g.add(p); break; }
     case 'gundam': add(new THREE.CylinderGeometry(.045, .045, .25, 8), 0xf4f4f4, 0, -.1, 0); glow(new THREE.CylinderGeometry(.06, .06, 1, 10), 0xff6bd6, -.72); break;
     default: return null;

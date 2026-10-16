@@ -273,7 +273,7 @@ const Net = {
   },
   encF(f){
     const r = v => Math.round(v);
-    const flags = (f.weapon ? 1 : 0) | (f.held ? 2 : 0) | (f.invuln > 0 ? 4 : 0) | (f.onGround ? 8 : 0) | (f.rage > 0 ? 16 : 0) | (f.chill > 0 ? 32 : 0) | (f.shock > 0 ? 64 : 0) | (f.formT > 0 ? 128 : 0) | (f.apeT > 0 ? 256 : 0) | (f.zombie ? 512 : 0);
+    const flags = (f.weapon ? 1 : 0) | (f.held ? 2 : 0) | (f.invuln > 0 ? 4 : 0) | (f.onGround ? 8 : 0) | (f.rage > 0 ? 16 : 0) | (f.chill > 0 ? 32 : 0) | (f.shock > 0 ? 64 : 0) | (f.formT > 0 ? 128 : 0) | (f.apeT > 0 ? 256 : 0) | (f.zombie ? 512 : 0) | (f.poison && f.poison.length ? 1024 : 0);
     return [r(f.pos.x*100), r(f.pos.y*100), r(f.pos.z*100), r(f.vel.x*10), r(f.vel.y*10), r(f.vel.z*10), r(f.facing*100),
       STATES.indexOf(f.state), Math.min(f.stateT, 999), Math.ceil(Math.max(0, f.hp)), f.stocks, flags, f.move ? MOVE_KEYS.indexOf(f.moveKey) : -1, f.weaponUses, f.lr, WEAPONS.indexOf(f.weapon), Math.ceil(f.skillCd/6), f.lock ? f.lock.idx : -1, Math.round(f.stam), f.emo && f.emo.until > G.frame ? f.emoSeq*16 + f.emo.id : 0];
   },
@@ -504,7 +504,7 @@ const Net = {
       else if (Math.abs(f.stateT - n(8)) > 6) f.stateT = n(8);
       f.hp = hp; f.stocks = stk; f.stun = 18;
       f.weapon = a.length > 15 ? (WEAPONS[n(15)] || null) : (fl & 1 ? 'hammer' : null); f.held = fl & 2 ? 'bomb' : null; f.invuln = fl & 4 ? 10 : 0; f.onGround = !!(fl & 8);
-      f.weaponUses = n(13); f.skillCd = n(16)*6; f.rage = fl & 16 ? 30 : 0; f.chill = fl & 32 ? 30 : 0; f.shock = fl & 64 ? 30 : 0; { const was = f.formT > 0; f.formT = fl & 128 ? 30 : 0; if ((f.formT > 0) !== was) f.formT > 0 ? formFx(f) : endForm(f); } { const was = f.apeT > 0; f.apeT = fl & 256 ? 30 : 0; if ((f.apeT > 0) !== was){ if (f.apeT > 0){ apeFx(f); f.apeIntro = 50; } else endApe(f); } } zombieFromSnap(f, !!(fl & 512)); f.lockIdx = a.length > 17 ? n(17) : -1; f.stam = a.length > 18 ? n(18) : 100;
+      f.weaponUses = n(13); f.skillCd = n(16)*6; f.rage = fl & 16 ? 30 : 0; f.chill = fl & 32 ? 30 : 0; f.shock = fl & 64 ? 30 : 0; { const was = f.formT > 0; f.formT = fl & 128 ? 30 : 0; if ((f.formT > 0) !== was) f.formT > 0 ? formFx(f) : endForm(f); } { const was = f.apeT > 0; f.apeT = fl & 256 ? 30 : 0; if ((f.apeT > 0) !== was){ if (f.apeT > 0){ apeFx(f); f.apeIntro = 50; } else endApe(f); } } zombieFromSnap(f, !!(fl & 512)); f.poisonVis = !!(fl & 1024); f.lockIdx = a.length > 17 ? n(17) : -1; f.stam = a.length > 18 ? n(18) : 100;
       if (a.length > 19){ const ec = n(19); if (ec && ec !== f.emoCode){ f.emoCode = ec; if (!(f.emo && f.emo.id === ec % 16 && f.emo.until > G.frame)) f.emo = {id:ec % 16, until:G.frame + EMOTE_T}; } }
     });
     if (Array.isArray(sn.it)){

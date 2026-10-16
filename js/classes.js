@@ -208,13 +208,28 @@ const OUTFITS = {
     const w = OP(new THREE.BoxGeometry(.5, .07, .04), 0x2b2f3a); w.position.set(0, .14, .59); h.add(w);
     oPads(t, 0xc9d2de); oCape(t, 0xb8282a); oCross(t, 0xb8282a);
   }},
-  alchemist:{name:'อัลเคมิสต์', body:0xf2efe6, head:true, build(h, t){
-    goggles(h, 0x8a5a2b, .4);
-    oRobe(t, 0xe8e4da); oCollar(t, 0x3f8f8f, .3, .07);
-    [0x6fe08a, 0x7fe3ff, 0xff8fd6].forEach((c, i) => {
-      const fl = new THREE.Mesh(new THREE.CylinderGeometry(.05, .07, .16, 8), new THREE.MeshBasicMaterial({color:c, transparent:true, opacity:.85}));
-      fl.position.set(-.22 + i*.22, -.2, .36); t.add(fl);
-    });
+  // Alchemist: round gold-rimmed glasses, a long brown coat, a blue cape with gold trim, a belt with a pouch and potions
+  alchemist:{name:'อัลเคมิสต์', body:0x7a5233, head:true, build(h, t){
+    const GOLD = 0xe2b84a, BLUE = 0x2f4fa8;
+    for (const s of [-1, 1]){
+      const g = OP(new THREE.TorusGeometry(.1, .022, 6, 16), GOLD); g.position.set(s*.17, .03, .565); h.add(g);
+      const lens = new THREE.Mesh(new THREE.CircleGeometry(.09, 14), new THREE.MeshBasicMaterial({color:0xe6f6ff, transparent:true, opacity:.4})); lens.position.set(s*.17, .03, .572); h.add(lens);
+    }
+    const br = OP(new THREE.BoxGeometry(.12, .025, .02), GOLD); br.position.set(0, .05, .575); h.add(br);
+    oRobe(t, 0x6b4428);
+    const hem = OP(new THREE.CylinderGeometry(.56, .59, .08, 16, 1, true), 0x4a2e1a); hem.position.y = -.56; t.add(hem);
+    // a blue mantle over the shoulders with a gold edge and a stand-up collar at the back
+    const mant = OP(SPH(.47), BLUE, 1.04); mant.scale.set(1.14, .42, 1); mant.position.y = .27; t.add(mant);
+    const trim = OP(new THREE.TorusGeometry(.5, .03, 6, 22), GOLD); trim.rotation.x = PI/2; trim.position.y = .2; t.add(trim);
+    const stand = OP(new THREE.BoxGeometry(.5, .22, .06), BLUE); stand.position.set(0, .44, -.24); stand.rotation.x = -.35; t.add(stand);
+    const cape = OP(new THREE.BoxGeometry(.72, .88, .04), BLUE); cape.position.set(0, -.12, -.38); cape.rotation.x = .16; t.add(cape);
+    const capeT = OP(new THREE.BoxGeometry(.74, .05, .06), GOLD); capeT.position.set(0, -.55, -.31); capeT.rotation.x = .16; t.add(capeT);
+    for (let i = 0; i < 3; i++){ const b = OP(SPH(.035), GOLD); b.position.set(0, .16 - i*.11, .37); t.add(b); }
+    const belt = OP(new THREE.TorusGeometry(.4, .045, 6, 20), 0x3a2a1a); belt.rotation.x = PI/2; belt.position.y = -.18; t.add(belt);
+    const buckle = OP(new THREE.BoxGeometry(.13, .1, .04), GOLD); buckle.position.set(0, -.18, .41); t.add(buckle);
+    const pouch = OP(new THREE.BoxGeometry(.16, .17, .1), 0x5a3a22); pouch.position.set(.3, -.26, .26); t.add(pouch);
+    const vial = new THREE.Mesh(new THREE.CylinderGeometry(.045, .055, .17, 8), new THREE.MeshBasicMaterial({color:0xd8342c, transparent:true, opacity:.9})); vial.position.set(-.3, -.24, .28); t.add(vial);
+    const vial2 = new THREE.Mesh(new THREE.CylinderGeometry(.04, .05, .14, 8), new THREE.MeshBasicMaterial({color:0x6fe08a, transparent:true, opacity:.9})); vial2.position.set(-.18, -.27, .34); t.add(vial2);
   }},
   rogue:{name:'โร้ก', body:0x3a2f4a, head:true, noHair:true, build(h, t){
     h.add(OP(new THREE.SphereGeometry(.6, 24, 12, 0, PI*2, 0, PI*.46), 0x5a2a7a));

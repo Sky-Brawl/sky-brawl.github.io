@@ -38,7 +38,7 @@ class Fighter {
     Object.assign(this, {chill:0, shock:0, hp:MAX_HP, hpLag:MAX_HP, stocks, state:'idle', stateT:0, move:null, moveKey:'', hasHit:false,
       buffer:0, invuln:0, onGround:true, weapon:null, weaponUses:0, held:null, stun:16, squash:0, combo:0, freeze:0,
       hits:0, dmgDealt:0, kos:0, lastHitBy:-1, lastHitT:-9999, place:0, lr:0, waitT:0, lastMove:null,
-      splashed:false, netInit:false, nc:null, skillCd:0, rage:0, lock:null, lockIdx:-1, formT:0, stam:100, exh:false, stamT:0, apeT:0, apeSk:0, apeIntro:0, mechSk:0, mech:null});
+      splashed:false, netInit:false, nc:null, skillCd:0, rage:0, lock:null, lockIdx:-1, formT:0, stam:100, exh:false, stamT:0, apeT:0, apeSk:0, apeIntro:0, mechSk:0, mech:null, poison:null, poisonVis:false});
   }
 }
 const setState = (f, s) => { f.state = s; f.stateT = 0; };

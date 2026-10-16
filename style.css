@@ -436,3 +436,6 @@ body.replaying::after{bottom:0}
 #zbBar{background:var(--paper);border:3px solid var(--ink);border-radius:12px;box-shadow:3px 3px 0 var(--ink);padding:5px 12px;font:700 14px var(--body);white-space:nowrap}
 #zbBar[hidden]{display:none}
 #zbBar.low{background:#ffe0dc;animation:dpulse .6s ease-in-out infinite alternate}
+
+/* Poison damage numbers */
+.pop.poison{color:#7be36a;font-size:14px}

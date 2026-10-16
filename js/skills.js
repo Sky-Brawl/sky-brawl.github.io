@@ -45,7 +45,44 @@ function throwGrenade(f, m, spread){
   b.mesh.position.copy(b.pos); G.bombs.push(b);
 }
 // Area effects that live for a while (the ice storm); the host runs them, guests only draw them
-const ZONE_KINDS = ['ice', 'skull'];
+const ZONE_KINDS = ['ice', 'skull', 'acid'];
+// Alchemist's acid pool: lies on the ground POOL_SECS; anyone standing in it is poisoned for POISON_SECS (refreshed while
+// inside). Each pool adds its own stack (up to POISON_MAX), and every 0.5 s a fighter loses POISON_DMG per stack.
+const ALCH_CFG = ((window.SKY_CONFIG || {}).skills || {}).alchemist || {};
+const cfgNum = (v, d, lo, hi) => { v = Number(v); return Number.isFinite(v) ? Math.max(lo, Math.min(hi, v)) : d; };
+const POOL_SECS = cfgNum(ALCH_CFG.poolSeconds, 10, 1, 30), POISON_SECS = cfgNum(ALCH_CFG.poisonSeconds, 10, 1, 30), POISON_DMG = cfgNum(ALCH_CFG.poisonDmg, 1.5, 0, 20), POISON_MAX = 4;
+function acidPool(owner, pos, r){
+  const gy = groundUnder(pos.x, pos.z); if (gy < -50) return;   // over water or the void: nothing to pool on
+  G.zones.push({id:G.nextId++, kind:'acid', owner, x:pos.x, y:gy, z:pos.z, r, t:0, life:Math.round(POOL_SECS*60), born:G.frame});
+}
+function stepAcid(zn){
+  if (zn.t >= zn.life){ dropZone(zn); return; }
+  if (zn.t % 10) return;
+  for (const f of G.fighters){
+    if (f === zn.owner || ally(zn.owner, f) || !hittable(f) || Math.abs(f.pos.y - zn.y) > 1.6 || Math.hypot(f.pos.x - zn.x, f.pos.z - zn.z) > zn.r) continue;
+    const P = f.poison || (f.poison = []), until = G.frame + Math.round(POISON_SECS*60), s = P.find(p => p.src === zn.id);
+    if (s) s.until = until;
+    else if (P.length < POISON_MAX){ P.push({src:zn.id, owner:zn.owner, until}); if (P.length === 1) popup(new V(f.pos.x, f.pos.y + 2.4, f.pos.z), 'ติดพิษ!', 'poison th', 40); }
+  }
+}
+// Every 0.5 s: poison damage that does not stop you (no hitstun); the last tick knocks out the normal way
+function stepPoison(){
+  for (const f of G.fighters){
+    const P = f.poison; if (!P || !P.length) continue;
+    for (let i = P.length - 1; i >= 0; i--) if (P[i].until <= G.frame) P.splice(i, 1);
+    if (!P.length || (G.frame + f.idx) % 30 || !hittable(f) || f.state === 'ko') continue;
+    const owner = P[P.length - 1].owner;
+    let dmg = POISON_DMG*P.length;
+    const at = new V(f.pos.x, f.pos.y + 1.9, f.pos.z);
+    if (f.mech){ f.mech.hp -= dmg; popup(at, '-' + Math.round(dmg*10)/10, 'poison'); if (f.mech.hp <= 0) destroyMech(f.mech, owner); continue; }
+    if (f.apeT > 0) dmg *= PU.apeTake;
+    if (f.hp - dmg <= 0){ applyHit(null, f, {dmg:Math.ceil(dmg), kb:5, up:5, launch:true, hitstop:4, shake:.1}, new V(Math.sin(f.facing + PI), 0, Math.cos(f.facing + PI)), owner); continue; }
+    f.hp -= dmg;
+    if (owner && owner !== f){ owner.dmgDealt += dmg; f.lastHitBy = owner.idx; f.lastHitT = G.frame; }
+    popup(at, '-' + Math.round(dmg*10)/10, 'poison');
+    emit(at, 4, 0x6fe08a, 2, 2, 18, 1.1, -2);
+  }
+}
 const STORM_TICK = {dmg:2, kb:1.5, up:0, stun:14, hitstop:2, shake:.04};
 function iceStorm(f, m){
   const t = f.lock && hittable(f.lock) ? f.lock : nearestTarget(f, 13);
@@ -54,8 +91,10 @@ function iceStorm(f, m){
   flash(new V(x, 1, z), 0xbfefff, .45, m.radius || 4, 16);
 }
 function stepZones(){
+  stepPoison();
   for (const zn of [...G.zones]){
     zn.t++;
+    if (zn.kind === 'acid'){ stepAcid(zn); continue; }
     if (zn.kind === 'skull'){
       stepSkeleton(zn);
       if (zn.sink >= 26) dropZone(zn);
@@ -67,10 +106,26 @@ function stepZones(){
   }
 }
 const ZONE_GEO = new THREE.CircleGeometry(1, 40);
+function acidFx(zn){
+  const age = G.frame - (zn.born || G.frame), left = POOL_SECS*60 - age;
+  if (!zn.mesh){
+    zn.mesh = new THREE.Mesh(ZONE_GEO, new THREE.MeshBasicMaterial({color:0x5fd35f, transparent:true, opacity:.42, depthWrite:false, side:THREE.DoubleSide}));
+    zn.mesh.rotation.x = -PI/2; scene.add(zn.mesh);
+    const c = new V(zn.x, (zn.y || 0) + .2, zn.z); flash(c, 0x8dff6a, .4, zn.r, 14);
+  }
+  zn.mesh.position.set(zn.x, (zn.y || 0) + .05, zn.z);
+  zn.mesh.scale.setScalar(zn.r*Math.min(1, .3 + age/12)*(.97 + Math.sin(G.frame*.12 + zn.x)*.03));
+  zn.mesh.material.opacity = .42*Math.max(0, Math.min(1, left/60));
+  if (G.frame % 2 === 0){
+    const a = Math.random()*PI*2, rr = Math.sqrt(Math.random())*zn.r*.95;
+    emit(new V(zn.x + Math.cos(a)*rr, (zn.y || 0) + .1, zn.z + Math.sin(a)*rr), 1, Math.random() < .3 ? 0xd8ffb0 : 0x6fe08a, .6, 2.2, 26, 1.3, -1.5);
+  }
+}
 function dropZone(zn){ if (zn.mesh) scene.remove(zn.mesh); G.zones.splice(G.zones.indexOf(zn), 1); }
 function zoneFx(){
   for (const zn of G.zones){
     if (zn.kind === 'skull'){ skullFx(zn); continue; }
+    if (zn.kind === 'acid'){ acidFx(zn); continue; }
     if (!zn.mesh){
       zn.mesh = new THREE.Mesh(ZONE_GEO, new THREE.MeshBasicMaterial({color:0xbfefff, transparent:true, opacity:.28, depthWrite:false, side:THREE.DoubleSide}));
       zn.mesh.rotation.x = -PI/2; scene.add(zn.mesh);
@@ -219,6 +274,8 @@ function zap(a, b){
   flash(b, 0xfff27a, .45, 1.5, 10);
 }
 function statusFx(f, shown){
+  if (shown && ((f.poison && f.poison.length) || f.poisonVis) && (G.frame + f.idx) % 7 === 0)
+    emit(new V(f.pos.x + (Math.random() - .5)*.7, f.pos.y + 1.6 + Math.random()*.6, f.pos.z + (Math.random() - .5)*.7), 1, 0x6fe08a, .5, 2, 22, 1.2, -2);
   const v = f.vis, on = shown && f.chill > 0;
   if (on && !v.ice){ v.ice = new THREE.Mesh(ICE_GEO, ICE_MAT); v.ice.renderOrder = 3; scene.add(v.ice); }
   if (v.ice){ v.ice.visible = on; if (on){ v.ice.position.set(f.pos.x, f.pos.y + .97, f.pos.z); v.ice.rotation.y = f.idx*.7; } }
