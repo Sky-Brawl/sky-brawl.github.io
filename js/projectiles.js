@@ -90,11 +90,12 @@ function aoe(src, center, radius, m, opt = {}){
   }
 }
 function useSkill(f){
-  const key = skillKey(f.cls);
-  f.skillCd = (SKILL_INFO[f.cls] || SKILL_INFO.none).cd + (MOVES[key].form ? Math.round(FORM_INFO[f.cls].secs*60) : 0);
+  const kc = skillOf(f), key = skillKey(kc), copied = kc !== f.cls;
+  f.skillCd = (SKILL_INFO[kc] || SKILL_INFO.none).cd + (MOVES[key].form && FORM_INFO[kc] ? Math.round(FORM_INFO[kc].secs*60) : 0);
+  if (copied) flash(new V(f.pos.x, f.pos.y + 1.4, f.pos.z), 0x8a5ad8, .35, 1.8, 10);
   if (f.held === 'bomb'){ dropItem('bomb', f.pos); f.held = null; }
   startMove(f, key);
-  popup(new V(f.pos.x, 2.7, f.pos.z), MOVES[key].name + '!', 'combo th', 40);
+  popup(new V(f.pos.x, 2.7, f.pos.z), (copied ? '📖 ' : '') + MOVES[key].name + '!', 'combo th', 40);
 }
 const blocked = (x, z) => !onDeck(x, z, .5) || FUNNELS.some(fn => Math.hypot(x - fn.x, z - fn.z) < fn.r + .4) || !!inBlock(x, z, .4);
 function shadowStep(f){
@@ -168,7 +169,20 @@ function grandCross(f, m){
     }
   }
 }
+// Rogue: copies the class skill of an enemy it hits (the E dash or the 3rd combo hit). E then casts that skill exactly like
+// its owner, until another one is copied or the rogue is knocked out. Transformations need the class's own body: not copied.
+const NO_COPY = new Set(['none', 'rogue', 'werewolf', 'tamer', 'dragonblade']);
+function rogueCopy(f, o){
+  if (!f || f.cls !== 'rogue' || !o || o === f || !o.cls || NO_COPY.has(o.cls) || !MOVES['sk_' + o.cls] || f.stolen === o.cls) return;
+  f.stolen = o.cls;
+  const at = new V(f.pos.x, f.pos.y + 2.8, f.pos.z);
+  popup(at, '📖 คัดลอก: ' + MOVES['sk_' + o.cls].name, 'combo th', 70);
+  flash(new V(f.pos.x, f.pos.y + 1.2, f.pos.z), 0x8a5ad8, .45, 2.2, 14); emit(at, 16, 0xb48dff, 3, 3, 26, 1.3, 1);
+  Sfx.play('skill', f.pos, .6);
+}
+const skillOf = f => f.cls === 'rogue' && f.stolen ? f.stolen : f.cls;
 function steal(f, o){
+  rogueCopy(f, o);
   const at = new V(o.pos.x, 2.4, o.pos.z);
   if (o.weapon){
     if (!f.weapon){ f.weapon = o.weapon; f.weaponUses = o.weaponUses; }
@@ -277,6 +291,7 @@ function stepBullets(){
       if (burst(b)){}
       else {
         applyHit(null, hit, b.m, b.vel.clone().setY(0).normalize(), b.owner);
+        if (b.m && b.m.copy) rogueCopy(b.owner, hit);
         if (b.kind === 'soul' && b.owner && alive(b.owner)){ b.owner.hp = Math.min(MAX_HP, b.owner.hp + b.m.dmg); popup(new V(b.owner.pos.x, 2.4, b.owner.pos.z), '+' + b.m.dmg, 'heal'); }
       }
       if (b.pierce){ (b.hitSet = b.hitSet || new Set()).add(hit); continue; }

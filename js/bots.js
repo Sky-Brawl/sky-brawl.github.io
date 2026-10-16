@@ -126,7 +126,7 @@ function think(b){
   if (tOk && t.state === 'attack' && t.stateT <= t.move.startup && dist < 2.6 && Math.random() < D.guard){
     ai.guardT = 12 + t.move.startup; inp.guard = true; inp.x = inp.z = 0; ai.cd = D.react; return;
   }
-  const si = SKILL_INFO[b.cls] || SKILL_INFO.none;
+  const si = SKILL_INFO[skillOf(b)] || SKILL_INFO.none;
   if (ai.mechGo && !b.mech && Math.hypot(ai.mechGo.pos.x - b.pos.x, ai.mechGo.pos.z - b.pos.z) < 2){ press('grab'); ai.cd = 4; return; }
   if (powerOn(b)){
     if (tOk && dist < 9 && !(b.apeT > 0 ? b.apeSk > 0 : b.mechSk > 0) && Math.random() < .3*D.aggr){ inp.x = dx/dist*.3; inp.z = dz/dist*.3; press('skill'); ai.cd = D.react; return; }

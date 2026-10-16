@@ -180,7 +180,7 @@ function loseStock(f, why){
     announceLoss(f, why, killer);
     botEmotes(f, killer); botChatKO(f, killer);
   }
-  f.weapon = null; f.held = null; f.combo = 0; f.lastHitBy = -1; f.chill = 0; f.shock = 0; f.formT = 0; f.poison = null;
+  f.weapon = null; f.held = null; f.combo = 0; f.lastHitBy = -1; f.chill = 0; f.shock = 0; f.formT = 0; f.poison = null; f.stolen = null;
   if (f.stocks <= 0){ f.state = 'out'; f.place = aliveCount() + 1; checkEnd(); }
   else { f.state = 'wait'; f.waitT = 70; }
 }

@@ -55,7 +55,7 @@ function zombieLose(f, why){
   if (killer && killer !== f) killer.kos++;
   announceLoss(f, why, killer);
   botEmotes(f, killer); botChatKO(f, killer);
-  f.weapon = null; f.held = null; f.combo = 0; f.lastHitBy = -1; f.chill = 0; f.shock = 0; f.formT = 0; f.poison = null;
+  f.weapon = null; f.held = null; f.combo = 0; f.lastHitBy = -1; f.chill = 0; f.shock = 0; f.formT = 0; f.poison = null; f.stolen = null;
   const wasHuman = !f.zombie;
   if (wasHuman && G.zbStarted) infect(f, killer);
   f.state = 'wait'; f.waitT = f.zombie ? Math.round(ZB.respawn*60) : 70;

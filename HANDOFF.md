@@ -439,3 +439,10 @@ python -m http.server 8765 --directory sky-brawl
 - ภาพ: `acidFx` วงเขียวโปร่ง + ฟองลอย จางช่วง 1 วิสุดท้าย · ตัวที่ติดพิษมีฟองเขียว (`statusFx`) · popup class `.pop.poison` · ออนไลน์: flag 1024 → `f.poisonVis`, บ่อมากับ `sn.zn` เดิม
 - ชุดใหม่ใน classes.js (แว่นกลมทอง โค้ตน้ำตาล ผ้าคลุมไหล่ทรงโดม + คอตั้ง + ผ้าคลุมหลังน้ำเงินขลิบทอง เข็มขัด กระเป๋า ขวดยา) · อาวุธในมือ (weapons.js) เป็นขวดกลมสีแดงมีจุก
 - ทดสอบ: 2 บ่อซ้อน → 2 stacks ~6 ดาเมจ/วิ, หมดบ่อแล้วพิษค้างตามเวลา, ไม่มี error
+
+## โร้กขโมยวิชา (1.15.0 · 2026-10-16)
+- `rogueCopy(f, o)` (projectiles.js): โร้กที่ตีโดนศัตรูด้วย `sk_rogue` (ผ่าน `steal`) หรือกระสุน rg3 (`copy:true`, เรียกตอนกระสุนโดนใน stepBullets) เก็บ `f.stolen = o.cls` · ไม่คัดลอก `NO_COPY` (none, rogue, werewolf, tamer, dragonblade = สกิลแปลงร่างที่ใช้ FORM_INFO ของอาชีพตัวเอง)
+- `skillOf(f)` = stolen ถ้าเป็นโร้กที่มีสกิลในตำรา · `useSkill` ใช้ skillKey/คูลดาวน์ของ skillOf · บอทใช้ SKILL_INFO ของ skillOf · HUD แสดง 📖 · ล้างตอน KO (loseStock/zombieLose) และ reset
+- ออนไลน์: f[20] = OUTFIT_K index ของ stolen (−1 = ไม่มี) ให้ HUD ของ guest
+- ทดสอบ: คัดลอก+ใช้ครบ 34 อาชีพไม่มี error, ขโมยเมจแล้ว E ยิงลูกไฟจริง
+- ชุดใหม่ใน classes.js (noHair + ผมเสย, เครื่องหมายหน้าผาก, ต่างหู, โค้ตยาว, ปกขน 12 ก้อน + หนาม, กระดุมทอง 2 แถว, ซับในแดง) · มือซ้ายถือตำรา (buildOffhand rogue)

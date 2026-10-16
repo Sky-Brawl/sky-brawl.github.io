@@ -87,6 +87,11 @@ function buildOffhand(cls){
   else if (cls === 'hunter'){ const bow = part(new THREE.TorusGeometry(.45, .03, 6, 18, PI), toon(0x6b3f1e)); bow.rotation.z = PI/2; g.add(bow); }
   else if (cls === 'assassin'){ const d = part(new THREE.BoxGeometry(.05, .35, .07), toon(0xc9d2de), 1.08); d.position.y = -.28; g.add(d); }
   else if (cls === 'gunner'){ const p = buildGun('gun'); p.scale.setScalar(.85); g.add(p); }
+  else if (cls === 'rogue'){
+    const bk = part(new THREE.BoxGeometry(.09, .36, .28), toon(0x3a1f2a), 1.08); bk.position.set(.06, -.28, .04); g.add(bk);
+    const pg = part(new THREE.BoxGeometry(.07, .33, .25), toon(0xf4ecd8)); pg.position.set(.075, -.28, .04); g.add(pg);
+    const em = part(new THREE.BoxGeometry(.02, .12, .1), toon(0xe2b84a)); em.position.set(.015, -.28, .04); g.add(em);
+  }
   else if (cls === 'dragonblade'){
     const gd = part(new THREE.CylinderGeometry(.1, .1, .03, 10), toon(0x16171c)); gd.position.y = -.08; g.add(gd);
     const bl = part(new THREE.BoxGeometry(.05, 1.15, .08), toon(0xc9d2de), 1.08); bl.position.y = -.12 - .575; g.add(bl);

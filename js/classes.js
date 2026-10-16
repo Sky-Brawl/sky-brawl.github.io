@@ -231,12 +231,25 @@ const OUTFITS = {
     const vial = new THREE.Mesh(new THREE.CylinderGeometry(.045, .055, .17, 8), new THREE.MeshBasicMaterial({color:0xd8342c, transparent:true, opacity:.9})); vial.position.set(-.3, -.24, .28); t.add(vial);
     const vial2 = new THREE.Mesh(new THREE.CylinderGeometry(.04, .05, .14, 8), new THREE.MeshBasicMaterial({color:0x6fe08a, transparent:true, opacity:.9})); vial2.position.set(-.18, -.27, .34); t.add(vial2);
   }},
-  rogue:{name:'โร้ก', body:0x3a2f4a, head:true, noHair:true, build(h, t){
-    h.add(OP(new THREE.SphereGeometry(.6, 24, 12, 0, PI*2, 0, PI*.46), 0x5a2a7a));
-    for (const s of [-1, 1]){ const tl = OP(new THREE.BoxGeometry(.07, .34, .03), 0x5a2a7a); tl.position.set(s*.1, -.02, -.6); tl.rotation.z = s*.4; h.add(tl); }
-    const patch = OP(new THREE.BoxGeometry(.21, .19, .04), 0x1d1d1d); patch.position.set(.2, .03, .56); patch.rotation.y = .36; h.add(patch);
-    const strap = new THREE.Mesh(new THREE.TorusGeometry(.6, .015, 4, 28), toon(0x1d1d1d)); strap.rotation.set(PI/2 - .1, 0, 0); strap.position.y = .1; h.add(strap);
-    oCollar(t, 0xa8322c, .3, .08);
+  // Rogue: slicked-back black hair, a forehead mark and blue drop earrings; a long dark coat with a white fur collar,
+  // two rows of gold buttons, gold shoulder studs and a red lining
+  rogue:{name:'โร้ก', body:0x2a1f3a, head:true, noHair:true, build(h, t){
+    const COAT = 0x2a1f3a, FUR = 0xf2f2f5, GOLD = 0xe2b84a, HAIR = 0x14141a;
+    const hair = OP(new THREE.SphereGeometry(.6, 24, 12, 0, PI*2, 0, PI*.5), HAIR, 1.03); hair.rotation.x = -.3; hair.position.set(0, .05, -.04); h.add(hair);
+    const nape = OP(new THREE.BoxGeometry(.52, .44, .2), HAIR); nape.position.set(0, -.12, -.46); h.add(nape);
+    const mv = OP(new THREE.BoxGeometry(.035, .13, .02), 0x3a2a4a), mh = OP(new THREE.BoxGeometry(.11, .035, .02), 0x3a2a4a);
+    for (const m of [mv, mh]){ m.position.set(0, .3, .48); m.rotation.x = -.55; h.add(m); }
+    for (const s of [-1, 1]){ const e = OP(SPH(.05), 0x3fd0c8); e.position.set(s*.56, -.16, .02); h.add(e); }
+    const coat = OP(new THREE.CylinderGeometry(.34, .6, .62, 16, 1, true), COAT); coat.position.y = -.37; t.add(coat);
+    const lining = OP(new THREE.BoxGeometry(.08, .56, .03), 0x8a1030); lining.position.set(0, -.4, .52); lining.rotation.x = -.38; t.add(lining);
+    const shirt = OP(new THREE.BoxGeometry(.2, .3, .04), 0x1e1e26); shirt.position.set(0, .12, .35); t.add(shirt);
+    // the fur collar sits wide on the shoulders and stands up behind the head
+    for (let i = 0; i < 12; i++){
+      const a = i/12*PI*2, f = OP(SPH(.15), FUR, 1.06); f.position.set(Math.sin(a)*.47, .3, Math.cos(a)*.38); t.add(f);
+      if (Math.cos(a) < .45){ const sp = OP(new THREE.ConeGeometry(.08, .32, 4), FUR); sp.position.set(Math.sin(a)*.5, .5, Math.cos(a)*.4); sp.rotation.set(-Math.cos(a)*.55, 0, Math.sin(a)*.6); t.add(sp); }
+    }
+    for (const x of [-.16, .16]) for (let i = 0; i < 3; i++){ const b = OP(SPH(.035), GOLD); b.position.set(x, .16 - i*.13, .34); t.add(b); }
+    for (const s of [-1, 1]){ const st = OP(new THREE.CylinderGeometry(.06, .06, .03, 10), GOLD); st.rotation.x = PI/2; st.position.set(s*.33, .27, .22); t.add(st); }
   }},
   taekwon:{name:'เทควันโด', body:0xf4f4f4, head:true, build(h, t){
     const band = OP(new THREE.TorusGeometry(.58, .06, 6, 28), 0xd8342c); band.rotation.x = PI/2 - .2; band.position.y = .18; h.add(band);
