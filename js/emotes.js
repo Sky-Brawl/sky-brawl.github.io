@@ -86,6 +86,7 @@ function syncEmoteTag(f){
 
 /* ---------- Victory: whoever won stops, turns to the camera and celebrates until the result screen ---------- */
 function winnersNow(){
+  if (G.zombie && G.zbWin != null) return G.fighters.filter(f => (G.zbWin === 1) === !!f.zombie && alive(f) && f.stocks > 0);
   if (G.winner) return [G.winner];
   if (G.winTeam !== null && G.winTeam !== undefined) return G.fighters.filter(f => f.side === G.winTeam && alive(f) && f.stocks > 0);
   if (G.raidWin) return G.fighters.filter(f => alive(f) && f.stocks > 0);

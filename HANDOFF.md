@@ -424,3 +424,11 @@ python -m http.server 8765 --directory sky-brawl
 - เล่นจบคืนสภาพเดิมด้วย snapshot ก่อนเล่น (`saved.now`) · หุ่น/กระสุน/ระเบิดในไฮไลต์ใช้โมเดลชั่วคราว (pool) แล้วลบทิ้ง
 - คลิป: วาดลง canvas 1280×720 + MediaRecorder (mp4 ถ้าเบราว์เซอร์รองรับ ไม่งั้น webm) · ไม่มีเสียงในคลิป · แชร์ด้วย `navigator.share({files})` ถ้า `canShare` ไม่งั้นดาวน์โหลด
 - `Quest.watch` ไม่นับระหว่างเล่นไฮไลต์ · `hideAllPanels` / Esc หยุดไฮไลต์
+
+## โหมดซอมบี้ (1.14.0 · 2026-10-16)
+- ไฟล์ใหม่ `js/zombie.js` (หลัง `powerups.js`) · `MODE_KEYS` ต่อท้าย 'zombie' (เลขโหมดเดิมไม่เปลี่ยน) · การ์ด `#md-zombie` + option ใน `#rMode` (ห้องออนไลน์ได้การ์ดอัตโนมัติจาก buildRoomPicks) · config `zombie`
+- `beginMatch` ตั้ง `G.zombie` แล้วให้ทุกคน side 0 · `zombieTick()` ใน tick (host/ออฟไลน์): ตอน countdown ≤ 30 สุ่มซอมบี้ตัวแรก (`infect(f, null, true)`) เริ่มนับ `G.zbT` · มนุษย์คนสุดท้ายได้ `rage` (ฮีโร่)
+- `loseStock` → `zombieLose`: มนุษย์โดน KO = `infect` (side 1, `setLook` ผิวเขียว ตาดุ ถอดหมวก/ฉายา, ป้ายชื่อ 🧟) ไม่เสียชีวิต · ซอมบี้รอ `respawnSeconds` แล้วเกิดใหม่ · ไม่เหลือมนุษย์ → `zombieEnd(1)` · หมดเวลา → `zombieEnd(0)` ตั้งอันดับ (มนุษย์ที่รอด = 1, ซอมบี้เรียงตามเวลาโดนกัด / ฝั่งซอมบี้ชนะเรียงตาม KO)
+- ตัวคูณ: speed ใน sim, damage ใน applyHit (credit.zombie) · ซอมบี้ห้ามขึ้นหุ่น/กินยา · ท่าแขนยื่น `poseZombie` ใน pose · HUD `#zbBar` (`zombieHud` ใน render)
+- ออนไลน์: flag 512 ใน f[11] → `zombieFromSnap` · `sn.zb = [frames left, started]` · ผลจบ win code -30 (มนุษย์) / -31 (ซอมบี้) → `G.zbWin` · `winnersNow` ให้ฝั่งที่ชนะฉลอง
+- ทดสอบ: บอท 5 ด่าน (8–16 คน) มนุษย์ชนะ 1 ซอมบี้ชนะ 4 (บอทมนุษย์ไม่หนี) · encode/decode guest ตรง · ไม่มี error

@@ -125,7 +125,7 @@ function makeMech(id, p){
 function removeMech(m){ scene.remove(m.vis.root); const i = G.mechs.indexOf(m); if (i >= 0) G.mechs.splice(i, 1); if (m.rider && m.rider.mech === m) m.rider.mech = null; m.rider = null; }
 function mechGrab(f, viaAtk){
   if (f.mech){ if (viaAtk) return false; leaveMech(f); return true; }
-  if (f.apeT > 0 || f.held) return false;
+  if (f.apeT > 0 || f.held || f.zombie) return false;
   let best = null, bd = 2.3;
   for (const m of G.mechs){ if (m.rider || !m.landed) continue; const d = Math.hypot(m.pos.x - f.pos.x, m.pos.z - f.pos.z); if (d < bd){ bd = d; best = m; } }
   if (!best) return false;

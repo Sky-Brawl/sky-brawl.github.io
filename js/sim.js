@@ -50,7 +50,7 @@ function stepFighter(f){
       // Sprint: needs a direction, solid ground and some stamina; once it runs dry you must recover a quarter before the next sprint
       const sprint = !!inp.sprint && mag > .2 && f.onGround && !f.exh && f.stam > 0 && !(f.shock > 0);
       if (sprint){ f.stam -= 100/(SPRINT_SECS*60); f.stamT = 40; if (f.stam <= 0){ f.stam = 0; f.exh = true; } }
-      const sp = WALK*(sprint ? SPRINT : 1)*(f.onGround && !f.weapon ? 1 : .875)*(f.rage > 0 ? 1.4 : 1)*(f.shock > 0 ? .55 : 1)*(f.formT > 0 ? FORM_INFO[f.cls].speed : 1)*powerSpeed(f), k = f.onGround ? (STAGE.slip ? .09 : .35) : .12;
+      const sp = WALK*(sprint ? SPRINT : 1)*(f.onGround && !f.weapon ? 1 : .875)*(f.rage > 0 ? 1.4 : 1)*(f.shock > 0 ? .55 : 1)*(f.formT > 0 ? FORM_INFO[f.cls].speed : 1)*powerSpeed(f)*(f.zombie ? ZB.speed : 1), k = f.onGround ? (STAGE.slip ? .09 : .35) : .12;
       f.vel.x += (inp.x*sp - f.vel.x)*k; f.vel.z += (inp.z*sp - f.vel.z)*k;
       if (mag > .2) f.facing = Math.atan2(inp.x, inp.z);
       f.state = f.onGround ? (mag > .2 ? 'run' : 'idle') : 'air';
@@ -171,6 +171,7 @@ function physics(f){
   if (f.pos.y < SEA_Y - 5) loseStock(f, 'ring');
 }
 function loseStock(f, why){
+  if (G.zombie && G.mode === 'play') return zombieLose(f, why);
   f.lr = why === 'ring' ? 1 : 2;
   const killer = f.lastHitBy >= 0 && G.frame - f.lastHitT < 420 ? G.fighters[f.lastHitBy] : null;
   if (G.mode === 'play'){
@@ -228,6 +229,7 @@ function tick(){
   fxTick();
   if (G.stones.length){ stepStones(); if (G.frame % 6 === 0) syncStoneHud(); }
   if (G.boss){ stepBoss(); if (G.frame % 6 === 0) syncBossHud(); }
+  if (G.zombie) zombieTick();
   if (G.mode === 'custom'){ for (const f of G.fighters) if (f.squash > 0) f.squash--; return; }
   if (G.mode !== 'play') chatTick();
   if (G.net === 'guest' && G.mode === 'play'){ guestTick(); return; }
@@ -265,7 +267,7 @@ function tick(){
     }
     if (it.t > 60*20){ removeItem(it); continue; }
     if (it.landed && it.type === 'potion'){
-      const f = fs.find(f => alive(f) && f.state !== 'ko' && !powerOn(f) && f.pos.y < 1 && Math.hypot(it.pos.x - f.pos.x, it.pos.z - f.pos.z) < 1.1);
+      const f = fs.find(f => alive(f) && f.state !== 'ko' && !powerOn(f) && !f.zombie && f.pos.y < 1 && Math.hypot(it.pos.x - f.pos.x, it.pos.z - f.pos.z) < 1.1);
       if (f){ drinkPotion(f, it); continue; }
     }
     if (it.landed && it.type === 'heal'){

@@ -4,7 +4,7 @@
 function setSummary(){
   readMenuCfg();
   const stg = G.cfg.mode === 'boss' ? BOSS_STAGE : G.cfg.stage;
-  $('setSum').textContent = [{ffa:'ตะลุมบอน', team:'ทีมตีหิน', boss:'ตีบอส'}[G.cfg.mode], STAGES[stg].name, 'บอท' + {easy:'ง่าย', normal:'ปกติ', hard:'ยาก'}[G.cfg.df], G.cfg.n + ' คน', G.cfg.st + ' ชีวิต'].join(' · ');
+  $('setSum').textContent = [{ffa:'ตะลุมบอน', team:'ทีมตีหิน', boss:'ตีบอส', zombie:'ซอมบี้'}[G.cfg.mode], STAGES[stg].name, 'บอท' + {easy:'ง่าย', normal:'ปกติ', hard:'ยาก'}[G.cfg.df], G.cfg.n + ' คน', G.cfg.st + ' ชีวิต'].join(' · ');
 }
 $('setD').addEventListener('change', setSummary); $('setD').addEventListener('input', setSummary);
 try { $('setD').open = localStorage.getItem('skybrawl.setOpen') === '1'; } catch (e) {}
@@ -91,7 +91,7 @@ for (const r of document.querySelectorAll('input[name=stage]')) r.addEventListen
   G.cfg.stage = e.target.value; setStage(stageFor(G.cfg.stage, G.cfg.mode)); if (G.mode === 'menu') enterAttract();
   try { localStorage.setItem('skybrawl.stage', G.cfg.stage); } catch (err) {}
 });
-try { const m = localStorage.getItem('skybrawl.mode'); if (m === 'team' || m === 'boss'){ G.cfg.mode = m; $('md-' + m).checked = true; } } catch (err) {}
+try { const m = localStorage.getItem('skybrawl.mode'); if (m === 'team' || m === 'boss' || m === 'zombie'){ G.cfg.mode = m; $('md-' + m).checked = true; } } catch (err) {}
 for (const r of document.querySelectorAll('input[name=mode]')) r.addEventListener('change', e => {
   try { localStorage.setItem('skybrawl.mode', e.target.value); } catch (err) {}
   G.cfg.mode = modeOf(e.target.value); setStage(stageFor(G.cfg.stage, G.cfg.mode)); if (G.mode === 'menu') enterAttract();

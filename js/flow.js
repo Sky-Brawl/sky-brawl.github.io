@@ -69,6 +69,7 @@ function beginMatch(specs, stocks){
   hideAllPanels(); clearArena();
   G.raid = G.cfg.mode === 'boss'; G.raidWin = null;
   G.teamMode = !G.raid && G.cfg.mode === 'team' && specs.length >= 2;
+  G.zombie = !G.raid && G.cfg.mode === 'zombie' && specs.length >= 2; G.zbStarted = false; G.zbT = 0; G.zbWin = null;
   if (G.teamMode) makeStones(specs.length); else clearStones();
   if (G.raid) makeBoss(); else clearBoss();
   G.mode = 'play'; G.paused = false; G.endT = 0; G.winner = null; G.slow = 0; G.stocks = stocks;
@@ -76,6 +77,7 @@ function beginMatch(specs, stocks){
   G.matchId = (G.matchId || 0) + 1; $('resXp').hidden = true;
   G.camYaw = G.camYawT = 0; camStep(2 - G.camZoom);   // start wide every time (the tutorial picks its own)
   createFighters(specs, stocks, true);
+  if (G.zombie) for (const f of G.fighters){ f.side = 0; f.zombie = false; }   // everyone starts human (zombie.js)
   renderer.setPixelRatio(Math.min(devicePixelRatio, IS_TOUCH ? (specs.length > 24 ? 1 : 1.5) : (specs.length > 64 ? 1.5 : 2))); resize();
   buildHud();
   $('hud').hidden = false;
@@ -123,6 +125,7 @@ function showResult(rows, winnerIdx){
   t.style.color = w ? hex(w.team) : 'var(--gold)';
   if (G.teamMode && G.winTeam !== null){ t.textContent = `ฝ่าย${SIDES[G.winTeam].name}ชนะ!`; t.style.color = hex(SIDES[G.winTeam].col); }
   if (G.raid && G.raidWin !== null){ t.textContent = G.raidWin ? 'ปราบยักษ์หิมะสำเร็จ!' : 'ยักษ์หิมะชนะ…'; t.style.color = G.raidWin ? 'var(--gold)' : '#7fb5ff'; }
+  if (G.zombie && G.zbWin != null){ t.textContent = G.zbWin === 0 ? '🧑 มนุษย์รอดชีวิต!' : '🧟 ซอมบี้ครองโลก!'; t.style.color = G.zbWin === 0 ? 'var(--gold)' : hex(ZOMBIE_COL); }
   const body = $('resBody'); body.textContent = '';
   rows.sort((a, b) => a.place - b.place || b.kos - a.kos).forEach(r => {
     const tr = document.createElement('tr'); if (r.f.isLocal) tr.className = 'me';
@@ -144,5 +147,5 @@ function showResult(rows, winnerIdx){
   $('rematch').focus({preventScroll:true});
   // Team wins travel to guests as -10 - side
   // Raid results travel as -20 (boss down) / -21 (boss won)
-  if (G.net === 'host') Net.hostEnd(rows, G.raid && G.raidWin !== null ? (G.raidWin ? -20 : -21) : G.teamMode && G.winTeam !== null ? -10 - G.winTeam : w ? w.idx : -1);
+  if (G.net === 'host') Net.hostEnd(rows, G.zombie && G.zbWin != null ? -30 - G.zbWin : G.raid && G.raidWin !== null ? (G.raidWin ? -20 : -21) : G.teamMode && G.winTeam !== null ? -10 - G.winTeam : w ? w.idx : -1);
 }

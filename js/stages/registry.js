@@ -87,7 +87,7 @@ const STAGES = {
     sky:['#160404', '#3d0f08', '#8f2a12', '#ff7a32'], build:buildVolcano, inside:volInside, pushOut:volPush, fx:volcanoTick},
 };
 const STAGE_KEYS = Object.keys(STAGES);
-const MODE_KEYS = ['ffa', 'team', 'boss'];
+const MODE_KEYS = ['ffa', 'team', 'boss', 'zombie'];
 // The raid boss lives in its own mode and always fights on the Christmas stage (its walls and platforms are built around it)
 const BOSS_STAGE = 'christmas';
 const modeOf = v => MODE_KEYS.includes(v) ? v : 'ffa';

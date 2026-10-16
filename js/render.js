@@ -113,6 +113,7 @@ function pose(f){
   v.bubble.visible = s === 'guard' || s === 'guardstun';
   if (v.bubble.visible) v.bubble.scale.setScalar(s === 'guardstun' ? 1.1 : 1 + Math.sin(T*.2)*.02);
   if (f.squash > 0){ const q = f.squash/10; tilt.scale.set(1 + .2*q, 1 - .2*q, 1 + .2*q); }
+  if (f.zombie) poseZombie(f, v, T, s);
   powerPose(f);
   if (G.debug && f.move !== undefined){
     v.hurt.visible = true; v.hurt.position.set(f.pos.x, f.pos.y + .8, f.pos.z);
@@ -141,6 +142,7 @@ function render(){
   if (G.mode === 'custom' && G.fighters[0]) G.fighters[0].facing = Math.sin(performance.now()*.0008)*.6;
   for (const f of G.fighters) pose(f);
   renderMechs();
+  zombieHud();
   updateLockMarks();
   updateGroundMarks();
   animGhosts();

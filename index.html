@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kanit:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=1.13.0">
+<link rel="stylesheet" href="style.css?v=1.14.0">
 
 </head>
 <body>
@@ -45,6 +45,7 @@
       <div class="sb"><span id="shn0">หินแดง</span><div class="shp"><i id="shp0" style="background:#ff5d4a"></i></div></div>
       <div class="sb"><span id="shn1">หินน้ำเงิน</span><div class="shp"><i id="shp1" style="background:#2f8cff"></i></div></div>
     </div>
+    <div id="zbBar" hidden></div>
     <div id="hudBtns">
       <button id="pauseBtn" class="chipbtn" type="button">II เมนู</button>
       <button id="camBtn" class="chipbtn" type="button" title="ปรับมุมกล้อง (ปุ่ม - และ = หรือล้อเมาส์)">กล้อง: ปกติ</button>
@@ -120,6 +121,7 @@
           <input type="radio" name="mode" id="md-ffa" value="ffa" checked><label class="pickcard" for="md-ffa"><svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="120" fill="#ffd25e"/><path d="M80 44 0 0h44zM80 44 116 0h44v26zM80 44l80 34v42h-30zM80 44 54 120H18zM80 44 0 86V48z" fill="#ffb02e"/><polygon points="80,18 88,33 105,29 94,43 106,56 89,54 80,70 71,54 54,56 66,43 55,29 72,33" fill="#fff" stroke="#1b2333" stroke-width="3" stroke-linejoin="round"/><g stroke="#1b2333" stroke-width="3"><circle cx="32" cy="50" r="18" fill="#ff5d4a"/><circle cx="128" cy="50" r="18" fill="#2f8cff"/><circle cx="80" cy="84" r="14" fill="#3fbf5a"/></g><g fill="#1b2333"><rect x="36" y="44" width="4" height="8" rx="2"/><rect x="44" y="44" width="4" height="8" rx="2"/><rect x="112" y="44" width="4" height="8" rx="2"/><rect x="120" y="44" width="4" height="8" rx="2"/></g><path d="M34 40l10 4M126 40l-10 4" stroke="#1b2333" stroke-width="3" stroke-linecap="round"/></svg><span class="nm">ตะลุมบอน<small>ทุกคนคือศัตรู</small></span></label>
           <input type="radio" name="mode" id="md-team" value="team"><label class="pickcard" for="md-team"><svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="120" fill="#2f8cff"/><polygon points="0,0 98,0 62,120 0,120" fill="#ff5d4a"/><polygon points="62,120 98,0 104,0 68,120" fill="#fff" opacity=".85"/><g stroke="#1b2333" stroke-width="3" stroke-linejoin="round"><rect x="20" y="62" width="30" height="10" rx="3" fill="#9aa3b5"/><polygon points="35,14 50,38 35,62 20,38" fill="#ffb3a8"/><rect x="110" y="62" width="30" height="10" rx="3" fill="#9aa3b5"/><polygon points="125,14 140,38 125,62 110,38" fill="#a8d4ff"/></g><path d="M31 26l-4 10M121 26l-4 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/><text x="80" y="54" text-anchor="middle" font-size="26" font-weight="900" font-family="Arial Black,Arial,sans-serif" fill="#ffd25e" stroke="#1b2333" stroke-width="5" paint-order="stroke">VS</text></svg><span class="nm">ทีมตีหิน<small>แดงปะทะน้ำเงิน</small></span></label>
           <input type="radio" name="mode" id="md-boss" value="boss"><label class="pickcard" for="md-boss"><svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="120" fill="#1f2d55"/><g fill="#fff" opacity=".8"><circle cx="14" cy="18" r="2"/><circle cx="40" cy="8" r="1.5"/><circle cx="150" cy="22" r="2"/><circle cx="132" cy="6" r="1.5"/><circle cx="20" cy="50" r="1.5"/><circle cx="146" cy="56" r="1.5"/></g><rect y="92" width="160" height="28" fill="#dfe9f7"/><g stroke="#1b2333" stroke-width="3"><circle cx="80" cy="76" r="30" fill="#f4f8ff"/><circle cx="80" cy="36" r="20" fill="#f4f8ff"/><polygon points="64,20 68,6 74,14 80,4 86,14 92,6 96,20" fill="#ffd23a" stroke-linejoin="round"/><circle cx="24" cy="94" r="10" fill="#ff5d4a"/><circle cx="138" cy="94" r="10" fill="#2f8cff"/></g><g fill="#1b2333"><circle cx="72" cy="35" r="3.5"/><circle cx="88" cy="35" r="3.5"/><circle cx="80" cy="66" r="3"/><circle cx="80" cy="78" r="3"/></g><path d="M66 27l10 4M94 27l-10 4" stroke="#1b2333" stroke-width="3" stroke-linecap="round"/><polygon points="80,40 92,44 80,46" fill="#ff8a2a" stroke="#1b2333" stroke-width="1.5"/><path d="M73 50q7 -5 14 0" fill="none" stroke="#1b2333" stroke-width="2.5" stroke-linecap="round"/></svg><span class="nm">ตีบอส<small>รุมยักษ์หิมะ</small></span></label>
+          <input type="radio" name="mode" id="md-zombie" value="zombie"><label class="pickcard" for="md-zombie"><svg viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="120" fill="#2a3a2a"/><circle cx="128" cy="24" r="14" fill="#f4f1c8"/><rect y="94" width="160" height="26" fill="#3d5a34"/><g stroke="#1b2333" stroke-width="3" stroke-linejoin="round"><rect x="50" y="30" width="48" height="44" rx="6" fill="#8fcf7a"/><rect x="58" y="74" width="32" height="26" fill="#5a6b8a"/><rect x="20" y="78" width="40" height="10" rx="4" fill="#8fcf7a"/><rect x="88" y="70" width="44" height="10" rx="4" fill="#8fcf7a"/></g><g fill="#ff3a3a"><rect x="60" y="44" width="9" height="7"/><rect x="80" y="44" width="9" height="7"/></g><path d="M62 62h24" stroke="#1b2333" stroke-width="3"/><path d="M66 58v8M72 58v8M78 58v8M84 58v8" stroke="#1b2333" stroke-width="2"/><circle cx="30" cy="104" r="8" fill="#ffd25e" stroke="#1b2333" stroke-width="3"/><circle cx="140" cy="104" r="8" fill="#ffd25e" stroke="#1b2333" stroke-width="3"/></svg><span class="nm">ซอมบี้<small>โดน KO กลายเป็นซอมบี้</small></span></label>
         </div>
       </div>
       <div class="pick" role="radiogroup" aria-label="ด่าน">
@@ -168,6 +170,7 @@
             <dt><kbd>Enter</kbd></dt><dd>พิมพ์แชท (ข้อความวิ่งบนจอ)</dd>
             <dt><kbd>Z</kbd> <kbd>C</kbd></dt><dd>หมุนกล้อง (กดค้าง) · <kbd>V</kbd> กลับมุมปกติ · หรือคลิกขวาค้างแล้วลาก · มือถือใช้ปุ่ม ⟲ ⟳</dd>
             <dt>🧪 ยาวานรยักษ์</dt><dd>เดินทับขวดยาสีทอง แปลงร่างเป็นกอริลล่ายักษ์ 10 วิ (E = ลำแสงจากปาก)</dd>
+            <dt>🧟 โหมดซอมบี้</dt><dd>มนุษย์มีชีวิตเดียว โดน KO แล้วกลายเป็นซอมบี้ · มนุษย์รอดจนหมดเวลา = ชนะ · ซอมบี้กัดครบทุกคน = ซอมบี้ชนะ</dd>
             <dt>🤖 หุ่นรบแดง</dt><dd>เดินไปใกล้แล้วกด <kbd>R</kbd> ขึ้นขี่ · <kbd>F</kbd> ฟันขวาน · <kbd>E</kbd> ปืนกล · <kbd>R</kbd> อีกครั้งลงจากหุ่น</dd>
           </dl>
         </div>
@@ -247,7 +250,7 @@
         <div class="seg"><label class="lbl" for="rN">จำนวนนักสู้</label><input type="range" id="rN" min="2" max="64" value="2"><output id="rNOut" for="rN">2</output></div>
         <div class="seg"><label class="lbl" for="rSt">ชีวิตต่อคน</label><select id="rSt"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
           <label class="lbl" for="rDf" style="margin-left:8px">ระดับบอท</label><select id="rDf"><option value="easy">ง่าย</option><option value="normal" selected>ปกติ</option><option value="hard">ยาก</option></select></div>
-        <div class="seg" style="display:none"><label class="lbl" for="rMode">โหมด</label><select id="rMode"><option value="ffa">ตะลุมบอน</option><option value="team">ทีมตีหิน</option><option value="boss">ตีบอส (ด่านคริสต์มาส)</option></select></div>
+        <div class="seg" style="display:none"><label class="lbl" for="rMode">โหมด</label><select id="rMode"><option value="ffa">ตะลุมบอน</option><option value="team">ทีมตีหิน</option><option value="boss">ตีบอส (ด่านคริสต์มาส)</option><option value="zombie">ซอมบี้</option></select></div>
         <div class="seg" style="display:none"><label class="lbl" for="rStage">ด่าน</label><select id="rStage"><option value="titanic">เรือไททานิก</option><option value="temple">วัดไทย</option><option value="siam">สยาม</option><option value="gvg">สนามกิลวอ</option><option value="halloween">ฮัลโลวีน</option><option value="christmas">คริสต์มาส (บอส)</option><option value="ice">ทะเลสาบน้ำแข็ง</option><option value="hospital">โรงพยาบาล</option><option value="japan">เมืองญี่ปุ่นโบราณ</option><option value="skyisle">เกาะลอยฟ้า</option><option value="volcano">ภูเขาไฟระเบิด</option></select></div>
       </div>
       <p id="rCfgText" class="note" hidden></p>
@@ -401,57 +404,58 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <!-- Settings you can tweak without touching this file: skill cooldowns/power, classes on/off -->
-<script src="config.js?v=1.13.0"></script>
+<script src="config.js?v=1.14.0"></script>
 <!-- The game: these files share one scope and must stay in this order (see js/README.md) -->
-<script src="js/voxel.js?v=1.13.0"></script>
-<script src="js/core.js?v=1.13.0"></script>
-<script src="js/moves.js?v=1.13.0"></script>
-<script src="js/world.js?v=1.13.0"></script>
-<script src="js/stages/temple-siam.js?v=1.13.0"></script>
-<script src="js/stages/gvg.js?v=1.13.0"></script>
-<script src="js/stages/halloween.js?v=1.13.0"></script>
-<script src="js/stages/christmas.js?v=1.13.0"></script>
-<script src="js/stages/ice.js?v=1.13.0"></script>
-<script src="js/stages/hospital.js?v=1.13.0"></script>
-<script src="js/stages/japan.js?v=1.13.0"></script>
-<script src="js/stages/skyisle.js?v=1.13.0"></script>
-<script src="js/stages/volcano.js?v=1.13.0"></script>
-<script src="js/stages/registry.js?v=1.13.0"></script>
-<script src="js/stages/cards.js?v=1.13.0"></script>
-<script src="js/classes.js?v=1.13.0"></script>
-<script src="js/config-apply.js?v=1.13.0"></script>
-<script src="js/looks.js?v=1.13.0"></script>
-<script src="js/forms.js?v=1.13.0"></script>
-<script src="js/summons.js?v=1.13.0"></script>
-<script src="js/fighter-model.js?v=1.13.0"></script>
-<script src="js/fx.js?v=1.13.0"></script>
-<script src="js/state.js?v=1.13.0"></script>
-<script src="js/input.js?v=1.13.0"></script>
-<script src="js/bots.js?v=1.13.0"></script>
-<script src="js/combat.js?v=1.13.0"></script>
-<script src="js/skills.js?v=1.13.0"></script>
-<script src="js/items.js?v=1.13.0"></script>
-<script src="js/projectiles.js?v=1.13.0"></script>
-<script src="js/powerups.js?v=1.13.0"></script>
-<script src="js/weapons.js?v=1.13.0"></script>
-<script src="js/modes.js?v=1.13.0"></script>
-<script src="js/sim.js?v=1.13.0"></script>
-<script src="js/render.js?v=1.13.0"></script>
-<script src="js/hud.js?v=1.13.0"></script>
-<script src="js/emotes.js?v=1.13.0"></script>
-<script src="js/chat.js?v=1.13.0"></script>
-<script src="js/chatbot.js?v=1.13.0"></script>
-<script src="js/flow.js?v=1.13.0"></script>
-<script src="js/online.js?v=1.13.0"></script>
-<script src="js/account.js?v=1.13.0"></script>
-<script src="js/quests.js?v=1.13.0"></script>
-<script src="js/replay.js?v=1.13.0"></script>
-<script src="js/relay.js?v=1.13.0"></script>
-<script src="js/online-ui.js?v=1.13.0"></script>
-<script src="js/customize.js?v=1.13.0"></script>
-<script src="js/tutorial.js?v=1.13.0"></script>
-<script src="js/settings.js?v=1.13.0"></script>
-<script src="js/touch.js?v=1.13.0"></script>
-<script src="js/main.js?v=1.13.0"></script>
+<script src="js/voxel.js?v=1.14.0"></script>
+<script src="js/core.js?v=1.14.0"></script>
+<script src="js/moves.js?v=1.14.0"></script>
+<script src="js/world.js?v=1.14.0"></script>
+<script src="js/stages/temple-siam.js?v=1.14.0"></script>
+<script src="js/stages/gvg.js?v=1.14.0"></script>
+<script src="js/stages/halloween.js?v=1.14.0"></script>
+<script src="js/stages/christmas.js?v=1.14.0"></script>
+<script src="js/stages/ice.js?v=1.14.0"></script>
+<script src="js/stages/hospital.js?v=1.14.0"></script>
+<script src="js/stages/japan.js?v=1.14.0"></script>
+<script src="js/stages/skyisle.js?v=1.14.0"></script>
+<script src="js/stages/volcano.js?v=1.14.0"></script>
+<script src="js/stages/registry.js?v=1.14.0"></script>
+<script src="js/stages/cards.js?v=1.14.0"></script>
+<script src="js/classes.js?v=1.14.0"></script>
+<script src="js/config-apply.js?v=1.14.0"></script>
+<script src="js/looks.js?v=1.14.0"></script>
+<script src="js/forms.js?v=1.14.0"></script>
+<script src="js/summons.js?v=1.14.0"></script>
+<script src="js/fighter-model.js?v=1.14.0"></script>
+<script src="js/fx.js?v=1.14.0"></script>
+<script src="js/state.js?v=1.14.0"></script>
+<script src="js/input.js?v=1.14.0"></script>
+<script src="js/bots.js?v=1.14.0"></script>
+<script src="js/combat.js?v=1.14.0"></script>
+<script src="js/skills.js?v=1.14.0"></script>
+<script src="js/items.js?v=1.14.0"></script>
+<script src="js/projectiles.js?v=1.14.0"></script>
+<script src="js/powerups.js?v=1.14.0"></script>
+<script src="js/zombie.js?v=1.14.0"></script>
+<script src="js/weapons.js?v=1.14.0"></script>
+<script src="js/modes.js?v=1.14.0"></script>
+<script src="js/sim.js?v=1.14.0"></script>
+<script src="js/render.js?v=1.14.0"></script>
+<script src="js/hud.js?v=1.14.0"></script>
+<script src="js/emotes.js?v=1.14.0"></script>
+<script src="js/chat.js?v=1.14.0"></script>
+<script src="js/chatbot.js?v=1.14.0"></script>
+<script src="js/flow.js?v=1.14.0"></script>
+<script src="js/online.js?v=1.14.0"></script>
+<script src="js/account.js?v=1.14.0"></script>
+<script src="js/quests.js?v=1.14.0"></script>
+<script src="js/replay.js?v=1.14.0"></script>
+<script src="js/relay.js?v=1.14.0"></script>
+<script src="js/online-ui.js?v=1.14.0"></script>
+<script src="js/customize.js?v=1.14.0"></script>
+<script src="js/tutorial.js?v=1.14.0"></script>
+<script src="js/settings.js?v=1.14.0"></script>
+<script src="js/touch.js?v=1.14.0"></script>
+<script src="js/main.js?v=1.14.0"></script>
 </body>
 </html>

@@ -431,3 +431,8 @@ body.replaying::after{bottom:0}
 #rpUi .rptop button{margin-left:auto;pointer-events:auto}
 #rpUi #rpRec{color:#ff5d4a;animation:dpulse .8s ease-in-out infinite alternate}
 #rpUi .rpcap{position:absolute;bottom:0;left:0;right:0;height:9vh;display:flex;align-items:center;justify-content:center;color:#fff;font:700 clamp(15px,2.8vh,26px) var(--body);text-align:center;padding:0 12px}
+
+/* Zombie mode HUD */
+#zbBar{background:var(--paper);border:3px solid var(--ink);border-radius:12px;box-shadow:3px 3px 0 var(--ink);padding:5px 12px;font:700 14px var(--body);white-space:nowrap}
+#zbBar[hidden]{display:none}
+#zbBar.low{background:#ffe0dc;animation:dpulse .6s ease-in-out infinite alternate}
