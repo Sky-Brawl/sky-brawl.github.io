@@ -92,7 +92,7 @@ const Quest = {
   },
   // Every frame: things that are easiest to see from the local fighter's state (also works for guests)
   watch(){
-    if (G.mode !== 'play' || G.tut) return;
+    if (G.mode !== 'play' || G.tut || Replay.on) return;
     const me = G.fighters.find(f => f.isLocal && (G.net === 'guest' || f.ctrl === 'p1'));
     if (!me) return;
     const w = me.qw || (me.qw = {state:me.state, mk:me.moveKey, wep:me.weapon, held:me.held, ape:me.apeT > 0, mech:!!me.mech});

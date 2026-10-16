@@ -416,3 +416,11 @@ python -m http.server 8765 --directory sky-brawl
 - รับรางวัล: RPC `claim_quest(slot)` ฝั่งเซิร์ฟเวอร์กำหนด XP 60/90/130, ครบ 3 ข้อ +50 และฉายา `t:quest5` / `t:quest20` (ลงใน daily_login.unlocks) · ต้องมีแมตช์ที่บันทึกแล้ววันนี้ (`player_stats.last_match_at`) · แต่ละข้อรับได้วันละครั้ง → สูงสุด 330 XP/วัน · เซิร์ฟเวอร์เช็กความคืบหน้าจริงไม่ได้ (นับในเครื่อง) จึงจำกัดเพดานแทน
 - `quest_status()` บอก claimed/full_days/played_today · ถ้า RPC ไม่มี → `Quest.off` นับได้แต่ปุ่มรับปิด
 - ฉายาใหม่ต่อท้าย `TITLES` (quest5, quest20) เลขลำดับเดิมไม่เปลี่ยน
+
+## ไฮไลต์ + คลิป (1.13.0 · 2026-10-16)
+- ไฟล์ใหม่ `js/replay.js` (หลัง `quests.js`) · ห่อ `emit/flash/popup/banner` และ `Sfx.play/move/proj` ตอนโหลด (ตัวจริงอยู่ที่ `.raw`) และห่อ `render` ให้ตั้ง `Replay.inRender` → เหตุการณ์ที่เกิดนอก render (sim, applySnap ของ guest) ถูกจดลงเฟรม
+- `main.js` loop: `Replay.record()` ทุกเฟรมที่วาด (ring `RP_KEEP`=420) · ระหว่างเล่นไฮไลต์ไม่ tick และเรียก `Replay.frame()` แทน `render()`
+- `announceLoss` → `Replay.onKO(f, killer, why)` ให้คะแนน (killer = เรา 5, เราโดน 3, อื่น 1, +1 มีคนฆ่า, +2 KO สุดท้าย) เก็บเฟรม KO−270 ถึง KO+60 · `camTargets` ตาม victim/killer ตอนเล่น · กล้องหมุน -0.3→0.3 rad (มากกว่านี้ปล่องเรือบัง) · สโลว์ ×0.35 ช่วง KO−55..KO+18
+- เล่นจบคืนสภาพเดิมด้วย snapshot ก่อนเล่น (`saved.now`) · หุ่น/กระสุน/ระเบิดในไฮไลต์ใช้โมเดลชั่วคราว (pool) แล้วลบทิ้ง
+- คลิป: วาดลง canvas 1280×720 + MediaRecorder (mp4 ถ้าเบราว์เซอร์รองรับ ไม่งั้น webm) · ไม่มีเสียงในคลิป · แชร์ด้วย `navigator.share({files})` ถ้า `canShare` ไม่งั้นดาวน์โหลด
+- `Quest.watch` ไม่นับระหว่างเล่นไฮไลต์ · `hideAllPanels` / Esc หยุดไฮไลต์

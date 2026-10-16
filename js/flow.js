@@ -35,6 +35,7 @@ async function copyText(text, btn, label){
   catch (e) { const inp = btn.previousElementSibling; if (inp && inp.select){ inp.select(); try { if (document.execCommand('copy')) done(); } catch (err) {} } }
 }
 function hideAllPanels(){
+  if (Replay.on) Replay.stop();
   for (const id of ['menu','online','pause','result','custom','hud','touch','dbg','invite','ranks','daily','quests']) $(id).hidden = true;
   $('banner').className = '';
 }
@@ -139,6 +140,7 @@ function showResult(rows, winnerIdx){
     setShares('res', txt, gameUrl());
   }
   $('result').hidden = false; $('touch').hidden = true; $('spec').hidden = true;
+  renderReplayBtns();
   $('rematch').focus({preventScroll:true});
   // Team wins travel to guests as -10 - side
   // Raid results travel as -20 (boss down) / -21 (boss won)

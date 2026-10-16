@@ -20,12 +20,12 @@ let last = performance.now(), acc = 0;
 function loop(now){
   requestAnimationFrame(loop);
   const dt = Math.min(.1, (now - last)/1000); last = now;
-  if (!G.paused){
+  if (!G.paused && !Replay.on){
     acc += dt*(G.slow > 0 ? .35 : 1);
     let n = 0; while (acc >= DT && n < 5){ acc -= DT; tick(); n++; }
     if (n === 5) acc = 0;
   }
   thumbStep(); classThumbStep();
-  render();
+  if (Replay.on) Replay.frame(); else { Replay.record(); render(); }
 }
 requestAnimationFrame(loop);

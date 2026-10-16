@@ -122,6 +122,7 @@ function pose(f){
   }
 }
 function camTargets(){
+  if (Replay.on) return Replay.targets();
   const won = G.fighters.filter(f => f.state === 'win' && alive(f));
   if (won.length) return won;
   const locals = G.fighters.filter(f => f.isLocal && alive(f) && f.pos.y > -3);

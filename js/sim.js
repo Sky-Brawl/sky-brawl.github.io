@@ -189,6 +189,7 @@ function announceLoss(f, why, killer){
   if (f.stocks <= 0) feed(`${f.name} ตกรอบ`);
   if (f.isLocal || G.fighters.length <= 2) banner(why === 'ring' ? (STAGE.water ? 'SPLASH!' : 'RING OUT!') : 'K.O.', 'red');
   else if (killer && killer.isLocal) banner('K.O.!');
+  Replay.onKO(f, killer, why);
 }
 function respawn(f){
   let p = randomDeckPoint(1.5);
