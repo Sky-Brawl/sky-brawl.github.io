@@ -432,3 +432,10 @@ python -m http.server 8765 --directory sky-brawl
 - ตัวคูณ: speed ใน sim, damage ใน applyHit (credit.zombie) · ซอมบี้ห้ามขึ้นหุ่น/กินยา · ท่าแขนยื่น `poseZombie` ใน pose · HUD `#zbBar` (`zombieHud` ใน render)
 - ออนไลน์: flag 512 ใน f[11] → `zombieFromSnap` · `sn.zb = [frames left, started]` · ผลจบ win code -30 (มนุษย์) / -31 (ซอมบี้) → `G.zbWin` · `winnersNow` ให้ฝั่งที่ชนะฉลอง
 - ทดสอบ: บอท 5 ด่าน (8–16 คน) มนุษย์ชนะ 1 ซอมบี้ชนะ 4 (บอทมนุษย์ไม่หนี) · encode/decode guest ตรง · ไม่มี error
+
+## อัลเคมิสต์: บ่อกรดพิษ + ชุดใหม่ (1.14.1 · 2026-10-16)
+- `burst()` ของกระสุน 'acid' เรียก `acidPool` (skills.js) → zone kind 'acid' (ต่อท้าย `ZONE_KINDS`) รัศมี 0.85×blast อยู่ `poolSeconds` (ไม่วางบนน้ำ/ที่ว่าง: `groundUnder`)
+- `stepAcid` ทุก 10 เฟรม: ศัตรูในวงได้/ต่ออายุ stack ของบ่อนั้นใน `f.poison` [{src, owner, until}] สูงสุด 4 · `stepPoison` (ต้น stepZones) ทุก 30 เฟรม หัก `poisonDmg × stacks` แบบไม่ hitstun (หุ่นรบหักเลือดหุ่น, วานรครึ่งเดียว) ครั้งที่ทำให้ตายเรียก applyHit ปกติให้นับ KO · ล้างตอน loseStock/zombieLose/reset
+- ภาพ: `acidFx` วงเขียวโปร่ง + ฟองลอย จางช่วง 1 วิสุดท้าย · ตัวที่ติดพิษมีฟองเขียว (`statusFx`) · popup class `.pop.poison` · ออนไลน์: flag 1024 → `f.poisonVis`, บ่อมากับ `sn.zn` เดิม
+- ชุดใหม่ใน classes.js (แว่นกลมทอง โค้ตน้ำตาล ผ้าคลุมไหล่ทรงโดม + คอตั้ง + ผ้าคลุมหลังน้ำเงินขลิบทอง เข็มขัด กระเป๋า ขวดยา) · อาวุธในมือ (weapons.js) เป็นขวดกลมสีแดงมีจุก
+- ทดสอบ: 2 บ่อซ้อน → 2 stacks ~6 ดาเมจ/วิ, หมดบ่อแล้วพิษค้างตามเวลา, ไม่มี error
