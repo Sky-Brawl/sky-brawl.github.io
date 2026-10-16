@@ -136,6 +136,7 @@ function camTargets(){
 const camPos = new V(0, 14, 30), camLook = new V(0, 1, 0);
 const tmpV = new V();
 function render(){
+  Quest.watch();
   if (G.mode === 'custom' && G.fighters[0]) G.fighters[0].facing = Math.sin(performance.now()*.0008)*.6;
   for (const f of G.fighters) pose(f);
   renderMechs();

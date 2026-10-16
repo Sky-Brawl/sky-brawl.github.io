@@ -54,7 +54,10 @@ $('dailyBtn').onclick = () => Daily.open();
 $('dailyClaim').onclick = () => Daily.claim();
 $('dailyClose').onclick = () => { $('daily').hidden = true; $('menu').hidden = false; renderDaily(); };
 $('dailyWear').onclick = () => { $('daily').hidden = true; openCustom(); };
-Account.boot().then(() => Daily.refresh(true));
+Account.boot().then(() => { Daily.refresh(true); Quest.refresh(); });
+$('questBtn').onclick = () => Quest.open();
+$('questClose').onclick = () => { $('quests').hidden = true; $('menu').hidden = false; renderQuestBtn(); };
+Quest.load(); renderQuestBtn();
 $('chatForm').addEventListener('submit', async e => {
   e.preventDefault();
   const inp = $('chatIn');

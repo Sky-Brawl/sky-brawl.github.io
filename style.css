@@ -405,3 +405,16 @@ details.legal a{color:inherit;text-decoration:underline}
 
 /* Camera turning chips */
 #hudBtns .rot{min-width:38px;font-size:18px;line-height:1;touch-action:none;user-select:none;-webkit-user-select:none}
+
+/* Daily quests */
+.qlist{display:grid;gap:8px;margin:10px 0}
+.qrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 10px;border:2.5px solid var(--ink);border-radius:12px;background:#fff}
+.qrow.done{background:#fff6d6}
+.qrow.got{background:#e3f5dc}
+.qrow .qi{font-size:26px;line-height:1}
+.qrow .qm{display:grid;gap:3px;min-width:0}
+.qrow .qt{font-weight:700;font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+.qrow .qx{font-size:12px;opacity:.7}
+.qrow .xpbar{display:block;height:8px}
+.qrow .qb{padding:8px 10px;font-size:13px;white-space:nowrap;min-width:0}
+.qrow .qb:disabled{opacity:.6;cursor:default}

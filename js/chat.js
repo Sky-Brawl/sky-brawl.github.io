@@ -47,6 +47,7 @@ function sendChat(text){
   if (!me) return;
   if ((CHAT.sentT || 0) > performance.now()) return;   // one message every 1.2 s
   CHAT.sentT = performance.now() + 1200;
+  Quest.add('chat');
   if (G.net === 'guest'){ CHAT.mySeq++; Net.presence({ch:[CHAT.mySeq, text, Net.epoch]}); CHAT.pending.push(text); nicoShow(me, text, true); }
   else postChat(me, text, true);
 }

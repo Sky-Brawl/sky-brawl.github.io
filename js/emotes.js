@@ -21,6 +21,7 @@ function emoteLocal(id, who = 'p1'){
   if (G.net === 'guest'){ const c = Net.counts; c.e = (c.e || 0) + 1; c.eid = id; }
   Sfx.play('pickup', f.pos, .5);
   $('emoPanel').hidden = true;
+  Quest.add('emote');
 }
 // Bots react to KOs now and then (host / offline only)
 function botEmotes(f, killer){

@@ -9,6 +9,7 @@ const GAME_KEYS = new Set([...Object.values(MAP1), ...Object.values(MAP2), ...Ob
 addEventListener('keydown', e => {
   if (e.code === 'Escape' && G.mode === 'custom'){ closeCustom(); return; }
   if (e.code === 'Escape' && !$('daily').hidden){ $('dailyClose').click(); return; }
+  if (e.code === 'Escape' && !$('quests').hidden){ $('questClose').click(); return; }
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
   if (e.code === 'Escape' && G.mode === 'play' && $('result').hidden){ togglePause(); return; }
   if (e.code === 'KeyX' && !e.repeat) toggleDebug();

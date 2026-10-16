@@ -303,12 +303,13 @@ function buildMech(){
   for (const [x, z] of [[.12, .1], [.12, -.1], [.2, 0]]) add3(armL, new THREE.ConeGeometry(.04, .16, 4), GRAY, x, .2, z);
   add3(armR, B3(.08, .44, .38), RED, -.18, -.05, 0, 1.04);
   const axe = new THREE.Group(); axe.position.set(0, -.68, .05); armR.add(axe);
-  add3(axe, new THREE.CylinderGeometry(.03, .03, .7, 6), DARK, 0, 0, .28).rotation.x = PI/2;
-  glow3(axe, B3(.05, .26, .22), 0xff8a2a, 0, .09, .6);
+  // the axe and the gun run down the arm, so they point forward when the arm swings up
+  add3(axe, new THREE.CylinderGeometry(.03, .03, .7, 6), DARK, 0, -.28, 0);
+  glow3(axe, B3(.05, .26, .24), 0xff8a2a, 0, -.56, .12);
   const gun = new THREE.Group(); gun.position.set(0, -.68, .05); armL.add(gun);
-  add3(gun, B3(.1, .12, .62), DARK, 0, 0, .25, 1.04);
-  add3(gun, new THREE.CylinderGeometry(.12, .12, .1, 10), GRAY, .1, -.02, .12).rotation.z = PI/2;
-  const muzzle = glow3(gun, SPH(.1), 0xffe066, 0, 0, .62); muzzle.visible = false;
+  add3(gun, B3(.1, .62, .12), DARK, 0, -.25, 0, 1.04);
+  add3(gun, new THREE.CylinderGeometry(.12, .12, .1, 10), GRAY, .1, -.12, -.02).rotation.z = PI/2;
+  const muzzle = glow3(gun, SPH(.1), 0xffe066, 0, -.62, 0); muzzle.visible = false;
   const leg = sd => {
     const g = limb(sd*.2, -.16);
     add3(g, new THREE.CylinderGeometry(.1, .1, .22, 8), GRAY, 0, -.12, 0);
