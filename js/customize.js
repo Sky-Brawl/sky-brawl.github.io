@@ -21,7 +21,7 @@ const OPTS = [
   {key:'hair', label:'ทรงผม', choices:HAIRS},
   {key:'hairColor', label:'สีผม', colors:HAIR_COLORS},
   {key:'hat', label:'ของบนหัว', choices:HATS},
-  {key:'title', label:'ฉายาเหนือหัว (ปลดล็อกจากรางวัลรายวัน)', choices:TITLES},
+  {key:'title', label:'ฉายาเหนือหัว (ปลดล็อกจากรางวัลรายวัน ภารกิจ และร้านค้า)', choices:TITLES},
   {key:'eyes', label:'ดวงตา', choices:EYES},
 ];
 for (const o of OPTS){
@@ -52,8 +52,9 @@ for (const o of OPTS){
     const img = document.createElement('span'); img.className = 'cimg';
     const n = document.createElement('span'); n.className = 'cn'; n.textContent = k === 'none' ? 'ไม่มีอาชีพ' : OUTFITS[k].name;
     const sr = document.createElement('span'); sr.className = 'cs'; sr.textContent = stars(st);
+    const pr = document.createElement('span'); pr.className = 'cprice';
     b.title = ROLE_NAME[role] + ' · ความยาก ' + st + '/3';
-    b.append(img, n, sr); b.onclick = () => setLookVals({outfit:k});
+    b.append(img, n, sr, pr); b.onclick = () => Shop.classLocked(k) ? previewClass(k) : setLookVals({outfit:k});
     grid.appendChild(b);
   }
   old.replaceWith(tabs, grid);
@@ -132,20 +133,22 @@ function facePortrait(look, mood = 'normal'){
   return url;
 }
 function paintClassCard(k){
-  const c = document.querySelector('.ccard[data-val="' + k + '"] .cimg'); if (!c) return;
-  if (CLASS_THUMBS[k]) c.style.backgroundImage = 'url(' + CLASS_THUMBS[k] + ')';
-  else { const o = OUTFITS[k]; c.style.backgroundImage = 'none'; c.style.backgroundColor = hex(o && o.body ? o.body : 0xfff4dc); }
+  for (const c of document.querySelectorAll('.ccard[data-val="' + k + '"] .cimg, .scard[data-cls="' + k + '"] .cimg')){
+    if (CLASS_THUMBS[k]) c.style.backgroundImage = 'url(' + CLASS_THUMBS[k] + ')';
+    else { const o = OUTFITS[k]; c.style.backgroundImage = 'none'; c.style.backgroundColor = hex(o && o.body ? o.body : 0xfff4dc); }
+  }
 }
 for (const k of ON_K){
   try { const v = localStorage.getItem('skybrawl.cls.' + k); if (v && v.startsWith(CLS_VER + '|')) CLASS_THUMBS[k] = v.slice(CLS_VER.length + 1); } catch (e) {}
   paintClassCard(k);
 }
-// Two portraits a frame while the customize panel is open, visible cards first
+// Two portraits a frame while the customize panel (or the shop's class tab) is open, visible cards first
 function classThumbStep(){
-  if ($('custom').hidden) return;
+  const shop = !$('shop').hidden;
+  if ($('custom').hidden && !shop) return;
   let n = 0;
-  for (const pass of [false, true]) for (const b of document.querySelectorAll('.ccard')){
-    const k = b.dataset.val;
+  for (const pass of [false, true]) for (const b of document.querySelectorAll(shop ? '.scard[data-cls]' : '.ccard')){
+    const k = b.dataset.val || b.dataset.cls;
     if (CLASS_THUMBS[k] !== undefined || b.hidden !== pass) continue;
     try { CLASS_THUMBS[k] = classThumb(k); } catch (e) { CLASS_THUMBS[k] = ''; console.warn('[class picture] ' + k, e); continue; }
     try { localStorage.setItem('skybrawl.cls.' + k, CLS_VER + '|' + CLASS_THUMBS[k]); } catch (e) {}
@@ -156,6 +159,12 @@ function classThumbStep(){
 function reflectCustom(){
   const look = LOOKS[G.editSlot];
   for (const b of document.querySelectorAll('#copts button[data-key]')) b.setAttribute('aria-pressed', String(b.dataset.key === 'oc' ? tintOf(look) : look[b.dataset.key] || (b.dataset.key === 'title' ? 'none' : '')) === b.dataset.val);
+  Quest.load();
+  for (const c of document.querySelectorAll('.ccard')){
+    const k = c.dataset.val, lock = Shop.classLocked(k), trial = Shop.on && Shop.st && k === Quest.cls && !FREE_CLASSES.has(k) && !Shop.owns('c:' + k);
+    c.classList.toggle('locked', lock); c.classList.toggle('preview', G.custPreview === k);
+    c.querySelector('.cprice').textContent = lock ? '🔒 ' + fmtCoins(classPrice(k)) + ' ' + COIN : trial ? 'ฟรีวันนี้' : '';
+  }
   for (const b of document.querySelectorAll('#copts button[data-key="hat"], #copts button[data-key="title"]')){
     const lock = lockedItem(b.dataset.key, b.dataset.val);
     b.classList.toggle('locked', lock);
@@ -164,23 +173,48 @@ function reflectCustom(){
   $('ocOpt').hidden = !OUTFITS[look.outfit] || !OUTFITS[look.outfit].build;
   for (const b of document.querySelectorAll('#custom .ctabs .tab')) b.setAttribute('aria-pressed', b.dataset.slot === String(G.editSlot));
   $('cname').value = look.name;
-  const k = OUTFITS[look.outfit] ? look.outfit : 'none', si = SKILL_INFO[k] || SKILL_INFO.none, box = $('skillInfo');
+  const pv = G.custPreview, k = pv || (OUTFITS[look.outfit] ? look.outfit : 'none'), si = SKILL_INFO[k] || SKILL_INFO.none, box = $('skillInfo');
   box.textContent = '';
   const b = document.createElement('b'); b.textContent = (k === 'none' ? 'ไม่มีอาชีพ' : OUTFITS[k].name) + ' · ' + MOVES[skillKey(k)].name;
   const p = document.createElement('div'); p.textContent = si.desc + ' · คูลดาวน์ ' + Math.round(si.cd/60) + ' วินาที · กด E (มือถือกดปุ่มสกิล)';
   box.append(b, p);
   const meta = CLASS_META[k];
   if (meta){ const r = document.createElement('div'); r.className = 'crole'; r.textContent = 'แนว: ' + ROLE_NAME[meta[0]] + ' · ความยาก ' + stars(meta[1]); box.appendChild(r); }
+  if (pv){
+    // Trying on a class that is not bought yet: buy it here (two presses), or go back to the one you wear
+    const u = 'c:' + pv, pr = classPrice(pv), have = Shop.st ? Shop.st.coins : 0;
+    const row = document.createElement('div'); row.className = 'cbuy';
+    const t = document.createElement('span'); t.textContent = '🔒 ทดลองดูอยู่ · ราคา ' + fmtCoins(pr) + ' ' + COIN + ' (คุณมี ' + fmtCoins(have) + ')';
+    const buy = document.createElement('button'); buy.type = 'button'; buy.className = 'btn sb' + (Shop.confirm === u ? ' ask' : '') + (have < pr ? ' poor' : '');
+    buy.textContent = Shop.confirm === u ? 'ยืนยันซื้อ?' : 'ซื้อเลย';
+    buy.onclick = () => Shop.buy(u, () => { G.custPreview = null; setLookVals({outfit:pv}); });
+    const back = document.createElement('button'); back.type = 'button'; back.className = 'btn plain sb'; back.textContent = 'กลับชุดเดิม';
+    back.onclick = endPreview;
+    row.append(t, buy, back); box.appendChild(row);
+  }
+}
+// Show a locked class on the model without saving it
+function previewClass(k){
+  G.custPreview = k; Shop.confirm = '';
+  const f = G.fighters[0]; f.setLook({...LOOKS[G.editSlot], outfit:k}); f.squash = 10;
+  reflectCustom();
+}
+function endPreview(){
+  if (!G.custPreview) return;
+  G.custPreview = null; Shop.confirm = '';
+  const f = G.fighters[0]; if (f) f.setLook(LOOKS[G.editSlot]);
+  reflectCustom();
 }
 function setLookVals(patch){
   const i = G.editSlot;
+  G.custPreview = null;
   LOOKS[i] = {...LOOKS[i], ...patch};
   const f = G.fighters[0]; f.setLook(LOOKS[i]); f.squash = 10;
   emit(STAGE.preview.clone().add(new V(0, 1.6, .4)), 8, 0xffc23a, 2.5, 3, 18, 1, 4);
   saveLooks(); reflectCustom();
 }
 function selectSlot(i){
-  G.editSlot = i;
+  G.editSlot = i; G.custPreview = null;
   const f = G.fighters[0]; f.setLook(LOOKS[i]); f.squash = 10;
   reflectCustom();
 }
@@ -194,9 +228,11 @@ function openCustom(next){
   createFighters([{name:'', ctrl:'none', look:LOOKS[G.editSlot]}], 99, false);
   G.fighters[0].reset(STAGE.preview.clone(), 0, 99);
   $('custom').hidden = false;
+  G.custPreview = null;
   reflectCustom();
 }
 function closeCustom(){
+  G.custPreview = null; Shop.confirm = '';
   const back = G.customBack; G.customNext = null; G.customBack = null; saveLooks();
   if (back) back(); else toMenu();
 }

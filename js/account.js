@@ -202,6 +202,7 @@ const Progress = {
     if (G.teamMode && G.winTeam != null) place = me.side === G.winTeam ? 1 : players;
     place = Math.max(1, Math.min(players, place | 0 || players));
     showXp({pending:true});
+    const boost = Shop.xpBoostOn();
     const u = await Supa.signIn();
     if (!u){ showXp({error:'บันทึก XP ไม่ได้ (เชื่อมต่อบัญชีไม่ได้)'}); return; }
     const prev = this.stats || {xp:0, level:1, matches:0, wins:0, kos:0};
@@ -210,7 +211,7 @@ const Progress = {
     const r = Array.isArray(data) ? data[0] : data;
     this.stats = {xp:r.new_xp, level:r.new_level, matches:r.total_matches, wins:r.total_wins, kos:prev.kos + (mine.kos | 0)};
     this.store(); renderLevelChip();
-    showXp({gained:r.gained, levelUp:r.new_level > prev.level});
+    showXp({gained:r.gained * (boost ? 2 : 1), boost, levelUp:r.new_level > prev.level});
   },
 };
 function renderLevelChip(){
@@ -226,7 +227,7 @@ function showXp(o){
   if (o.pending || o.error){ $('resLv').textContent = o.pending ? 'กำลังบันทึก XP…' : o.error; $('resGain').textContent = ''; $('resBar').style.width = '0%'; return; }
   const st = Progress.stats, p = xpProgress(st);
   $('resLv').textContent = 'Lv.' + st.level + ' ' + levelTitle(st.level) + (o.levelUp ? ' · เลเวลอัป!' : '');
-  $('resGain').textContent = '+' + o.gained + ' XP' + (G.net ? ' (ออนไลน์ ×1.5)' : '') + ' · ' + p.cur + '/' + p.need;
+  $('resGain').textContent = '+' + o.gained + ' XP' + (G.net ? ' (ออนไลน์ ×1.5)' : '') + (o.boost ? ' ⚡×2' : '') + ' · ' + p.cur + '/' + p.need;
   requestAnimationFrame(() => { $('resBar').style.width = p.pct + '%'; });
   if (o.levelUp) banner('LEVEL UP!');
 }
@@ -268,11 +269,14 @@ const DAILY_CYCLE = [['t', 'regular'], ['h', 'halo'], ['t', 'steady'], ['h', 'to
 const DAILY_ICON = {halo:'😇', tophat:'🎩', flower:'🌸', star:'⭐'};
 const rewardName = u => { const [t, k] = String(u).split(':'); return t === 'h' ? 'หมวก "' + (HATS[k] || k) + '"' : 'ฉายา "' + (TITLES[k] || k) + '"'; };
 function lockedItem(key, val){
-  if (key === 'hat') return DAILY_HATS.has(val) && !Daily.owns('h:' + val);
-  if (key === 'title') return val !== 'none' && !Daily.owns('t:' + val);
+  if (key === 'outfit') return Shop.classLocked(val);
+  if (key === 'hat') return DAILY_HATS.has(val) ? !Daily.owns('h:' + val) : SHOP_HATS.has(val) && Shop.itemLocked('h:' + val);
+  if (key === 'title') return val !== 'none' && (SHOP_TITLES.has(val) ? Shop.itemLocked('t:' + val) : !Daily.owns('t:' + val));
   return false;
 }
 function lockedHint(val){
+  const u = SHOP_HATS.has(val) ? 'h:' + val : SHOP_TITLES.has(val) ? 't:' + val : '';
+  if (u){ toast('🔒 ซื้อได้ที่ 🛒 ร้านค้า (ปุ่มในเมนูหลัก) ราคา ' + fmtCoins(itemPrice(u)) + ' ' + COIN); return; }
   const d = DAILY_CYCLE.findIndex(c => c[1] === val) + 1;
   const how = {legend7:'ล็อกอินต่อเนื่องครบ 7 วัน', d14:'ล็อกอินรวมครบ 14 วัน', d30:'ล็อกอินรวมครบ 30 วัน', quest5:'ภารกิจรายวันครบ 3 ข้อ 5 วัน', quest20:'ภารกิจรายวันครบ 3 ข้อ 20 วัน'}[val] || 'รางวัลล็อกอินรายวัน วันที่ ' + d;
   toast('🔒 ปลดล็อกได้จาก' + how);
@@ -312,8 +316,8 @@ const Daily = {
   fixLooks(){
     let ch = false;
     for (const l of LOOKS){
-      if (lockedItem('hat', l.hat)){ l.hat = 'band'; ch = true; }
-      if (l.title && lockedItem('title', l.title)){ l.title = 'none'; ch = true; }
+      if (DAILY_HATS.has(l.hat) && lockedItem('hat', l.hat)){ l.hat = 'band'; ch = true; }
+      if (l.title && !SHOP_TITLES.has(l.title) && lockedItem('title', l.title)){ l.title = 'none'; ch = true; }
     }
     if (ch) saveLooks();
   },
@@ -334,7 +338,8 @@ const Daily = {
     }
     const r = Array.isArray(data) ? data[0] : data;
     this.set(r, false); renderDaily();
-    $('dailyGot').textContent = '🎉 ได้รับ ' + (r.reward || []).map(rewardName).join(' และ ') + ' แล้ว!';
+    $('dailyGot').textContent = '🎉 ได้รับ ' + (r.reward || []).map(rewardName).join(' และ ') + ' แล้ว!' + (Shop.on ? ' + ' + (r.day === 7 ? 200 : 50) + ' ' + COIN : '');
+    Shop.refresh();
     $('dailyWear').hidden = false; $('dailyWear').focus({preventScroll:true});
     Sfx.play('level');
   },
@@ -397,7 +402,7 @@ const Account = {
       named = true;
     } else Supa.saveProfile();
     await Progress.refresh();
-    Daily.refresh();
+    Daily.refresh(); Shop.refresh();
     renderAccount();
   },
   async linkGoogle(){
@@ -422,9 +427,10 @@ const Account = {
     Progress.stats = null; try { localStorage.removeItem('skybrawl.stats'); } catch (e) {}
     renderLevelChip();
     Daily.st = null; Daily.uid = null; try { localStorage.removeItem('skybrawl.daily'); } catch (e) {}
+    Shop.clear();
     await Supa.signIn();   // a fresh guest account
     await Progress.refresh();
-    Daily.refresh();
+    Daily.refresh(); Shop.refresh();
     renderAccount();
   },
 };

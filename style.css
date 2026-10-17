@@ -439,3 +439,34 @@ body.replaying::after{bottom:0}
 
 /* Poison damage numbers */
 .pop.poison{color:#7be36a;font-size:14px}
+
+/* Coins + shop (js/shop.js) */
+.coinchip{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 12px;border:2.5px solid var(--ink);border-radius:999px;background:var(--gold);box-shadow:2px 2px 0 var(--ink);font:inherit;font-weight:700;font-size:15px;color:var(--ink);cursor:pointer}
+.coinchip .cv{font-family:var(--display)}
+.coinchip .cb{font-size:11px;font-weight:700;opacity:.8}
+.coinchip .cb:empty{display:none}
+.coinchip[hidden],#shopBtn[hidden]{display:none}
+.coinbar{margin:0;font-family:var(--display);font-size:20px;text-align:center}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));grid-auto-rows:max-content;gap:8px;max-height:min(52vh,480px);overflow-y:auto;padding:2px 4px 4px 2px}
+.scard{display:grid;justify-items:center;align-content:start;gap:3px;padding:0 0 7px;border:2px solid var(--ink);border-radius:10px;background:#fff;overflow:hidden;box-shadow:2px 2px 0 var(--ink);min-width:0}
+.scard.owned{background:#e3f5dc}
+.scard .cimg{width:100%;aspect-ratio:1;background:#fff4dc center/cover no-repeat;border-bottom:2px solid var(--ink)}
+.scard .sicon{font-size:38px;line-height:1;padding:12px 0 4px}
+.scard .sn{font-size:13px;font-weight:700;line-height:1.2;padding:3px 5px 0;text-align:center;overflow-wrap:anywhere}
+.scard .ss{font-size:11px;opacity:.7;text-align:center;padding:0 5px;line-height:1.25}
+.btn.sb{flex:none;font-size:13px;padding:6px 10px;box-shadow:2px 2px 0 var(--ink);border-width:2px;border-radius:9px}
+.btn.sb.poor{background:#e6e1d6;color:#6d6a63}
+.btn.sb.ask{background:#ff7a59;color:#fff}
+.btn.sb:disabled{opacity:.6;cursor:default}
+#shopGot{font-weight:700;text-align:center;min-height:1.2em;margin:0}
+#shopGot:empty{display:none}
+.ccard{position:relative}
+.ccard .cprice{position:absolute;top:3px;left:3px;right:3px;font-size:10px;font-weight:700;line-height:1.2;text-align:center;background:var(--ink);color:var(--gold);border-radius:6px;padding:1px 2px}
+.ccard .cprice:empty{display:none}
+.ccard.locked .cimg{filter:grayscale(.75) brightness(.95)}
+.ccard.preview{outline:3px dashed #ff7a59;outline-offset:1px}
+.cbuy{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:2px dashed var(--ink);font-weight:700}
+.cbuy span{flex:1 1 180px}
+#resCoin{font-family:var(--display);color:#b07800}
+#resCoin:empty{display:none}
+@media (max-width:480px){.sgrid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}.scard .sn{font-size:12px}}

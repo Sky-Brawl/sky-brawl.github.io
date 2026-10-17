@@ -87,6 +87,46 @@ function buildHat(head, look, helmet){
       for (let i = 0; i < 5; i++){ const a = i/5*PI*2; const p = part(new THREE.ConeGeometry(.06, .16, 6), toon(0xffc23a)); p.position.set(Math.cos(a)*.27, .72, Math.sin(a)*.27); head.add(p); }
       break;
     }
+    // Shop hats (js/shop.js)
+    case 'chef': {
+      const w = toon(0xfafafa);
+      const b = part(new THREE.CylinderGeometry(.5, .5, .34, 16), w, 1.05); b.position.y = .7; head.add(b);
+      const puff = part(SPH(.5), w, 1.05); puff.scale.set(1.1, .7, 1.1); puff.position.y = .98; head.add(puff);
+      break;
+    }
+    case 'headphones': {
+      const blk = toon(0x23242c), red = toon(0xff3b5c);
+      const top = part(new THREE.BoxGeometry(1.36, .12, .18), blk, 1.06); top.position.y = .76; head.add(top);
+      for (const s of [-1, 1]){
+        const side = part(new THREE.BoxGeometry(.12, .62, .18), blk, 1.06); side.position.set(s*.62, .42, 0); head.add(side);
+        const cup = part(new THREE.CylinderGeometry(.21, .21, .16, 16), red, 1.08); cup.rotation.z = PI/2; cup.position.set(s*.64, .08, 0); head.add(cup);
+      }
+      break;
+    }
+    case 'wizard': {
+      const pur = toon(0x5b3fc4), gold = toon(0xffd23a);
+      const br = part(new THREE.CylinderGeometry(.74, .74, .06, 20), pur, 1.05); br.position.y = .5; head.add(br);
+      const cone = part(new THREE.ConeGeometry(.46, 1.05, 16), pur, 1.05); cone.position.y = 1.02; cone.rotation.z = -.12; head.add(cone);
+      const band = part(new THREE.CylinderGeometry(.44, .45, .1, 16), gold); band.position.y = .58; head.add(band);
+      for (const [x, y, z] of [[.18, .9, .3], [-.15, 1.15, .22], [.06, 1.35, .14]]){ const st = new THREE.Mesh(new THREE.BoxGeometry(.09, .09, .04), gold); st.position.set(x, y, z); st.rotation.z = PI/4; head.add(st); }
+      break;
+    }
+    case 'pirate': {
+      const blk = toon(0x1d1d24);
+      const br = part(new THREE.CylinderGeometry(.74, .74, .07, 20), blk, 1.05); br.scale.z = .72; br.position.y = .55; head.add(br);
+      const crown = part(new THREE.CylinderGeometry(.38, .46, .36, 16), blk, 1.05); crown.position.y = .74; head.add(crown);
+      const band = part(new THREE.CylinderGeometry(.47, .47, .06, 16), toon(0xffc23a)); band.position.y = .6; head.add(band);
+      const skull = new THREE.Mesh(SPH(.11), toon(0xffffff)); skull.position.set(0, .76, .4); head.add(skull);
+      for (const s of [-1, 1]){ const bone = new THREE.Mesh(new THREE.BoxGeometry(.26, .04, .03), toon(0xffffff)); bone.position.set(0, .76, .43); bone.rotation.z = s*.7; head.add(bone); }
+      break;
+    }
+    case 'propeller': {
+      const d = part(halfDome(.62), toon(0xff5d4a), 1.04); d.position.y = .05; head.add(d);
+      for (const [c, a] of [[0x2f8cff, 0], [0xffd23a, PI/2], [0x3fbf5a, PI]]){ const s = part(halfDome(.625), toon(c)); s.scale.set(.34, 1, 1); s.rotation.y = a; s.position.y = .05; head.add(s); }
+      const stick = part(new THREE.CylinderGeometry(.04, .04, .24, 8), toon(0x23242c)); stick.position.y = .74; head.add(stick);
+      for (const [c, s] of [[0x2f8cff, 1], [0xffd23a, -1]]){ const b = part(new THREE.BoxGeometry(.5, .04, .14), toon(c), 1.08); b.position.set(s*.27, .87, 0); b.rotation.x = s*.25; head.add(b); }
+      break;
+    }
   }
 }
 function buildEyes(head, look){

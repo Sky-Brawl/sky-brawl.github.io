@@ -2,13 +2,16 @@
 // Part of the game split into files: all js/ files share one global scope and must load in the order listed in index.html.
 /* ---------- Character customization ---------- */
 const HAIRS = {short:'สั้น', spiky:'ชี้ฟู', buns:'จุกคู่', long:'ยาว', mohawk:'โมฮอว์ก', none:'โล้น'};
-const HATS = {band:'ผ้าคาดหัว', cap:'หมวกแก๊ป', ears:'หูแมว', horns:'เขา', crown:'มงกุฎ', none:'ไม่ใส่', halo:'วงแหวนนางฟ้า', tophat:'หมวกทรงสูง', flower:'มงกุฎดอกไม้', star:'ดาวลอยฟ้า'};
+const HATS = {band:'ผ้าคาดหัว', cap:'หมวกแก๊ป', ears:'หูแมว', horns:'เขา', crown:'มงกุฎ', none:'ไม่ใส่', halo:'วงแหวนนางฟ้า', tophat:'หมวกทรงสูง', flower:'มงกุฎดอกไม้', star:'ดาวลอยฟ้า', chef:'หมวกเชฟ', headphones:'หูฟังเกมเมอร์', wizard:'หมวกพ่อมด', pirate:'หมวกโจรสลัด', propeller:'หมวกใบพัด'};
 const EYES = {round:'ตากลม', angry:'ตาดุ', sleepy:'ตาง่วง', happy:'ตายิ้ม'};
 const HAIR_K = Object.keys(HAIRS), HAT_K = Object.keys(HATS), EYE_K = Object.keys(EYES);
 // Daily-login rewards: these hats and titles are unlocked by claim_daily() (supabase-daily.sql); bots never wear them
-const DAILY_HATS = new Set(['halo', 'tophat', 'flower', 'star']), HAT_FREE = HAT_K.filter(k => !DAILY_HATS.has(k));
+const DAILY_HATS = new Set(['halo', 'tophat', 'flower', 'star']);
+// Shop items (js/shop.js, prices decided by supabase-shop.sql); bots never wear them either
+const SHOP_HATS = new Set(['chef', 'headphones', 'wizard', 'pirate', 'propeller']), SHOP_TITLES = new Set(['shopper', 'cute', 'bigboss', 'shadow', 'ace', 'rich']);
+const HAT_FREE = HAT_K.filter(k => !DAILY_HATS.has(k) && !SHOP_HATS.has(k));
 const FLOAT_HATS = new Set(['halo', 'star']);   // float above the head, so they also show with a class helmet
-const TITLES = {none:'ไม่ใช้ฉายา', regular:'ขาประจำ', steady:'ไม่เคยขาด', guardian:'ผู้พิทักษ์ลอยฟ้า', legend7:'ตำนาน 7 วัน', d14:'ขาประจำ 14 วัน', d30:'สุดยอดขาประจำ 30 วัน', quest5:'นักล่าภารกิจ', quest20:'เจ้าแห่งภารกิจ'};
+const TITLES = {none:'ไม่ใช้ฉายา', regular:'ขาประจำ', steady:'ไม่เคยขาด', guardian:'ผู้พิทักษ์ลอยฟ้า', legend7:'ตำนาน 7 วัน', d14:'ขาประจำ 14 วัน', d30:'สุดยอดขาประจำ 30 วัน', quest5:'นักล่าภารกิจ', quest20:'เจ้าแห่งภารกิจ', shopper:'ขาช้อป', cute:'น่ารักที่สุดในเซิร์ฟ', bigboss:'บอสใหญ่', shadow:'เงามรณะ', ace:'มือหนึ่งแห่งเวที', rich:'เศรษฐีลอยฟ้า'};
 const TITLE_K = Object.keys(TITLES);
 // Class outfits: each one recolors the body and adds its own gear; head:true replaces the hat, noHair hides the hair
 const OP = (geo, c, ol) => part(geo, toon(c), ol);
