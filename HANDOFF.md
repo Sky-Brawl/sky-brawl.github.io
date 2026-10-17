@@ -446,3 +446,16 @@ python -m http.server 8765 --directory sky-brawl
 - ออนไลน์: f[20] = OUTFIT_K index ของ stolen (−1 = ไม่มี) ให้ HUD ของ guest
 - ทดสอบ: คัดลอก+ใช้ครบ 34 อาชีพไม่มี error, ขโมยเมจแล้ว E ยิงลูกไฟจริง
 - ชุดใหม่ใน classes.js (noHair + ผมเสย, เครื่องหมายหน้าผาก, ต่างหู, โค้ตยาว, ปกขน 12 ก้อน + หนาม, กระดุมทอง 2 แถว, ซับในแดง) · มือซ้ายถือตำรา (buildOffhand rogue)
+
+## เหรียญ + ร้านค้า (1.16.0 · 2026-10-17)
+- **ต้องรัน `supabase-shop.sql` ใน Supabase SQL Editor หนึ่งครั้ง** (หลัง levels + daily) · รันซ้ำได้ · ถ้ายังไม่รัน `wallet_status` จะ error → `Shop.off` = ร้านซ่อน ไม่มีอะไรล็อก
+- ฝั่งเซิร์ฟเวอร์: ตาราง `wallet` (coins, earned, spent, owned text[], coin_boost, xp_boost) อ่านได้แค่แถวตัวเอง ไม่มี policy เขียน · `shop_price(item)` = ราคาจริง (null = ไม่ขาย) · `wallet_status()` · `buy_item(item)` (error: `not for sale`, `already owned`, `not enough coins`, `boost full`)
+- ได้เหรียญด้วย trigger ไม่ต้องแก้ฟังก์ชันเดิม: `wallet_on_stats` (BEFORE UPDATE `player_stats`) ทุกครั้งที่ XP เพิ่ม → เหรียญเท่า XP ที่เพิ่ม (ครอบคลุม `record_match` และ `claim_quest`) · ถ้า `matches` เพิ่ม (= แมตช์จริง) ใช้บูสต์ 1 แมตช์: XP ×2 แก้ `new.xp/new.level` ในแถวเลย, เหรียญ ×2 · `wallet_on_daily` (AFTER UPDATE `daily_login` เมื่อ total เพิ่ม) +50, วันที่ 7 ของรอบ +200
+- รหัสสินค้า: `c:<อาชีพ>`, `h:<หมวก>`, `t:<ฉายา>`, `b:coin2`, `b:xp2` · อาชีพที่ไม่ได้อยู่ในรายการของ `shop_price` = 800 อัตโนมัติ (อาชีพใหม่ขายได้เลย) · **ถ้าเปลี่ยนราคา ต้องแก้ทั้ง `shop_price` ใน SQL และ `classPrice` / `SHOP_ITEMS` ใน `js/shop.js`** (เกมแค่แสดง เซิร์ฟเวอร์เป็นตัวตัดสิน)
+- อาชีพฟรี `FREE_CLASSES` = ความยาก ★ ใน `CLASS_META` (+ none) · ต้องตรงกับรายการ null ใน `shop_price` · ถ้าเปลี่ยนดาวของอาชีพใน `CLASS_META` อย่าลืมแก้ SQL ด้วย
+- ไฟล์ใหม่ `js/shop.js` (หลัง `customize.js` เพราะใช้ `CLASS_META`) · `Shop` (cache `skybrawl.wallet` ผูก uid): `classLocked(k)` (ล็อกเมื่อร้านทำงาน + โหลดกระเป๋าแล้ว + ไม่ฟรี + ไม่ได้ซื้อ + ไม่ใช่ `Quest.cls`), `itemLocked`, `fixLooks` (ถอดอาชีพ/หมวก/ฉายาที่ไม่มีออก, อาชีพ → `none`), `buy(u, after)` (กดครั้งแรกตั้ง `Shop.confirm`), `use(u)`, `afterMatch` (เทียบเหรียญก่อน/หลังแล้วเขียน `#resCoin`)
+- `lockedItem` ใน `account.js` รองรับ key `outfit` และของในร้าน (`SHOP_HATS` / `SHOP_TITLES` ใน `classes.js` ต่อท้าย `HATS`/`TITLES` เลข index เดิมไม่เลื่อน · ไม่อยู่ใน `HAT_FREE` บอทจึงไม่ใส่) · `Daily.fixLooks` ข้ามของในร้าน
+- หน้าแต่งตัว: การ์ด `.ccard` มี `.cprice` · คลิกอาชีพที่ล็อก → `previewClass(k)` ตั้ง `G.custPreview` (โมเดลใส่ชุดนั้นแต่ไม่บันทึก) `reflectCustom` แสดงแถว `.cbuy` · `setLookVals` / `selectSlot` / `closeCustom` ล้าง preview
+- รูปการ์ดอาชีพในร้านใช้ `CLASS_THUMBS` เดียวกับหน้าแต่งตัว (`classThumbStep` ทำงานตอนร้านเปิดด้วย, `paintClassCard` ทาทั้ง `.ccard` และ `.scard`)
+- ออนไลน์/บอท: ไม่เกี่ยว (ล็อกเฉพาะผู้เล่นในเครื่อง) · ไม่มีเน็ตหรือโหลด supabase-js ไม่ได้ → ใช้ได้ทุกอาชีพ (ตั้งใจไว้ ไม่ให้เกมพังตอนออฟไลน์)
+- ทดสอบ: SQL บน Postgres 16 จำลอง auth (ได้เหรียญจากแมตช์/ภารกิจ/รายวัน, บูสต์ทั้งสองแบบ, ซื้อซ้ำ/เงินไม่พอ/ของไม่ขาย, RLS กันเขียนตรงและกันดูกระเป๋าคนอื่น, anon เรียกไม่ได้) · หน้าเกมใน Chromium กับ Supabase จำลอง: ล็อก/ปลดล็อก, ซื้อจากร้านและหน้าแต่งตัว, หมวก/ฉายาล็อก, หน้าสรุปผล +เหรียญ, Esc, จอมือถือไม่ล้น · `?v=1.16.0`

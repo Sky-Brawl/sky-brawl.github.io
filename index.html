@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kanit:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=1.15.0">
+<link rel="stylesheet" href="style.css?v=1.16.0">
 
 </head>
 <body>
@@ -85,6 +85,7 @@
       <h1 class="logo blox" aria-label="Sky Brawl">SKY<span>BRAWL</span></h1>
       <p class="sub">ศึกตะลุมบอนบนดาดฟ้าเรือไททานิก ต่อยคู่แข่งจนพลังหมด หรือซัดให้ลอยข้ามราวลงทะเล ลงได้สูงสุด 128 คน ทั้งคนจริงและบอท คนสุดท้ายที่เหลืออยู่ชนะ</p>
       <div id="lvChip" class="lvchip" hidden><span class="lv"></span><span class="lt"></span><span class="xpbar"><i></i></span></div>
+      <button id="coinChip" class="coinchip" type="button" hidden aria-label="เหรียญของคุณ เปิดร้านค้า">🪙 <span class="cv">0</span> <small class="cb"></small></button>
       <div id="acctBox" class="acct" hidden>
         <span id="acctText" class="note"></span>
         <button class="btn google" id="acctGoogle" type="button">ผูกบัญชี Google</button>
@@ -146,6 +147,7 @@
       <button class="btn red" id="playSolo" type="button">เล่นกับบอท</button>
       <button class="btn blue" id="play2p" type="button">2 คนเครื่องเดียว</button>
       <button class="btn wide" id="playOnline" type="button">เล่นออนไลน์ (สร้าง/เข้าห้อง)</button>
+      <button class="btn wide" id="shopBtn" type="button" hidden>🛒 ร้านค้า (ซื้ออาชีพ ของแต่งตัว บูสต์)</button>
       <button class="btn wide" id="questBtn" type="button">📋 ภารกิจรายวัน<i class="rdot" hidden></i></button>
       <button class="btn wide" id="dailyBtn" type="button" hidden>🎁 รางวัลล็อกอินรายวัน<i class="rdot" hidden></i></button>
       <button class="btn plain wide" id="custBtn" type="button">แต่งตัวละคร</button>
@@ -313,6 +315,18 @@
     <div class="btns"><button class="btn plain" id="questClose" type="button">ปิด</button></div>
   </div>
 </div>
+<div id="shop" class="overlay" hidden>
+  <div class="card" style="max-width:680px">
+    <h2 class="logo sm">ร้านค้า</h2>
+    <p class="coinbar" id="shopCoins"></p>
+    <div class="chips stabs" id="shopTabs" role="group" aria-label="หมวดสินค้า"></div>
+    <div id="shopGrid" class="sgrid"></div>
+    <p id="shopGot" aria-live="polite"></p>
+    <p class="note" id="shopNote"></p>
+    <p class="note">เก็บเหรียญ: ได้เท่ากับ XP ทุกแมตช์ (ออนไลน์ ×1.5) และทุกภารกิจ · ล็อกอินรายวัน +50 (วันที่ 7 +200) · ผูกบัญชี Google ไว้ เหรียญและของจะตามไปทุกเครื่อง</p>
+    <div class="btns"><button class="btn plain" id="shopClose" type="button">ปิด</button></div>
+  </div>
+</div>
 <div id="rpUi" hidden>
   <div class="rptop"><span>🎬 ไฮไลต์</span><span id="rpRec" hidden>● REC</span><button class="chipbtn" id="rpSkip" type="button">ข้าม (Esc)</button></div>
   <div class="rpcap" id="rpCap"></div>
@@ -359,7 +373,7 @@
   <div class="card">
     <h2 class="result" id="resTitle">P1 ชนะ!</h2>
     <div id="resXp" class="resxp" hidden>
-      <div class="row"><span id="resLv"></span><span id="resGain"></span></div>
+      <div class="row"><span id="resLv"></span><span id="resGain"></span><span id="resCoin"></span></div>
       <span class="xpbar"><i id="resBar"></i></span>
     </div>
     <div class="rtable"><table><thead><tr><th>อันดับ</th><th>ชื่อ</th><th class="n">KO</th><th class="n">ดาเมจ</th></tr></thead><tbody id="resBody"></tbody></table></div>
@@ -404,58 +418,59 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <!-- Settings you can tweak without touching this file: skill cooldowns/power, classes on/off -->
-<script src="config.js?v=1.15.0"></script>
+<script src="config.js?v=1.16.0"></script>
 <!-- The game: these files share one scope and must stay in this order (see js/README.md) -->
-<script src="js/voxel.js?v=1.15.0"></script>
-<script src="js/core.js?v=1.15.0"></script>
-<script src="js/moves.js?v=1.15.0"></script>
-<script src="js/world.js?v=1.15.0"></script>
-<script src="js/stages/temple-siam.js?v=1.15.0"></script>
-<script src="js/stages/gvg.js?v=1.15.0"></script>
-<script src="js/stages/halloween.js?v=1.15.0"></script>
-<script src="js/stages/christmas.js?v=1.15.0"></script>
-<script src="js/stages/ice.js?v=1.15.0"></script>
-<script src="js/stages/hospital.js?v=1.15.0"></script>
-<script src="js/stages/japan.js?v=1.15.0"></script>
-<script src="js/stages/skyisle.js?v=1.15.0"></script>
-<script src="js/stages/volcano.js?v=1.15.0"></script>
-<script src="js/stages/registry.js?v=1.15.0"></script>
-<script src="js/stages/cards.js?v=1.15.0"></script>
-<script src="js/classes.js?v=1.15.0"></script>
-<script src="js/config-apply.js?v=1.15.0"></script>
-<script src="js/looks.js?v=1.15.0"></script>
-<script src="js/forms.js?v=1.15.0"></script>
-<script src="js/summons.js?v=1.15.0"></script>
-<script src="js/fighter-model.js?v=1.15.0"></script>
-<script src="js/fx.js?v=1.15.0"></script>
-<script src="js/state.js?v=1.15.0"></script>
-<script src="js/input.js?v=1.15.0"></script>
-<script src="js/bots.js?v=1.15.0"></script>
-<script src="js/combat.js?v=1.15.0"></script>
-<script src="js/skills.js?v=1.15.0"></script>
-<script src="js/items.js?v=1.15.0"></script>
-<script src="js/projectiles.js?v=1.15.0"></script>
-<script src="js/powerups.js?v=1.15.0"></script>
-<script src="js/zombie.js?v=1.15.0"></script>
-<script src="js/weapons.js?v=1.15.0"></script>
-<script src="js/modes.js?v=1.15.0"></script>
-<script src="js/sim.js?v=1.15.0"></script>
-<script src="js/render.js?v=1.15.0"></script>
-<script src="js/hud.js?v=1.15.0"></script>
-<script src="js/emotes.js?v=1.15.0"></script>
-<script src="js/chat.js?v=1.15.0"></script>
-<script src="js/chatbot.js?v=1.15.0"></script>
-<script src="js/flow.js?v=1.15.0"></script>
-<script src="js/online.js?v=1.15.0"></script>
-<script src="js/account.js?v=1.15.0"></script>
-<script src="js/quests.js?v=1.15.0"></script>
-<script src="js/replay.js?v=1.15.0"></script>
-<script src="js/relay.js?v=1.15.0"></script>
-<script src="js/online-ui.js?v=1.15.0"></script>
-<script src="js/customize.js?v=1.15.0"></script>
-<script src="js/tutorial.js?v=1.15.0"></script>
-<script src="js/settings.js?v=1.15.0"></script>
-<script src="js/touch.js?v=1.15.0"></script>
-<script src="js/main.js?v=1.15.0"></script>
+<script src="js/voxel.js?v=1.16.0"></script>
+<script src="js/core.js?v=1.16.0"></script>
+<script src="js/moves.js?v=1.16.0"></script>
+<script src="js/world.js?v=1.16.0"></script>
+<script src="js/stages/temple-siam.js?v=1.16.0"></script>
+<script src="js/stages/gvg.js?v=1.16.0"></script>
+<script src="js/stages/halloween.js?v=1.16.0"></script>
+<script src="js/stages/christmas.js?v=1.16.0"></script>
+<script src="js/stages/ice.js?v=1.16.0"></script>
+<script src="js/stages/hospital.js?v=1.16.0"></script>
+<script src="js/stages/japan.js?v=1.16.0"></script>
+<script src="js/stages/skyisle.js?v=1.16.0"></script>
+<script src="js/stages/volcano.js?v=1.16.0"></script>
+<script src="js/stages/registry.js?v=1.16.0"></script>
+<script src="js/stages/cards.js?v=1.16.0"></script>
+<script src="js/classes.js?v=1.16.0"></script>
+<script src="js/config-apply.js?v=1.16.0"></script>
+<script src="js/looks.js?v=1.16.0"></script>
+<script src="js/forms.js?v=1.16.0"></script>
+<script src="js/summons.js?v=1.16.0"></script>
+<script src="js/fighter-model.js?v=1.16.0"></script>
+<script src="js/fx.js?v=1.16.0"></script>
+<script src="js/state.js?v=1.16.0"></script>
+<script src="js/input.js?v=1.16.0"></script>
+<script src="js/bots.js?v=1.16.0"></script>
+<script src="js/combat.js?v=1.16.0"></script>
+<script src="js/skills.js?v=1.16.0"></script>
+<script src="js/items.js?v=1.16.0"></script>
+<script src="js/projectiles.js?v=1.16.0"></script>
+<script src="js/powerups.js?v=1.16.0"></script>
+<script src="js/zombie.js?v=1.16.0"></script>
+<script src="js/weapons.js?v=1.16.0"></script>
+<script src="js/modes.js?v=1.16.0"></script>
+<script src="js/sim.js?v=1.16.0"></script>
+<script src="js/render.js?v=1.16.0"></script>
+<script src="js/hud.js?v=1.16.0"></script>
+<script src="js/emotes.js?v=1.16.0"></script>
+<script src="js/chat.js?v=1.16.0"></script>
+<script src="js/chatbot.js?v=1.16.0"></script>
+<script src="js/flow.js?v=1.16.0"></script>
+<script src="js/online.js?v=1.16.0"></script>
+<script src="js/account.js?v=1.16.0"></script>
+<script src="js/quests.js?v=1.16.0"></script>
+<script src="js/replay.js?v=1.16.0"></script>
+<script src="js/relay.js?v=1.16.0"></script>
+<script src="js/online-ui.js?v=1.16.0"></script>
+<script src="js/customize.js?v=1.16.0"></script>
+<script src="js/shop.js?v=1.16.0"></script>
+<script src="js/tutorial.js?v=1.16.0"></script>
+<script src="js/settings.js?v=1.16.0"></script>
+<script src="js/touch.js?v=1.16.0"></script>
+<script src="js/main.js?v=1.16.0"></script>
 </body>
 </html>

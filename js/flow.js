@@ -36,7 +36,7 @@ async function copyText(text, btn, label){
 }
 function hideAllPanels(){
   if (Replay.on) Replay.stop();
-  for (const id of ['menu','online','pause','result','custom','hud','touch','dbg','invite','ranks','daily','quests']) $(id).hidden = true;
+  for (const id of ['menu','online','pause','result','custom','hud','touch','dbg','invite','ranks','daily','quests','shop']) $(id).hidden = true;
   $('banner').className = '';
 }
 function enterAttract(){
@@ -119,7 +119,7 @@ function rankingRows(){
 function showResult(rows, winnerIdx){
   rows = rows || rankingRows();
   Sfx.result(rows);
-  if (Progress.recordedFor !== G.matchId){ Progress.recordedFor = G.matchId; Quest.onMatch(rows); Progress.record(rows).then(() => Quest.refresh()); }
+  if (Progress.recordedFor !== G.matchId){ Progress.recordedFor = G.matchId; Quest.onMatch(rows); $('resCoin').textContent = ''; Progress.record(rows).then(() => { Quest.refresh(); Shop.afterMatch(); }); }
   const w = winnerIdx !== undefined ? G.fighters[winnerIdx] : G.winner;
   const t = $('resTitle'); t.textContent = w ? w.name + ' ชนะ!' : 'เสมอ!';
   t.style.color = w ? hex(w.team) : 'var(--gold)';

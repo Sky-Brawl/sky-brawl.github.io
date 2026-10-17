@@ -132,7 +132,8 @@ const Quest = {
     if (this.server) Object.assign(this.server, {claimed:r.claimed | 0, full:r.full_days | 0});
     const prev = Progress.stats || {xp:0, level:1, matches:0, wins:0, kos:0};
     Progress.stats = {...prev, xp:r.new_xp, level:r.new_level}; Progress.store(); renderLevelChip();
-    let msg = '🎉 ได้รับ ' + r.gained + ' XP' + (r.bonus ? ' + โบนัสครบ 3 ภารกิจ ' + r.bonus + ' XP' : '');
+    let msg = '🎉 ได้รับ ' + r.gained + ' XP' + (r.bonus ? ' + โบนัสครบ 3 ภารกิจ ' + r.bonus + ' XP' : '') + (Shop.on ? ' + ' + fmtCoins((r.gained | 0) + (r.bonus | 0)) + ' ' + COIN : '');
+    Shop.refresh();
     if (Array.isArray(r.reward) && r.reward.length){ msg += ' และ ' + r.reward.map(rewardName).join(', ') + '!'; Daily.refresh(); }
     if (r.new_level > prev.level) msg += ' · เลเวลอัปเป็น Lv.' + r.new_level + '!';
     $('questGot').textContent = msg;
