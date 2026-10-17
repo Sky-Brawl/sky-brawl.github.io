@@ -6,7 +6,7 @@ function attackKey(f){
   if (f.weapon === 'gun') return 'shoot';
   if (f.weapon === 'shotgun') return 'blast';
   if (f.formT > 0 && FORM_INFO[f.cls]) return FORM_INFO[f.cls].atk;
-  if (!f.onGround) return 'air';
+  if (!f.onGround) return JUG.on ? 'air1' : 'air';
   return f.weapon === 'hammer' ? 'ham1' : (CLASS_COMBO[f.cls] || 'jab1');
 }
 const RAGE_MOVES = new WeakMap();
@@ -22,7 +22,7 @@ function startMove(f, key){
   const aim = aimTarget(f, m);
   if (aim) f.facing = Math.atan2(aim.pos.x - f.pos.x, aim.pos.z - f.pos.z);
   if (m.lunge){ f.vel.x = Math.sin(f.facing)*m.lunge; f.vel.z = Math.cos(f.facing)*m.lunge; }
-  if (m.air) f.vel.y = Math.max(f.vel.y, 2);
+  if (m.air){ f.vel.y = Math.max(f.vel.y, 2); airAssist(f); }
 }
 function hitCenter(f){
   const m = f.move;

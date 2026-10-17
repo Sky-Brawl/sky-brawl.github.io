@@ -12,7 +12,9 @@ function stepFighter(f){
   if ((f.ctrl === 'p1' || f.ctrl === 'p2') ? G.autoLock && !isAuto(f) : f.ctrl === 'net' && f.netAuto) autoLockStep(f);
   if (f.state === 'wait'){ if (--f.waitT <= 0) respawn(f); return; }
   if (atkP) f.buffer = 8;
+  if (jumpP) f.jbuf = 8;   // remembered through hitstop, for the chase jump
   if (f.freeze > 0){ f.freeze--; return; }
+  if (f.jbuf > 0 && !jumpP) f.jbuf--;
   if (f.chill > 0){
     // Frozen solid: no input at all until the ice melts or someone breaks it
     if (f.state === 'ko' || f.state === 'respawn' || !alive(f)) f.chill = 0;
@@ -41,6 +43,7 @@ function stepFighter(f){
   if (f.rage > 0){ f.rage--; if (G.frame % 6 === 0) emit(new V(f.pos.x, f.pos.y + .9, f.pos.z), 1, 0xff4a3a, 1.5, 2, 18, 1.2, -1); }
   if (!atkP && f.buffer > 0) f.buffer--;
   f.stateT++;
+  juggleTick(f);
   if (f.invuln > 0) f.invuln--;
   if (f.squash > 0) f.squash--;
   const mag = Math.hypot(inp.x, inp.z), fric = k => { const kk = STAGE.slip && f.onGround ? 1 - (1 - k)*.45 : k; f.vel.x *= kk; f.vel.z *= kk; };
@@ -54,7 +57,7 @@ function stepFighter(f){
       f.vel.x += (inp.x*sp - f.vel.x)*k; f.vel.z += (inp.z*sp - f.vel.z)*k;
       if (mag > .2) f.facing = Math.atan2(inp.x, inp.z);
       f.state = f.onGround ? (mag > .2 ? 'run' : 'idle') : 'air';
-      if (jumpP && f.onGround && !(f.shock > 0)){ f.vel.y = JUMP; f.onGround = false; f.state = 'air'; dust(f.pos); Sfx.play('jump', f.pos); }
+      if (jumpP && f.onGround && !(f.shock > 0)){ f.vel.y = JUMP; f.onGround = false; f.state = 'air'; chaseJump(f); dust(f.pos); Sfx.play('jump', f.pos); }
       else if (skillP && G.countdown <= 30 && powerOn(f)) powerSkill(f);
       else if (skillP && f.skillCd <= 0 && G.countdown <= 30) useSkill(f);
       else if (grabP) doGrab(f);
@@ -78,6 +81,8 @@ function stepFighter(f){
       break;
     case 'attack': {
       const m = f.move, t = f.stateT;
+      // a launcher that connected can be cancelled into the chase jump (juggle.js)
+      if ((jumpP || f.jbuf > 0) && f.onGround && canChase(f)){ f.jbuf = 0; f.vel.y = JUMP; f.onGround = false; setState(f, 'air'); chaseJump(f); dust(f.pos); Sfx.play('jump', f.pos); break; }
       const inActive = t >= m.startup && t < m.startup + m.active;
       if (m.glide && inActive){
         f.vel.x = Math.sin(f.facing)*m.lunge; f.vel.z = Math.cos(f.facing)*m.lunge;
@@ -130,7 +135,7 @@ function stepFighter(f){
 function physics(f){
   if (!alive(f) || f.freeze > 0) return;
   const px = f.pos.x, pz = f.pos.z, py = f.pos.y;
-  f.vel.y = Math.max(-30, f.vel.y - GRAV*DT);
+  f.vel.y = Math.max(-30, f.vel.y - GRAV*juggleGrav(f)*DT);
   f.pos.addScaledVector(f.vel, DT);
   if (RAILED.has(f.state) && f.pos.y > -.5 && !onDeck(f.pos.x, f.pos.z, .45)){
     if (onDeck(px, f.pos.z, .45)) f.pos.x = px;
