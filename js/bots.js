@@ -138,6 +138,12 @@ function think(b){
   const near = nearestItem(b, 1.3);
   if (near && near.it.type !== 'heal' && near.it.type !== 'potion' && !powerOn(b)){ press('grab'); ai.cd = 4; return; }
   const isGun = b.weapon === 'gun' || b.weapon === 'shotgun';
+  // Someone is floating after a launch: jump after them and keep the air combo going (better bots do it more often)
+  if (tOk && !isGun && juggled(t) && dist < 4.5 && Math.random() < .35 + D.combo*.6){
+    inp.x = dx/dist*.4; inp.z = dz/dist*.4;
+    if (b.onGround) press('jump'); else { press('atk'); ai.wantCombo = true; }
+    ai.cd = 3; return;
+  }
   if (tOk && dist < (isGun ? (b.weapon === 'gun' ? 11 : 5.5) : b.weapon ? 2.3 : powerOn(b) ? 3.2 : b.formT > 0 ? FORM_INFO[b.cls].reach : (CLASS_REACH[b.cls] || 1.9)) && Math.random() < D.aggr*(isGun ? .5 : 1)){
     inp.x = dx/dist*.3; inp.z = dz/dist*.3; press('atk'); ai.wantCombo = Math.random() < D.combo; ai.cd = 4; return;
   }

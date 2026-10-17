@@ -314,6 +314,7 @@ function applyHit(att, tgt, m, dir, credit){
   if (guarding){ popup(at, 'GUARD BREAK', 'combo'); Sfx.play('gbreak', at); }
   if (tgt.chill > 0 && !m.freeze) thaw(tgt);
   const comboing = ['hitstun','tumble'].includes(tgt.state);
+  m = juggleDamage(tgt, m);
   rageSteal(credit, tgt, Math.min(m.dmg, Math.max(0, tgt.hp)));
   tgt.hp -= m.dmg;
   if (credit && credit !== tgt){
@@ -334,7 +335,8 @@ function applyHit(att, tgt, m, dir, credit){
     Sfx.play('ko', at);
     return;
   }
-  if (m.launch || !tgt.onGround){
+  if (juggleHit(att, tgt, m, dir, credit, sc)){ /* launched up, kept up in the air, or spiked down (juggle.js) */ }
+  else if (m.launch || !tgt.onGround){
     setState(tgt, 'tumble');
     tgt.vel.set(dir.x*m.kb*sc, Math.max(m.up || 0, 3)*(.7 + sc*.3), dir.z*m.kb*sc);
     tgt.onGround = false;
