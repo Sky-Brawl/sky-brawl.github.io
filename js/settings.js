@@ -174,8 +174,50 @@ function camYawStep(){
   if (G.mode !== 'play') return;
   const d = (camTurn.l || keys.has('KeyZ') ? 1 : 0) - (camTurn.r || keys.has('KeyC') ? 1 : 0);
   if (d && !G.paused) G.camYawT += d*.04;
+  if (d || camTurn.drag !== null) camBack.hold = 120;   // turned by hand: wait 2 s before swinging back behind
+  camBehindStep();
   G.camYaw += (G.camYawT - G.camYaw)*.2;
   if (Math.abs(G.camYawT - G.camYaw) < .0005) G.camYaw = G.camYawT;
+}
+/* Third person ("ด้านหลัง", the default): with one local fighter the camera rides behind them.
+   G.camYaw = facing + π puts the camera at the fighter's back. It swings round while they run forward
+   (running sideways or towards the camera does not turn it, so holding left does not spin you in circles),
+   settles behind them after standing still for half a second, and looks past them at a target locked by hand.
+   During the countdown it starts right behind. Two players on one screen, spectating, the victory pose and the
+   "ทั้งด่าน" zoom keep the old overview camera. */
+G.camBehind = true;
+try { G.camBehind = localStorage.getItem('skybrawl.camBehind') !== '0'; } catch (e) {}
+const camBack = {hold:0, idle:0, x:0, z:0};
+function behindFighter(){
+  if (!G.camBehind || G.mode !== 'play' || Replay.on) return null;
+  const cz = CAM_LEVELS[G.camZoom]; if (!cz || cz.all) return null;
+  const ts = camTargets();
+  return ts.length === 1 && ts[0].isLocal && ts[0].state !== 'win' ? ts[0] : null;
+}
+function camBehindStep(){
+  const f = behindFighter(); if (!f || G.paused) return;
+  const manual = f.lock && !f.autoPicked && alive(f.lock) ? f.lock : null;
+  let want = manual ? Math.atan2(manual.pos.x - f.pos.x, manual.pos.z - f.pos.z) + PI : f.facing + PI;
+  want = G.camYawT + Math.atan2(Math.sin(want - G.camYawT), Math.cos(want - G.camYawT));
+  const moved = Math.hypot(f.pos.x - camBack.x, f.pos.z - camBack.z); camBack.x = f.pos.x; camBack.z = f.pos.z;
+  if (G.countdown > 0){ G.camYawT = G.camYaw = want; camBack.hold = 0; return; }
+  if (camBack.hold > 0){ camBack.hold--; return; }
+  camBack.idle = moved > .02 ? 0 : camBack.idle + 1;
+  let rate;
+  if (manual) rate = .06;
+  else if (camBack.idle === 0){
+    // how much the fighter runs away from the camera (1 = straight ahead, 0 or less = sideways / towards it)
+    const ahead = -(Math.sin(f.facing)*Math.sin(G.camYaw) + Math.cos(f.facing)*Math.cos(G.camYaw));
+    rate = .05*Math.max(0, ahead);
+  } else rate = camBack.idle > 30 ? .035 : 0;
+  G.camYawT += (want - G.camYawT)*rate;
+}
+function setCamBehind(on){
+  G.camBehind = !!on;
+  try { localStorage.setItem('skybrawl.camBehind', on ? '1' : '0'); } catch (e) {}
+  $('viewBtn').textContent = 'มุม: ' + (on ? 'ด้านหลัง' : 'ภาพรวม');
+  $('viewBtn').classList.toggle('on', !!on);
+  if (!on) camYawReset();
 }
 function camYawReset(){ G.camYawT = G.camYaw - Math.atan2(Math.sin(G.camYaw), Math.cos(G.camYaw)); }
 for (const [id, side] of [['rotL', 'l'], ['rotR', 'r']]){
@@ -185,6 +227,8 @@ for (const [id, side] of [['rotL', 'l'], ['rotR', 'r']]){
   b.addEventListener('contextmenu', e => e.preventDefault());
 }
 $('rotL').addEventListener('dblclick', camYawReset); $('rotR').addEventListener('dblclick', camYawReset);
+setCamBehind(G.camBehind);
+$('viewBtn').onclick = e => { setCamBehind(!G.camBehind); e.currentTarget.blur(); };
 canvas.addEventListener('contextmenu', e => { if (G.mode === 'play') e.preventDefault(); });
 canvas.addEventListener('pointerdown', e => { if (G.mode === 'play' && e.button === 2){ camTurn.drag = e.clientX; canvas.setPointerCapture(e.pointerId); } });
 canvas.addEventListener('pointermove', e => { if (camTurn.drag === null) return; G.camYawT -= (e.clientX - camTurn.drag)*.008; camTurn.drag = e.clientX; });

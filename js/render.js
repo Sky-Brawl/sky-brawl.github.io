@@ -136,6 +136,30 @@ function camTargets(){
   return s ? [s] : [];
 }
 const camPos = new V(0, 14, 30), camLook = new V(0, 1, 0);
+// How far along the segment from (ax,ay,az) to (bx,by,bz) it first runs into a tall block or a big funnel (1 = clear)
+function camBlockT(ax, ay, az, bx, by, bz){
+  let best = 1; camBlockT.kind = '';
+  const dx = bx - ax, dy = by - ay, dz = bz - az;
+  for (const b of BLOCKS){
+    if (b.h < 1.9 || b.kind === 'edge') continue;   // low platforms never hide you; the hospital's outer walls are one-sided, invisible from outside
+    let t0 = 0, t1 = 1, ok = true;
+    const m = b.kind === 'house' ? 1.3 : .7;   // houses have wide eaves
+    for (const [o, d, lo, hi] of [[ax, dx, b.x - b.hx - m, b.x + b.hx + m], [az, dz, b.z - b.hz - m, b.z + b.hz + m], [ay, dy, -1, b.h + 1.2]]){
+      if (Math.abs(d) < 1e-6){ if (o < lo || o > hi){ ok = false; break; } continue; }
+      let a = (lo - o)/d, c = (hi - o)/d; if (a > c) [a, c] = [c, a];
+      t0 = Math.max(t0, a); t1 = Math.min(t1, c); if (t0 > t1){ ok = false; break; }
+    }
+    if (ok && t0 > 0 && t0 < best){ best = t0; camBlockT.kind = b.kind || ''; }
+  }
+  for (const f of FUNNELS){
+    if (!(f.r >= .85)) continue;   // thin lanterns, posts and carts are fine to look past
+    const ox = ax - f.x, oz = az - f.z, A = dx*dx + dz*dz, B = 2*(ox*dx + oz*dz), C = ox*ox + oz*oz - (f.r + .5)*(f.r + .5), D = B*B - 4*A*C;
+    if (A < 1e-6 || D < 0) continue;
+    const t = (-B - Math.sqrt(D))/(2*A);
+    if (t > 0 && t < best){ best = t; camBlockT.kind = 'funnel'; }
+  }
+  return best;
+}
 const tmpV = new V();
 function render(){
   Quest.watch();
@@ -179,16 +203,39 @@ function render(){
     camYawStep();
     // where the camera wants to be with no turning, then turned by G.camYaw around the point it looks at
     let L, P, k;
-    if (cz.all && !won){ const d = (STAGE.camX + 6)/(Math.tan(camera.fov*PI/360)*camera.aspect)*.74; L = new V(0, 0, 0); P = tmpV.set(0, d, d); k = .07; }
+    const bf = behindFighter();
+    if (bf){
+      // third person: a little above and behind the fighter, looking past them so the arena ahead is in view
+      const fx = -Math.sin(G.camYaw), fz = -Math.cos(G.camYaw), y = Math.max(0, bf.pos.y)*.6;
+      L = new V(bf.pos.x + fx*4, y + 1.6, bf.pos.z + fz*4);
+      P = tmpV.set(bf.pos.x - fx*(8*ck), y + 3.4*ck + 1.6, bf.pos.z - fz*(8*ck));
+      // a wall, house or funnel between the fighter and the camera: come in closer, in front of it
+      // low walls, screens, funnels: rise over them · houses (wide roofs): come in closer, under the eaves
+      const hx = bf.pos.x, hy = y + 1.4, hz = bf.pos.z;
+      let t = camBlockT(hx, hy, hz, P.x, P.y, P.z);
+      if (t < 1){
+        const base = P.y;
+        if (camBlockT.kind !== 'house') for (let up = 1.5; up <= 7.5 && t < 1; up += 1.5){ P.y = base + up; t = camBlockT(hx, hy, hz, P.x, P.y, P.z); }
+        if (t < 1){
+          const house = camBlockT.kind === 'house';
+          P.y = house ? base : base + 4; t = camBlockT(hx, hy, hz, P.x, P.y, P.z);
+          const u = Math.max(house ? .3 : .45, t - .08); P.set(hx + (P.x - hx)*u, hy + (P.y - hy)*u + (1 - u)*.8, hz + (P.z - hz)*u);
+        }
+        // looking down from higher up: aim nearer the fighter so they stay on screen
+        const w = Math.min(1, Math.max(0, P.y - base)/6); L.set(L.x + (hx - L.x)*w, L.y + (hy - .4 - L.y)*w, L.z + (hz - L.z)*w);
+      }
+      camPos.lerp(P, .12); camLook.lerp(L, .14);
+    }
+    else if (cz.all && !won){ const d = (STAGE.camX + 6)/(Math.tan(camera.fov*PI/360)*camera.aspect)*.74; L = new V(0, 0, 0); P = tmpV.set(0, d, d); k = .07; }
     else { L = new V(mid.x, mid.y + (won ? 1.9 : 1), mid.z*(won ? 1 : .8)); P = tmpV.set(mid.x*.9, (7.5 + spread*.35)*ck + mid.y, mid.z*mz + (11.5 + spread*.55)*ck); k = won ? .05 : .07; }
-    if (G.camYaw){
+    if (!bf && G.camYaw){
       const c = Math.cos(G.camYaw), s = Math.sin(G.camYaw), dx = P.x - L.x, dz = P.z - L.z;
       P.x = L.x + dx*c + dz*s; P.z = L.z - dx*s + dz*c;
       // the stages are built to be seen from the front: from the sides and back the camera rises and looks down more, over the walls
       const back = (1 - c)/2, hz = 1 - .35*back;
       P.x = L.x + (P.x - L.x)*hz; P.z = L.z + (P.z - L.z)*hz; P.y = L.y + (P.y - L.y)*(1 + .75*back);
     }
-    camPos.lerp(P, k); camLook.lerp(L, .09);
+    if (!bf){ camPos.lerp(P, k); camLook.lerp(L, .09); }
   }
   camera.position.copy(camPos);
   if (G.shake > .005 && !REDUCE && !G.paused){
