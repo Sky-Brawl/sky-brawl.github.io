@@ -36,7 +36,7 @@ async function copyText(text, btn, label){
 }
 function hideAllPanels(){
   if (Replay.on) Replay.stop();
-  for (const id of ['menu','online','pause','result','custom','hud','touch','dbg','invite','ranks','daily','quests','shop']) $(id).hidden = true;
+  for (const id of ['menu','online','pause','result','custom','hud','touch','dbg','invite','ranks','daily','quests','shop','iosInstall']) $(id).hidden = true;
   $('banner').className = '';
 }
 function enterAttract(){

@@ -11,6 +11,7 @@ addEventListener('keydown', e => {
   if (e.code === 'Escape' && !$('daily').hidden){ $('dailyClose').click(); return; }
   if (e.code === 'Escape' && !$('quests').hidden){ $('questClose').click(); return; }
   if (e.code === 'Escape' && !$('shop').hidden){ $('shopClose').click(); return; }
+  if (e.code === 'Escape' && !$('iosInstall').hidden){ $('iosInstallClose').click(); return; }
   if (e.code === 'Escape' && Replay.on){ Replay.stop(); return; }
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
   if (e.code === 'Escape' && G.mode === 'play' && $('result').hidden){ togglePause(); return; }

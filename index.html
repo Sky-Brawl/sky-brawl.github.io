@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="copyright" content="© 2026 SORADAD. All rights reserved.">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#5a8f3a">
+<meta name="theme-color" content="#140f22">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sky Brawl">
 <meta name="description" content="Sky Brawl เกมต่อสู้ 3 มิติโลกบล็อกบนดาดฟ้าเรือไททานิก ตะลุมบอนกับบอทได้สูงสุด 124 คน หรือชวนเพื่อนเล่นออนไลน์ได้สูงสุด 64 คน">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sky-brawl.github.io/">
@@ -22,7 +29,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Kanit:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=1.16.0">
+<link rel="stylesheet" href="style.css?v=1.17.0">
+<link rel="stylesheet" href="theme.css?v=1.17.0">
 
 </head>
 <body>
@@ -80,23 +88,58 @@
 </div>
 
 <div id="menu" class="overlay">
-  <div class="card">
-    <div>
-      <h1 class="logo blox" aria-label="Sky Brawl">SKY<span>BRAWL</span></h1>
-      <p class="sub">ศึกตะลุมบอนบนดาดฟ้าเรือไททานิก ต่อยคู่แข่งจนพลังหมด หรือซัดให้ลอยข้ามราวลงทะเล ลงได้สูงสุด 128 คน ทั้งคนจริงและบอท คนสุดท้ายที่เหลืออยู่ชนะ</p>
-      <div id="lvChip" class="lvchip" hidden><span class="lv"></span><span class="lt"></span><span class="xpbar"><i></i></span></div>
-      <button id="coinChip" class="coinchip" type="button" hidden aria-label="เหรียญของคุณ เปิดร้านค้า">🪙 <span class="cv">0</span> <small class="cb"></small></button>
-      <div id="acctBox" class="acct" hidden>
+  <header class="mtop">
+    <div class="mbrand"><span class="mbadge" aria-hidden="true">⚔️</span><div><b>SKY BRAWL</b><small>ลุย! ต่อสู้ · เป็นที่หนึ่ง!</small></div></div>
+    <nav class="mnav" aria-label="เมนูลัด">
+      <button class="nbtn" id="boardBtn" type="button" data-i="🏆">อันดับ</button>
+      <button class="nbtn" id="inviteBtn" type="button" data-i="📣">ชวนเพื่อน</button>
+      <button class="nbtn" id="soundBtnMenu" type="button" data-i="🔊">เสียง: เปิด</button>
+      <button class="nbtn" id="helpBtn" type="button" data-i="❓">วิธีเล่น</button>
+    </nav>
+  </header>
+  <aside class="mside" aria-label="จุดเด่นของเกม">
+    <h3>เล่นได้ทั้งมือถือ และ PC</h3>
+    <ul>
+      <li><i aria-hidden="true">⚔️</i>PVP ตะลุมบอน สูงสุด 128 คน</li>
+      <li><i aria-hidden="true">🧙</i><span id="featCls">อาชีพมากมาย</span> แปลงร่างได้</li>
+      <li><i aria-hidden="true">🗺️</i><span id="featStg">หลายด่าน</span> · ซอมบี้ · ตีบอส</li>
+      <li><i aria-hidden="true">🎁</i>ภารกิจ รางวัลรายวัน ร้านค้า</li>
+    </ul>
+  </aside>
+  <div class="mcall" aria-hidden="true"><b>พร้อมลุยแล้วหรือยัง?</b><small>มาสร้างตำนานไปด้วยกัน!</small></div>
+  <div class="card mcard">
+    <h1 class="logo blox mlogo" aria-label="Sky Brawl">SKY<span>BRAWL</span></h1>
+    <div class="mbody">
+      <div class="mcol">
+        <div class="mprof">
+          <img id="menuFace" class="mface" alt="" width="64" height="64">
+          <div class="mpinfo">
+<div id="lvChip" class="lvchip" hidden><span class="lv"></span><span class="lt"></span><span class="xpbar"><i></i></span></div>
+<button id="coinChip" class="coinchip" type="button" hidden aria-label="เหรียญของคุณ เปิดร้านค้า">🪙 <span class="cv">0</span> <small class="cb"></small></button>
+          </div>
+        </div>
+<div id="acctBox" class="acct" hidden>
         <span id="acctText" class="note"></span>
         <button class="btn google" id="acctGoogle" type="button">ผูกบัญชี Google</button>
         <button class="btn google" id="acctExisting" type="button" hidden>เข้าบัญชี Google ที่มีอยู่</button>
         <button class="btn plain" id="acctOut" type="button" hidden>ออกจากระบบ</button>
       </div>
-      <p class="note" id="touchNote" hidden style="margin-top:8px">เล่นบนมือถือ: แตะครึ่งซ้ายของจอแล้วลากเพื่อเดิน ใช้ปุ่มด้านขวาเพื่อต่อย กระโดด กัน และหยิบของ หมุนจอแนวนอนจะเล่นง่ายขึ้น</p>
-    </div>
-    <button class="btn quick" id="quickPlay" type="button">▶ เล่นเลย<small>นักสู้ 8 ตัว บอทง่าย · ด่านสุ่ม · ใช้อาชีพของคุณ</small></button>
-    <button class="btn plain tutb" id="tutBtn" type="button">📘 สอนเล่น 1 นาที</button>
-    <details class="setd" id="setD"><summary>ตั้งค่าเกม <small id="setSum"></small></summary>
+        <button class="btn quick" id="quickPlay" type="button">เริ่มเข้าเกม<small>นักสู้ 8 ตัว บอทง่าย · ด่านสุ่ม · ใช้อาชีพของคุณ</small></button>
+<p class="note" id="touchNote" hidden style="margin-top:8px">เล่นบนมือถือ: แตะครึ่งซ้ายของจอแล้วลากเพื่อเดิน ใช้ปุ่มด้านขวาเพื่อต่อย กระโดด กัน และหยิบของ หมุนจอแนวนอนจะเล่นง่ายขึ้น</p>
+      </div>
+      <div class="mcol">
+        <div class="mgrid">
+          <button class="btn red" id="playSolo" type="button" data-i="🤖">เล่นกับบอท</button>
+          <button class="btn blue" id="play2p" type="button" data-i="🎮">2 คนเครื่องเดียว</button>
+          <button class="btn" id="playOnline" type="button" data-i="🌐">เล่นออนไลน์</button>
+          <button class="btn" id="shopBtn" type="button" data-i="🛒" hidden>ร้านค้า</button>
+          <button class="btn" id="questBtn" type="button" data-i="📋">ภารกิจรายวัน<i class="rdot" hidden></i></button>
+          <button class="btn" id="dailyBtn" type="button" data-i="🎁" hidden>รางวัลรายวัน<i class="rdot" hidden></i></button>
+          <button class="btn plain" id="custBtn" type="button" data-i="👕">แต่งตัวละคร</button>
+          <button class="btn plain" id="tutBtn" type="button" data-i="📘">สอนเล่น 1 นาที</button>
+          <button class="btn plain" id="installBtn" type="button" data-i="📲" hidden>ติดตั้งแอป</button>
+        </div>
+<details class="setd" id="setD"><summary>ตั้งค่าเกม <small id="setSum"></small></summary>
     <div class="settings">
       <div class="seg"><label class="lbl" for="nf">จำนวนนักสู้</label><input type="range" id="nf" min="2" max="128" value="8"><output id="nfOut" for="nf">8</output></div>
       <div class="seg" role="radiogroup" aria-label="จำนวนชีวิต">
@@ -143,19 +186,10 @@
       </div>
     </div>
     </details>
-    <div class="btns">
-      <button class="btn red" id="playSolo" type="button">เล่นกับบอท</button>
-      <button class="btn blue" id="play2p" type="button">2 คนเครื่องเดียว</button>
-      <button class="btn wide" id="playOnline" type="button">เล่นออนไลน์ (สร้าง/เข้าห้อง)</button>
-      <button class="btn wide" id="shopBtn" type="button" hidden>🛒 ร้านค้า (ซื้ออาชีพ ของแต่งตัว บูสต์)</button>
-      <button class="btn wide" id="questBtn" type="button">📋 ภารกิจรายวัน<i class="rdot" hidden></i></button>
-      <button class="btn wide" id="dailyBtn" type="button" hidden>🎁 รางวัลล็อกอินรายวัน<i class="rdot" hidden></i></button>
-      <button class="btn plain wide" id="custBtn" type="button">แต่งตัวละคร</button>
-      <button class="btn plain wide" id="soundBtnMenu" type="button">เสียง: เปิด</button>
-      <button class="btn line wide" id="inviteBtn" type="button">ชวนเพื่อนมาเล่น (LINE / Facebook / X / QR)</button>
-      <button class="btn plain wide" id="boardBtn" type="button">ตารางอันดับ</button>
+      </div>
     </div>
-    <details class="keys-d">
+    <p class="sub msub">ศึกตะลุมบอนโลกบล็อก ต่อยคู่แข่งจนพลังหมด หรือซัดให้ลอยตกเวที ลงได้สูงสุด 128 คน ทั้งคนจริงและบอท คนสุดท้ายที่เหลืออยู่ชนะ</p>
+    <details class="keys-d" id="keysD">
       <summary>ปุ่มควบคุม</summary>
       <div class="keys">
         <div class="k1"><h3>ผู้เล่น 1</h3>
@@ -332,6 +366,26 @@
   <div class="rpcap" id="rpCap"></div>
 </div>
 <div id="toast" role="status" hidden></div>
+<div id="iosInstall" class="overlay" hidden>
+  <div class="card" style="max-width:460px">
+    <h2 class="logo sm">ติดตั้งแอป</h2>
+    <ol class="isteps">
+      <li>แตะปุ่ม <b>แชร์</b> <span class="ishare" aria-hidden="true">⬆️</span> ของ Safari (แถบล่างหรือแถบบน)</li>
+      <li>เลื่อนลงแล้วเลือก <b>"เพิ่มไปยังหน้าจอโฮม"</b></li>
+      <li>กด <b>"เพิ่ม"</b> ไอคอน Sky Brawl จะอยู่บนหน้าจอ เปิดแล้วเล่นเต็มจอเหมือนแอป</li>
+    </ol>
+    <p class="note">ใช้ Chrome บน iPhone ก็ได้ (ปุ่มแชร์ในแถบที่อยู่) · บน Android กดปุ่ม "ติดตั้งแอป" แล้วกดติดตั้งได้ทันที</p>
+    <div class="btns"><button class="btn" id="iosInstallClose" type="button">เข้าใจแล้ว</button></div>
+  </div>
+</div>
+<div id="rotate" hidden>
+  <div class="rbox">
+    <div class="rphone" aria-hidden="true"><i></i></div>
+    <b>หมุนมือถือเป็นแนวนอน</b>
+    <small>Sky Brawl เล่นได้เฉพาะแนวนอน เพื่อให้เห็นสนามกว้างและกดปุ่มได้ถนัด</small>
+    <button class="btn" id="rotFull" type="button" hidden>เต็มจอ + หมุนอัตโนมัติ</button>
+  </div>
+</div>
 
 <div id="invite" class="overlay" hidden>
   <div class="card" style="max-width:460px">
@@ -418,59 +472,60 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <!-- Settings you can tweak without touching this file: skill cooldowns/power, classes on/off -->
-<script src="config.js?v=1.16.0"></script>
+<script src="config.js?v=1.17.0"></script>
 <!-- The game: these files share one scope and must stay in this order (see js/README.md) -->
-<script src="js/voxel.js?v=1.16.0"></script>
-<script src="js/core.js?v=1.16.0"></script>
-<script src="js/moves.js?v=1.16.0"></script>
-<script src="js/world.js?v=1.16.0"></script>
-<script src="js/stages/temple-siam.js?v=1.16.0"></script>
-<script src="js/stages/gvg.js?v=1.16.0"></script>
-<script src="js/stages/halloween.js?v=1.16.0"></script>
-<script src="js/stages/christmas.js?v=1.16.0"></script>
-<script src="js/stages/ice.js?v=1.16.0"></script>
-<script src="js/stages/hospital.js?v=1.16.0"></script>
-<script src="js/stages/japan.js?v=1.16.0"></script>
-<script src="js/stages/skyisle.js?v=1.16.0"></script>
-<script src="js/stages/volcano.js?v=1.16.0"></script>
-<script src="js/stages/registry.js?v=1.16.0"></script>
-<script src="js/stages/cards.js?v=1.16.0"></script>
-<script src="js/classes.js?v=1.16.0"></script>
-<script src="js/config-apply.js?v=1.16.0"></script>
-<script src="js/looks.js?v=1.16.0"></script>
-<script src="js/forms.js?v=1.16.0"></script>
-<script src="js/summons.js?v=1.16.0"></script>
-<script src="js/fighter-model.js?v=1.16.0"></script>
-<script src="js/fx.js?v=1.16.0"></script>
-<script src="js/state.js?v=1.16.0"></script>
-<script src="js/input.js?v=1.16.0"></script>
-<script src="js/bots.js?v=1.16.0"></script>
-<script src="js/combat.js?v=1.16.0"></script>
-<script src="js/skills.js?v=1.16.0"></script>
-<script src="js/items.js?v=1.16.0"></script>
-<script src="js/projectiles.js?v=1.16.0"></script>
-<script src="js/powerups.js?v=1.16.0"></script>
-<script src="js/zombie.js?v=1.16.0"></script>
-<script src="js/weapons.js?v=1.16.0"></script>
-<script src="js/modes.js?v=1.16.0"></script>
-<script src="js/sim.js?v=1.16.0"></script>
-<script src="js/render.js?v=1.16.0"></script>
-<script src="js/hud.js?v=1.16.0"></script>
-<script src="js/emotes.js?v=1.16.0"></script>
-<script src="js/chat.js?v=1.16.0"></script>
-<script src="js/chatbot.js?v=1.16.0"></script>
-<script src="js/flow.js?v=1.16.0"></script>
-<script src="js/online.js?v=1.16.0"></script>
-<script src="js/account.js?v=1.16.0"></script>
-<script src="js/quests.js?v=1.16.0"></script>
-<script src="js/replay.js?v=1.16.0"></script>
-<script src="js/relay.js?v=1.16.0"></script>
-<script src="js/online-ui.js?v=1.16.0"></script>
-<script src="js/customize.js?v=1.16.0"></script>
-<script src="js/shop.js?v=1.16.0"></script>
-<script src="js/tutorial.js?v=1.16.0"></script>
-<script src="js/settings.js?v=1.16.0"></script>
-<script src="js/touch.js?v=1.16.0"></script>
-<script src="js/main.js?v=1.16.0"></script>
+<script src="js/voxel.js?v=1.17.0"></script>
+<script src="js/core.js?v=1.17.0"></script>
+<script src="js/moves.js?v=1.17.0"></script>
+<script src="js/world.js?v=1.17.0"></script>
+<script src="js/stages/temple-siam.js?v=1.17.0"></script>
+<script src="js/stages/gvg.js?v=1.17.0"></script>
+<script src="js/stages/halloween.js?v=1.17.0"></script>
+<script src="js/stages/christmas.js?v=1.17.0"></script>
+<script src="js/stages/ice.js?v=1.17.0"></script>
+<script src="js/stages/hospital.js?v=1.17.0"></script>
+<script src="js/stages/japan.js?v=1.17.0"></script>
+<script src="js/stages/skyisle.js?v=1.17.0"></script>
+<script src="js/stages/volcano.js?v=1.17.0"></script>
+<script src="js/stages/registry.js?v=1.17.0"></script>
+<script src="js/stages/cards.js?v=1.17.0"></script>
+<script src="js/classes.js?v=1.17.0"></script>
+<script src="js/config-apply.js?v=1.17.0"></script>
+<script src="js/looks.js?v=1.17.0"></script>
+<script src="js/forms.js?v=1.17.0"></script>
+<script src="js/summons.js?v=1.17.0"></script>
+<script src="js/fighter-model.js?v=1.17.0"></script>
+<script src="js/fx.js?v=1.17.0"></script>
+<script src="js/state.js?v=1.17.0"></script>
+<script src="js/input.js?v=1.17.0"></script>
+<script src="js/bots.js?v=1.17.0"></script>
+<script src="js/combat.js?v=1.17.0"></script>
+<script src="js/skills.js?v=1.17.0"></script>
+<script src="js/items.js?v=1.17.0"></script>
+<script src="js/projectiles.js?v=1.17.0"></script>
+<script src="js/powerups.js?v=1.17.0"></script>
+<script src="js/zombie.js?v=1.17.0"></script>
+<script src="js/weapons.js?v=1.17.0"></script>
+<script src="js/modes.js?v=1.17.0"></script>
+<script src="js/sim.js?v=1.17.0"></script>
+<script src="js/render.js?v=1.17.0"></script>
+<script src="js/hud.js?v=1.17.0"></script>
+<script src="js/emotes.js?v=1.17.0"></script>
+<script src="js/chat.js?v=1.17.0"></script>
+<script src="js/chatbot.js?v=1.17.0"></script>
+<script src="js/flow.js?v=1.17.0"></script>
+<script src="js/online.js?v=1.17.0"></script>
+<script src="js/account.js?v=1.17.0"></script>
+<script src="js/quests.js?v=1.17.0"></script>
+<script src="js/replay.js?v=1.17.0"></script>
+<script src="js/relay.js?v=1.17.0"></script>
+<script src="js/online-ui.js?v=1.17.0"></script>
+<script src="js/customize.js?v=1.17.0"></script>
+<script src="js/shop.js?v=1.17.0"></script>
+<script src="js/tutorial.js?v=1.17.0"></script>
+<script src="js/settings.js?v=1.17.0"></script>
+<script src="js/touch.js?v=1.17.0"></script>
+<script src="js/ui.js?v=1.17.0"></script>
+<script src="js/main.js?v=1.17.0"></script>
 </body>
 </html>
