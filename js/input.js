@@ -22,6 +22,7 @@ addEventListener('keydown', e => {
   if (G.mode === 'play' && (e.code === 'Equal' || e.code === 'NumpadAdd')) camStep(-1);
   if (G.mode === 'play' && (e.code === 'KeyZ' || e.code === 'KeyC')){ e.preventDefault(); keys.add(e.code); }
   if (G.mode === 'play' && e.code === 'KeyV' && !e.repeat) camYawReset();
+  if (G.mode === 'play' && e.code === 'KeyB' && !e.repeat) setCamBehind(!G.camBehind);
   if (G.mode === 'play' && (e.code === 'Enter' || e.code === 'NumpadEnter') && !e.repeat && $('result').hidden){ e.preventDefault(); openChat(); return; }
   if (G.mode === 'play' && /^Digit[1-8]$/.test(e.code) && !e.repeat){ emoteLocal(Number(e.code.slice(5)) - 1); return; }
   if (G.mode === 'play' && GAME_KEYS.has(e.code)){ e.preventDefault(); keys.add(e.code); }
